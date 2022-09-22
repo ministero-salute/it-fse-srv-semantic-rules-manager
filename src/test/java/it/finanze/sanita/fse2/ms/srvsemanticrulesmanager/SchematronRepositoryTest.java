@@ -2,7 +2,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,17 +39,13 @@ class SchematronRepositoryTest extends AbstractTest {
     private final String TEST_INS_ROOT = "Root_E"; 
     private final String TEST_INS_EXTENSION = "Ext_E"; 
     
-    private final String TEST_INS_MANY_SCHEMATRON_A = "Root_MANY_A"; 
-    private final String TEST_INS_MANY_ROOT_A = "Root_MANY_A"; 
-    private final String TEST_INS_MANY_EXTENSION_A = "Root_MANY_A"; 
-    
-    private final String TEST_INS_MANY_SCHEMATRON_B = "Root_MANY_B"; 
-    private final String TEST_INS_MANY_ROOT_B = "Root_MANY_B"; 
-    private final String TEST_INS_MANY_EXTENSION_B = "Root_MANY_B"; 
-    
     private final String TEST_UPD_SCHEMATRON = "Root_UPD"; 
     private final String TEST_UPD_ROOT = "Root_UPD"; 
-    private final String TEST_UPD_EXTENSION = "Ext_UPD"; 
+    private final String TEST_UPD_EXTENSION = "Ext_UPD";
+	
+	private final String TEST_UPD_SCHEMATRON_NE = "Not Exist"; 
+    private final String TEST_UPD_ROOT_NE = "Not Exist"; 
+    private final String TEST_UPD_EXTENSION_NE = "Not Exist";
     
     private final String TEST_DEL_SCHEMATRON = "Root_DEL"; 
     private final String TEST_DEL_ROOT = "Root_DEL"; 
@@ -119,7 +117,7 @@ class SchematronRepositoryTest extends AbstractTest {
 
     	String updatedBinaryData = ety.getContentSchematron().toString(); 
     	
-    	repository.update(ety); 
+    	assertTrue(repository.update(ety)); 
     	
     	SchematronETY retrievedEty = repository.findByTemplateIdRootAndTemplateIdExtension(TEST_UPD_ROOT, TEST_UPD_EXTENSION); 
     	
@@ -127,6 +125,19 @@ class SchematronRepositoryTest extends AbstractTest {
 
     	assertEquals(0, retrievedEty.getContentSchematron().getType()); 
     	assertEquals(updatedBinaryData, retrievedEty.getContentSchematron().toString()); 
+
+		/// assert not exist
+
+		SchematronETY ety1 = new SchematronETY(); 
+    	
+    	ety1.setNameSchematron(TEST_UPD_SCHEMATRON_NE);
+    	ety1.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING_UPDATED.getBytes()));
+    	ety1.setTemplateIdRoot(TEST_UPD_ROOT_NE);
+    	ety1.setTemplateIdExtension(TEST_UPD_EXTENSION_NE); 
+    	ety1.setInsertionDate(new Date()); 
+    	ety1.setLastUpdateDate(new Date());
+
+		assertFalse(repository.update(ety1));
 
     } 
     

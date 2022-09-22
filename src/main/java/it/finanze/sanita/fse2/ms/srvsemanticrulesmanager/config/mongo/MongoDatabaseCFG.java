@@ -4,7 +4,7 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,14 +31,14 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
 
-	@Autowired
-	private MongoPropertiesCFG mongoPropertiesCFG;
+	@Value("${data.mongodb.uri}")
+	private String mongoUri; 
  
     final List<Converter<?, ?>> conversions = new ArrayList<>();
 
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(){
-        return new SimpleMongoClientDatabaseFactory(mongoPropertiesCFG.getUri());
+        return new SimpleMongoClientDatabaseFactory(mongoUri); 
     }
 
     @Bean

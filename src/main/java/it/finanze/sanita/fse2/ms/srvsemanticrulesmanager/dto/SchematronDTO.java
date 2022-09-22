@@ -41,6 +41,6 @@ public class SchematronDTO
 	private Date lastUpdateDate; 
 	
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private Boolean deleted; 
+	private boolean deleted; 
 	
 }

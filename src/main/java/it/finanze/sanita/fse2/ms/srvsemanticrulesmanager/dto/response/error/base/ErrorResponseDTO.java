@@ -1,11 +1,14 @@
-package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response; 
+package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base; 
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * The Class ErrorResponseDTO.
@@ -15,21 +18,13 @@ import lombok.Data;
  * 	Error response.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class ErrorResponseDTO extends ResponseDTO {
 
 	/**
 	 * Serial Version UID 
 	 */
 	private static final long serialVersionUID = 6423701106609931088L;
-
-
-	public static final String GENERIC_ERROR = "/msg/generic-error";
-    public static final String CONSTRAINT_ERROR = "/msg/constraint-error";
-    public static final String NOT_FOUND_ERROR = "/msg/not-found";
-    public static final String OPERATION_ERROR = "/msg/operation-error";
-    public static final String CONFLICT_ERROR = "/msg/conflict-error";
-    public static final String DATA_PROCESSING_ERROR = "/msg/process-error";
-    public static final String DATA_INTEGRITY_ERROR = "/msg/data-integrity-error";
 
 	
 	/**

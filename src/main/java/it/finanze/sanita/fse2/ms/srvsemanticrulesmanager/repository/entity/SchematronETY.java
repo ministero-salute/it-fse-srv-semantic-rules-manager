@@ -40,6 +40,6 @@ public class SchematronETY {
 	private Date lastUpdateDate; 
 	
 	@Field(name = "deleted")
-	private Boolean deleted; 
+	private boolean deleted; 
 	 
 }

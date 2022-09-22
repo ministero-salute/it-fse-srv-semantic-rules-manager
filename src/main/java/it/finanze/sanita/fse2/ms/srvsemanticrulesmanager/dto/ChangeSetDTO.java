@@ -30,8 +30,14 @@ public class ChangeSetDTO implements Serializable {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Payload {
-        @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
+    public static class Payload implements Serializable {
+    	
+        /**
+		 * Serial Version UID 
+		 */
+		private static final long serialVersionUID = -525579157952607584L; 
+		
+		@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
         String templateIdRoot;
         @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
         String templateIdExtension;

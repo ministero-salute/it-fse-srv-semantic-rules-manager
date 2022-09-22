@@ -2,7 +2,6 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +27,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.ObjectIdNotValidException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.impl.SchematronSRV; 
@@ -59,17 +57,7 @@ class SchematronServiceTest extends AbstractTest {
     private final Binary TEST_SCHEMATRON_CONTENT_INS_THROW = new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()); 
     
     private final ObjectId TEST_SCHEMATRON_ID_NOT_FOUND = new ObjectId("62c6de0e959b683ce2d996d7"); 
-    private final String TEST_SCHEMATRON_ID_THROW = "0000000s0000000000000001";
-    private final String TEST_SCHEMATRON_ID_NOT_VALID = "sds"; 
 
-    private final String TEST_SCHEMATRON_NAME_INS_1 = "testNameIns_1"; 
-    private final String TEST_SCHEMATRON_ROOT_INS_1 = "testRootIns_1"; 
-    private final String TEST_SCHEMATRON_EXTENSION_INS_1 = "testExtensionIns_1"; 
-    private final Binary TEST_SCHEMATRON_CONTENT_INS_1 = new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()); 
-    private final String TEST_SCHEMATRON_NAME_INS_2 = "testNameIns_2"; 
-    private final String TEST_SCHEMATRON_ROOT_INS_2 = "testRootIns_2"; 
-    private final String TEST_SCHEMATRON_EXTENSION_INS_2 = "testExtensionIns"; 
-    private final Binary TEST_SCHEMATRON_CONTENT_INS_2 = new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()); 
     private final String TEST_SCHEMATRON_NAME_INS_3 = "testNameIns_3"; 
     private final String TEST_SCHEMATRON_ROOT_INS_3 = "testRootIns_3"; 
     private final String TEST_SCHEMATRON_EXTENSION_INS_3 = "testExtensionIns_3"; 
@@ -229,10 +217,6 @@ class SchematronServiceTest extends AbstractTest {
 
     	SchematronDocumentDTO returnedDto_1 = schematronService.findById(returnedDto.getId());
 		assertNotNull(returnedDto_1); 
-		
-		// FIND BY ID - Invalid ID 
-		
-    	assertThrows(ObjectIdNotValidException.class, () -> schematronService.findById(TEST_SCHEMATRON_ID_THROW)); 
     	
 		
 		// FIND BY ID - Invalid ID 
@@ -244,14 +228,7 @@ class SchematronServiceTest extends AbstractTest {
     	assertThrows(DocumentNotFoundException.class, () -> schematronService.findById(TEST_SCHEMATRON_ID_NOT_FOUND.toString())); 
     	
 		
-    } 
-    
-    @Test
-    void findByIdObjectIdNotValidTest() {
-    	assertThrows(ObjectIdNotValidException.class, () -> schematronService.findById(TEST_SCHEMATRON_ID_NOT_VALID)); 
     }
-    
-    
     
     @Test
     void findByTemplateIdRootAndTemplateIdExtensionDeletedElementTest() throws DocumentNotFoundException, OperationException, DocumentAlreadyPresentException {
@@ -278,7 +255,6 @@ class SchematronServiceTest extends AbstractTest {
     @Test
     void getSchematronsTest() throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
-    	List<SchematronDTO> dtoList = new ArrayList<SchematronDTO>(); 
     	SchematronDTO dtoFirst = new SchematronDTO(); 
     	
     	Date date = new Date(); 
@@ -313,8 +289,7 @@ class SchematronServiceTest extends AbstractTest {
     @Test
     void buildDtoFromEtyTest() {
     	List<SchematronETY> etyList = new ArrayList<SchematronETY>(); 
-		SchematronETY schematronEty = new SchematronETY(); 
-		SchematronDTO parsedDto = new SchematronDTO(); 
+		SchematronETY schematronEty = new SchematronETY();
 		
 		Date date = new Date(); 
 		

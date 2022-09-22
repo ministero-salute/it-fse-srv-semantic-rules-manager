@@ -20,10 +20,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-
 @WebMvcTest(SchematronCTL.class)
 @ComponentScan
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

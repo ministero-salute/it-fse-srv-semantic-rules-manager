@@ -40,6 +40,7 @@ class OpenAPICFGTest extends AbstractTest {
 	
 	
 	@Test
+	@SuppressWarnings("rawtypes")
 	void openApiCfgTest() {
 		OpenAPI openApi = new OpenAPI(); 
 		Info info = new Info(); 

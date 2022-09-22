@@ -5,6 +5,9 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.Schem
 
 public final class ChangeSetUtility {
 
+	private ChangeSetUtility() {
+		
+	}
 
 	/**
 	 * Creates a ChangesetDTO from a SchematronETY.

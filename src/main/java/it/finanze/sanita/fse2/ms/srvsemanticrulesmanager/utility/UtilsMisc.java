@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Date;
+import javax.validation.Path;
 
 public final class UtilsMisc {
 
@@ -23,5 +24,11 @@ public final class UtilsMisc {
      */
     public static String encodeBase64(final byte[] input) {
         return Base64.getEncoder().encodeToString(input);
+    }
+
+    public static String extractKeyFromPath(Path path) {
+        String field = "";
+        for(Path.Node node: path) field = node.getName();
+        return field;
     }
 }

@@ -3,7 +3,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response;
 import javax.validation.constraints.Size;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * The Class ValidationErrorResponseDTO.
@@ -11,6 +13,7 @@ import lombok.Data;
  * 	Error response.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SchematronCreationErrorResponseDTO extends ErrorResponseDTO {
 
 	/**

@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DateNotValidException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -20,8 +19,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ChangeSetResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.NoFutureDate;
 
 /**
  * ChangeSet retriever controller
@@ -40,7 +40,7 @@ public interface IChangeSetCTL {
 			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
 	})
 	@GetMapping("/schematron/status")
-    Object getSchematronChangeSet(HttpServletRequest httpServletRequest, @RequestParam(value="lastUpdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastUpdate)
-        throws OperationException, DateNotValidException;
+    Object getSchematronChangeSet(HttpServletRequest httpServletRequest, @RequestParam(value="lastUpdate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @NoFutureDate Date lastUpdate)
+        throws OperationException;
 
 }

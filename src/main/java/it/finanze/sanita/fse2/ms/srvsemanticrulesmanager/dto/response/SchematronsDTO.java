@@ -8,6 +8,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author Riccardo Bonesi
@@ -15,11 +16,12 @@ import lombok.Data;
  * The Class SchematronsDTO, used to return the list of all schematrons.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class SchematronsDTO extends ResponseDTO {
 
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
-	private List<SchematronDTO> schematrons;
+	private transient List<SchematronDTO> schematrons;
 
 	public SchematronsDTO() {
 		super();

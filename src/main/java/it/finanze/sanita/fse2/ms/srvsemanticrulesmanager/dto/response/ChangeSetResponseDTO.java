@@ -51,9 +51,6 @@ public class ChangeSetResponseDTO extends ResponseDTO {
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
 	private List<ChangeSetDTO> deletions;
 
-	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
-	private List<ChangeSetDTO> modifications;
-
 	@Schema(minimum = DEFAULT_ARRAY_MIN_SIZE + "", maximum = DEFAULT_ARRAY_MAX_SIZE + "")
 	private int totalNumberOfElements;
 
@@ -62,13 +59,12 @@ public class ChangeSetResponseDTO extends ResponseDTO {
 	}
 
 
-	public ChangeSetResponseDTO(final LogTraceInfoDTO traceInfo, final String inTransactionId, final Date inLastUpdate, final Date inTimestamp, final List<ChangeSetDTO> inInsertions, final List<ChangeSetDTO> inDeletions, final List<ChangeSetDTO> inModifications, final int inTotalNumberOfElements) {
+	public ChangeSetResponseDTO(final LogTraceInfoDTO traceInfo, final Date inLastUpdate, final Date inTimestamp, final List<ChangeSetDTO> inInsertions, final List<ChangeSetDTO> inDeletions, final int inTotalNumberOfElements) {
 		super(traceInfo);
 		this.lastUpdate = inLastUpdate;
 		this.timestamp = inTimestamp;
 		this.insertions = inInsertions;
 		this.deletions = inDeletions;
-		this.modifications = inModifications;
 		this.totalNumberOfElements = inTotalNumberOfElements;
 	}
 	

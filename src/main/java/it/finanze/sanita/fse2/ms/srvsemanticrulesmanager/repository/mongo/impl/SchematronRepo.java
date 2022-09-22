@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -17,9 +16,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.result.UpdateResult;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronRepo;
@@ -55,33 +54,28 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public SchematronETY insert(SchematronETY ety) throws OperationException {
 		try {
-			 return mongoTemplate.insert(ety, getCollectionName());
+			return mongoTemplate.insert(ety, getCollectionName());
 		} catch(MongoException ex) {
 			log.error(Constants.Logs.ERROR_INSERTING_ETYS + ety , ex);
 			throw new OperationException(Constants.Logs.ERROR_INSERTING_ETYS + ety , ex);
+		} catch(Exception ex) {
+			log.error(Constants.Logs.ERROR_INSERTING_ETYS, ex);
+			throw new BusinessException(Constants.Logs.ERROR_INSERTING_ETYS, ex);
 		}
 	}
 	
 	@Override
 	public boolean update(SchematronETY ety) throws OperationException {
-		UpdateResult updateResult = null;  
-		
-		try {
-			Update update = new Update(); 
-			update.set(Constants.App.CONTENT_SCHEMATRON, ety.getContentSchematron()); 
-			update.set(Constants.App.LAST_UPDATE, new Date()); 
 
-			updateResult = mongoTemplate.updateFirst(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(ety.getTemplateIdRoot())
-					.and(Constants.App.TEMPLATE_ID_EXTENSION).is(ety.getTemplateIdExtension())
-					.and(Constants.App.DELETED).ne(true)), update, getCollectionName()); 
+        boolean removed = removeSchematron(ety.getTemplateIdRoot(), ety.getTemplateIdExtension());
 
-		} 
-		catch(MongoException e) {
-			log.error(Constants.Logs.ERROR_UPDATING_SCHEMATRON + getClass() , e);
-			throw new OperationException(Constants.Logs.ERROR_UPDATING_SCHEMATRON + getClass(), e);
-		}
-
-		return updateResult.getMatchedCount() > 0; 
+        if(removed){
+            SchematronETY inserted = insert(ety);
+            return inserted!=null;
+        } else {
+            return false;
+        }
+        
 	}
 	
 	@Override
@@ -143,7 +137,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		List<SchematronETY> etyList = mongoTemplate.findAll(SchematronETY.class, getCollectionName()); 
 				
 		return etyList.stream()
-				.filter(i -> Objects.isNull(i.getDeleted()) || !i.getDeleted())
+				.filter(i -> !i.isDeleted())
 		        .collect(Collectors.toList()); 
 	}
 
@@ -183,31 +177,6 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
-        }
-        return objects;
-    }
-
-    /**
-     * Retrieves the latest modifications according to the given timeframe
-     *
-     * @param lastUpdate The timeframe to consider while calculating
-     * @return The missing modifications
-     * @throws OperationException If a data-layer error occurs
-     */
-    @Override
-    public List<SchematronETY> getModifications(Date lastUpdate) throws OperationException {
-        // Working var
-        List<SchematronETY> objects;
-        // Create criteria
-        Query q = Query.query(
-            Criteria.where(FIELD_LAST_UPDATE).gt(lastUpdate)
-                .and(FIELD_INSERTION_DATE).lt(lastUpdate)
-                .and(FIELD_DELETED).ne(true)
-        );
-        try {
-            objects = mongoTemplate.find(q, SchematronETY.class, getCollectionName());
-        } catch (MongoException e) {
-            throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_MODIFICATIONS, e);
         }
         return objects;
     }

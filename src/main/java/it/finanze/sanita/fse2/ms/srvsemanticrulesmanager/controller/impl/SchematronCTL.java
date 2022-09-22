@@ -1,14 +1,10 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_STRING_MIN_SIZE;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Size;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -23,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.ValidationCFG;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronBodyDTO;
@@ -32,15 +27,10 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.OperationLogEnum;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.ResultLogEnum;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.UIDModeEnum;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.ObjectIdNotValidException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.logging.ElasticLoggerHelper;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -61,25 +51,15 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 
 	
 	@Autowired
-	private ISchematronSRV schematronService; 
-	
-	@Autowired
-	private ElasticLoggerHelper elasticLogger; 
-	
-	@Autowired
-	private ValidationCFG validationCFG;
-	
-	
+	private transient ISchematronSRV schematronService; 
+ 
 	@Override
 	public ResponseEntity<SchematronResponseDTO> addSchematron(HttpServletRequest request, 
 			      @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
 		log.info(Constants.Logs.CALLED_API_POST_SCHEMATRON); 
-		elasticLogger.info(Constants.Logs.CALLED_API_POST_SCHEMATRON, OperationLogEnum.POST_SCHEMATRON, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy())); 
 		Date date = new Date(); 
-		
 		SchematronBodyDTO schematronFromBody = getSchematronJSONObject(request.getParameter(Constants.App.BODY)); 
 		
 		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
@@ -92,10 +72,10 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setLastUpdateDate(date);
 
 			schematronService.insert(schematron);
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		
-		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NO_CONTENT); 
+		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
 		
 	}
 
@@ -103,9 +83,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request,
 	SchematronBodyDTO body, MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException {
 		log.info(Constants.Logs.CALLED_API_PUT_SCHEMATRON); 
-		elasticLogger.info(Constants.Logs.CALLED_API_PUT_SCHEMATRON, OperationLogEnum.PUT_SCHEMATRON, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy()));
+		Date date = new Date();
 
 		boolean hasBeenUpdated = false; 
 		
@@ -117,7 +96,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
 			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
 			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
-			schematron.setLastUpdateDate(new Date());
+			schematron.setInsertionDate(date);
+			schematron.setLastUpdateDate(date);
 
 			
 			hasBeenUpdated = schematronService.update(schematron);
@@ -125,10 +105,10 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	
 		
 		if(hasBeenUpdated) {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		else {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.NO_CONTENT); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
 		} 
 		
 	}
@@ -138,14 +118,12 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<SchematronResponseDTO> deleteSchematron(HttpServletRequest request, String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
 		
 		log.info(Constants.Logs.CALLED_API_DELETE_SCHEMATRON); 
-		elasticLogger.info(Constants.Logs.CALLED_API_DELETE_SCHEMATRON, OperationLogEnum.DELETE_SCHEMATRON, ResultLogEnum.OK, new Date()); 
 		
-		final String transactionId = StringUtility.generateTransactionUID(UIDModeEnum.get(validationCFG.getTransactionIDStrategy()));
 		
 		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, templateIdExtension); 	
 		
 		if(existsSchematron) {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), transactionId), HttpStatus.OK); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		else {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
@@ -157,7 +135,6 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
 		
 		log.info(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION); 
-		elasticLogger.info(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION, OperationLogEnum.QUERY_SCHEMATRON, ResultLogEnum.OK, new Date()); 
 				
 		SchematronDTO response =  schematronService.findByTemplateIdRootAndTemplateIdExtension(templateIdRoot, templateIdExtension); 
 				
@@ -168,7 +145,6 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<SchematronsDTO> getSchematrons(HttpServletRequest request) {
 		
 		log.info(Constants.Logs.CALLED_API_GET_SCHEMATRON);  
-		elasticLogger.info(Constants.Logs.CALLED_API_GET_SCHEMATRON, OperationLogEnum.QUERY_SCHEMATRON, ResultLogEnum.OK, new Date()); 
 		
 		List<SchematronDTO> schematrons = schematronService.getSchematrons(); 
 
@@ -191,10 +167,9 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request, @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException {
+	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request,  String id) throws OperationException, DocumentNotFoundException {
 
 		log.info(Constants.Logs.CALLED_API_QUERY_ID); 
-		elasticLogger.info(Constants.Logs.CALLED_API_GET_SCHEMATRON_BY_ID, OperationLogEnum.QUERY_SCHEMATRON_BY_ID, ResultLogEnum.OK, new Date()); 
 
 		SchematronDocumentDTO doc = schematronService.findById(id); 
 

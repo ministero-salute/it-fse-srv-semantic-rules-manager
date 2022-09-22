@@ -6,7 +6,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.ObjectIdNotValidException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 
@@ -70,6 +69,6 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @throws DocumentNotFoundException
 	 * @throws ObjectIdNotValidException
 	 */
-	SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException;
+	SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException;
 	
 }

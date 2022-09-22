@@ -10,7 +10,6 @@ import java.util.List;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -54,9 +53,6 @@ class ChangeSetServiceTest extends AbstractTest{
 
         List<ChangeSetDTO> insertions = schematronSRV.getInsertions(queryDate);
         assertEquals(2, insertions.size());
-
-        List<ChangeSetDTO> modifications = schematronSRV.getModifications(queryDate);
-        assertEquals(1, modifications.size());
 
         List<ChangeSetDTO> deletions = schematronSRV.getDeletions(queryDate);
         assertEquals(1, deletions.size());

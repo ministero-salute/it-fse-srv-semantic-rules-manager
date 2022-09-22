@@ -11,12 +11,12 @@ import org.springframework.http.HttpStatus;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ChangeSetResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronCreationErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 
 class ResponseDTOTest extends AbstractTest {
 
@@ -113,16 +113,14 @@ class ResponseDTOTest extends AbstractTest {
 	void schematronResponseDtoTest() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		SchematronResponseDTO dto = new SchematronResponseDTO(logTraceInfoDto, IN_TX_ID_TEST); 
+		SchematronResponseDTO dto = new SchematronResponseDTO(logTraceInfoDto); 
 		
 		assertEquals(SchematronResponseDTO.class, dto.getClass()); 
 		assertEquals(String.class, dto.getSpanID().getClass()); 
 		assertEquals(String.class, dto.getTraceID().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass());  
 		
 		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
 		
 	}
 	
@@ -182,14 +180,12 @@ class ResponseDTOTest extends AbstractTest {
 		
 		changesetResponse.setInsertions(new ArrayList<ChangeSetDTO>()); 
 		changesetResponse.setDeletions(new ArrayList<ChangeSetDTO>()); 
-		changesetResponse.setModifications(new ArrayList<ChangeSetDTO>()); 
 		changesetResponse.setTimestamp(date); 
 		changesetResponse.setLastUpdate(date); 
 		changesetResponse.setTotalNumberOfElements(1); 
 		
 		assertEquals(ArrayList.class, changesetResponse.getInsertions().getClass()); 
 		assertEquals(ArrayList.class, changesetResponse.getDeletions().getClass()); 
-		assertEquals(ArrayList.class, changesetResponse.getModifications().getClass()); 
 		assertEquals(Date.class, changesetResponse.getTimestamp().getClass()); 
 		assertEquals(Date.class, changesetResponse.getLastUpdate().getClass()); 
 
@@ -202,12 +198,11 @@ class ResponseDTOTest extends AbstractTest {
 	@Test
 	void changesetResponseDtoInitTest() {
 		LogTraceInfoDTO logTraceInfo = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-		ChangeSetResponseDTO changesetResponse = new ChangeSetResponseDTO(logTraceInfo, "txId", new Date(), new Date(), 
-				new ArrayList<ChangeSetDTO>(), new ArrayList<ChangeSetDTO>(), new ArrayList<ChangeSetDTO>(), 1); 
+		ChangeSetResponseDTO changesetResponse = new ChangeSetResponseDTO(logTraceInfo, new Date(), new Date(), 
+				new ArrayList<ChangeSetDTO>(), new ArrayList<ChangeSetDTO>(), 1); 
 		
 		assertEquals(ArrayList.class, changesetResponse.getInsertions().getClass()); 
 		assertEquals(ArrayList.class, changesetResponse.getDeletions().getClass()); 
-		assertEquals(ArrayList.class, changesetResponse.getModifications().getClass()); 
 		assertEquals(Date.class, changesetResponse.getTimestamp().getClass()); 
 		assertEquals(Date.class, changesetResponse.getLastUpdate().getClass()); 
 

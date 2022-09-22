@@ -3,13 +3,13 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.handler;
 
 
 
-import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
-import lombok.extern.slf4j.Slf4j;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createConstraintError;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createDocumentAlreadyPresentError;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createDocumentNotFoundError;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createGenericError;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createOperationError;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ErrorBuilderDTO.*;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +18,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *	Exceptions handler
@@ -33,24 +41,6 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @Autowired
     private Tracer tracer;
 
-    /**
-     * Handle object id not valid
-     *
-     * @param ex exception
-     */
-    @ExceptionHandler(ObjectIdNotValidException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleObjectIdNotValidException(ObjectIdNotValidException ex) {
-        // Log me
-        log.warn("HANDLER handleObjectIdNotValidException()");
-        log.error("HANDLER handleObjectIdNotValidException()", ex);
-        // Create error DTO
-        ErrorResponseDTO out = createObjectIdNotValidError(getLogTraceInfo(), ex);
-        // Set HTTP headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        // Bye bye
-        return new ResponseEntity<>(out, headers, out.getStatus());
-    }
 
     /**
      * Handle document not found exception.
@@ -72,17 +62,17 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handle date not valid exception.
+     * Handles exceptions thrown by the validation check performed on the request submitted by the user.
      *
-     * @param ex		exception
+     * @param ex exception
      */
-    @ExceptionHandler(DateNotValidException.class)
-    protected ResponseEntity<ErrorResponseDTO> handleDateNotValidException(DateNotValidException ex) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(ConstraintViolationException ex) {
         // Log me
-        log.warn("HANDLER handleDateNotValidException()");
-        log.error("HANDLER handleDateNotValidException()", ex);
+        log.warn("HANDLER handleConstraintViolationException()");
+        log.error("HANDLER handleConstraintViolationException()", ex);
         // Create error DTO
-        ErrorResponseDTO out = createDateNotValidError(getLogTraceInfo(), ex);
+        ErrorResponseDTO out = createConstraintError(getLogTraceInfo(), ex);
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);

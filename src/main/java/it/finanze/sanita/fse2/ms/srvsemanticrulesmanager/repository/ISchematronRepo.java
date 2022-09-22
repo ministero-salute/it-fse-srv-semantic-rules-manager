@@ -24,7 +24,7 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	SchematronETY insert(SchematronETY ety) throws OperationException;
 	
 	/**
-	 * Update a schematron on database.
+	 * Update a schematron on database: set as deleted the old version and insert a new one in database
 	 * 
 	 * @param ety Schematron to update.
 	 * @return Schematron updated.

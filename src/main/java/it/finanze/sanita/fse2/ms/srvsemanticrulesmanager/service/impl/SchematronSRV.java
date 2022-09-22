@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.ObjectIdNotValidException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl.SchematronRepo;
@@ -83,11 +81,7 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 
 	@Override
-	public SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException, ObjectIdNotValidException {
-		
-		if(!ObjectId.isValid(id)) {
-            throw new ObjectIdNotValidException(Constants.Logs.ERROR_INVALID_OBJECT_ID + id);
-        }
+	public SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException {
 
 		SchematronETY output = schematronRepo.findById(id);
 
@@ -125,16 +119,6 @@ public class SchematronSRV implements ISchematronSRV {
 		return output;
 	} 
 	
-	private List<SchematronETY> buildEtyFromDto(List<SchematronDTO> schematronDtoList) {
-		List<SchematronETY> output = new ArrayList<>();
-		
-		for(SchematronDTO schematron : schematronDtoList) {
-			output.add(parseDtoToEty(schematron)); 
-		}
-		
-		return output;
-	}
-	
 	public SchematronDTO parseEtyToDto(SchematronETY schematronEty) {
 		SchematronDTO output = new SchematronDTO();
 		output.setId(schematronEty.getId());
@@ -143,13 +127,11 @@ public class SchematronSRV implements ISchematronSRV {
 		output.setTemplateIdRoot(schematronEty.getTemplateIdRoot());
 		output.setTemplateIdExtension(schematronEty.getTemplateIdExtension()); 
 		output.setInsertionDate(schematronEty.getInsertionDate()); 
+		output.setDeleted(schematronEty.isDeleted());
 		
 		if(schematronEty.getLastUpdateDate() != null) {
 			output.setLastUpdateDate(schematronEty.getLastUpdateDate()); 
 		} 
-		if(schematronEty.getDeleted() != null) {
-			output.setDeleted(schematronEty.getDeleted()); 
-		}
 
 		return output;
 	}
@@ -162,12 +144,10 @@ public class SchematronSRV implements ISchematronSRV {
 		output.setTemplateIdRoot(schematronDto.getTemplateIdRoot());
 		output.setTemplateIdExtension(schematronDto.getTemplateIdExtension()); 
 		output.setInsertionDate(schematronDto.getInsertionDate()); 
+		output.setDeleted(schematronDto.isDeleted()); 
 		
 		if(schematronDto.getLastUpdateDate() != null) {
 			output.setLastUpdateDate(schematronDto.getLastUpdateDate()); 
-		} 
-		if(schematronDto.getDeleted() != null) {
-			output.setDeleted(schematronDto.getDeleted()); 
 		} 
 
 		return output;
@@ -208,27 +188,6 @@ public class SchematronSRV implements ISchematronSRV {
 			throw new BusinessException(Constants.Logs.ERROR_RETRIEVING_DELETIONS, e); 
 		}
 	}
-
-    @Override
-	public List<ChangeSetDTO> getModifications(Date lastUpdate) throws OperationException {
-		try {
-
-			List<ChangeSetDTO> modifications = new ArrayList<>();
-
-			if (lastUpdate != null) {
-				List<SchematronETY> modificationsETY = schematronRepo.getModifications(lastUpdate);
-				modifications = modificationsETY.stream().map(ChangeSetUtility::schematronToChangeset)
-						.collect(Collectors.toList());
-
-			} 
-			
-			return modifications; 
-
-        } catch (Exception e) {
-            log.error(Constants.Logs.ERROR_RETRIEVING_MODIFICATIONS, e);
-            throw new BusinessException(Constants.Logs.ERROR_RETRIEVING_MODIFICATIONS, e);
-        }
-    }
 
 
 
