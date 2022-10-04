@@ -72,7 +72,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setLastUpdateDate(date);
 
 			schematronService.insert(schematron);
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
 		} 
 		
 		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
