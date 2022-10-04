@@ -10,6 +10,7 @@ import java.util.List;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,6 +26,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.Schem
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 
 
+
 /**
  * Test ChangeSet generation at service level
  */
@@ -37,8 +39,17 @@ class ChangeSetServiceTest extends AbstractTest{
     @Autowired
     private ISchematronSRV schematronSRV;
 
+    @BeforeAll
+    public void setup() throws Exception {
+		mongo.dropCollection(SchematronETY.class);
+    } 
 
- 
+
+    @AfterAll
+    public void teardown() {
+        mongo.dropCollection(SchematronETY.class);
+    } 
+
     
     @Test
     @DisplayName("Test Schematron ChangeSet Service")
@@ -109,18 +120,12 @@ class ChangeSetServiceTest extends AbstractTest{
 
 
     	
-        mongo.insert(schematronA, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronB, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronC, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronD, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronE, SCHEMATRON_TEST_COLLECTION_NAME);
+        mongo.insert(schematronA);
+        mongo.insert(schematronB);
+        mongo.insert(schematronC);
+        mongo.insert(schematronD);
+        mongo.insert(schematronE);
     }
-
-
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
     
     
 }

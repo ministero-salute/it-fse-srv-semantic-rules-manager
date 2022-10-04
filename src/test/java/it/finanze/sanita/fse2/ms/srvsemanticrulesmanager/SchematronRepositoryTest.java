@@ -56,7 +56,13 @@ class SchematronRepositoryTest extends AbstractTest {
     
     @BeforeAll
     public void setup() throws Exception {
-        this.initTestRepository();
+		mongo.dropCollection(SchematronETY.class);
+		populateSchematron();
+    } 
+
+	@AfterAll
+    public void teardown() {
+        mongo.dropCollection(SchematronETY.class);
     } 
 
     
@@ -227,18 +233,7 @@ class SchematronRepositoryTest extends AbstractTest {
 
     } 
     
-    @Test
-    void getCollectionNameTest() {
-    	String testDB = repository.getCollectionName(); 
-    	
-    	assertEquals(String.class, testDB.getClass()); 
-    	assertEquals("test-schematron", testDB); 
-    }
     
     
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
     
 }

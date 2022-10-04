@@ -52,10 +52,6 @@ public abstract class AbstractTest {
      */
     public static final String SCHEMATRON_TEST_FAKE_NAME = "test_schematron_F";
     /**
-     * Test collection name
-     */
-    public static final String SCHEMATRON_TEST_COLLECTION_NAME = "test-schematron";
-    /**
      * Sample parameter for multiple tests
      */
     public static final String SCHEMATRON_TEST_NAME = "name_schematron";
@@ -122,28 +118,11 @@ public abstract class AbstractTest {
     	schematronC.setInsertionDate(new Date()); 
     	schematronC.setLastUpdateDate(new Date()); 
     	
-        mongo.insert(schematronA, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronB, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronC, SCHEMATRON_TEST_COLLECTION_NAME);
+        mongo.insert(schematronA);
+        mongo.insert(schematronB);
+        mongo.insert(schematronC);
 
     
-    }
-
-
-    private void createTestSchema() {
-        mongo.createCollection(SCHEMATRON_TEST_COLLECTION_NAME);
-    } 
-    
-
-    protected void initTestRepository() throws Exception {
-        	if(!mongo.collectionExists(SCHEMATRON_TEST_COLLECTION_NAME)) {
-        		 createTestSchema(); 
-        		 populateSchematron();  
-        	}
-    }
-
-    protected void dropTestSchema() {
-          mongo.dropCollection(SCHEMATRON_TEST_COLLECTION_NAME); 
     }
     
 

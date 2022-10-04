@@ -85,7 +85,13 @@ class SchematronServiceTest extends AbstractTest {
     
     @BeforeAll
     public void setup() throws Exception {
-        this.initTestRepository();
+		mongo.dropCollection(SchematronETY.class);
+		populateSchematron();
+    } 
+
+	@AfterAll
+    public void teardown() {
+        mongo.dropCollection(SchematronETY.class);
     } 
     
     @Test
@@ -394,13 +400,6 @@ class SchematronServiceTest extends AbstractTest {
 		assertEquals(date, parsedEty.getLastUpdateDate()); 
 
 	} 
-	
-
-    
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
 	
 
     

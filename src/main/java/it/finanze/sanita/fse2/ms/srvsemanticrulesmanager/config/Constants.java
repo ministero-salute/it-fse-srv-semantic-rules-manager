@@ -73,7 +73,7 @@ public final class Constants {
 		
 		public static final String TEST = "test"; 
 		
-		public static final String TEST_PREFIX = "test"; 
+		public static final String TEST_PREFIX = "test_"; 
 
 
 		/** 
@@ -118,6 +118,13 @@ public final class Constants {
 
 		private App() {
 			//This method is intentionally left blank.
+		}
+
+		public static final class Collections {
+			public static final String SCHEMATRON = "schematron";
+			
+			private Collections() {
+			}
 		}
 	}
 	

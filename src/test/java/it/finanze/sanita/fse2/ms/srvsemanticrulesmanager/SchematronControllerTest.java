@@ -44,6 +44,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronBodyDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,7 +83,14 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@BeforeAll
     public void setup() throws Exception {
-        this.initTestRepository();
+		mongo.dropCollection(SchematronETY.class);
+		populateSchematron();
+    } 
+
+
+	@AfterAll
+    public void teardown() {
+        mongo.dropCollection(SchematronETY.class);
     } 
     
     
@@ -338,12 +346,6 @@ class SchematronControllerTest extends AbstractTest {
 		assertEquals("Extension_AB", dto.getTemplateIdExtension()); 
 
 	} 
-	
-	
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
 	
     
 	

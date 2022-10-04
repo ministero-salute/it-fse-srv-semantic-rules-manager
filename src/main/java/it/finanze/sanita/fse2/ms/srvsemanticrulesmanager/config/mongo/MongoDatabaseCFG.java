@@ -4,7 +4,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
+
  
 
 /**
@@ -31,6 +34,12 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
 
+    @Autowired
+    private ApplicationContext appContext;
+
+	/** 
+	 * The Mongo URI 
+	 */
 	@Value("${data.mongodb.uri}")
 	private String mongoUri; 
  
@@ -44,13 +53,19 @@ public class MongoDatabaseCFG {
     @Bean
     @Primary
     public MongoTemplate mongoTemplate() {
-        final MongoDatabaseFactory factory = mongoDatabaseFactory();
-        MappingMongoConverter converter =
-                new MappingMongoConverter(new DefaultDbRefResolver(factory), new MongoMappingContext());
+        // Create new connection instance
+        MongoDatabaseFactory factory = mongoDatabaseFactory();
+        // Assign application context to mongo
+        final MongoMappingContext mongoMappingContext = new MongoMappingContext();
+        mongoMappingContext.setApplicationContext(appContext);
+        // Apply default mapper
+        MappingMongoConverter converter = new MappingMongoConverter(
+                new DefaultDbRefResolver(factory),
+                mongoMappingContext
+        );
+        // Set the default type mapper (removes custom "_class" column)
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
+        // Return the new instance
         return new MongoTemplate(factory, converter);
     }
-  
-  
- 
 }
