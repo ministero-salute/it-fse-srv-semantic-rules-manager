@@ -72,7 +72,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
 			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
 			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
+			schematron.setVersion(schematronFromBody.getVersion());
 			schematron.setInsertionDate(date); 
 			schematron.setLastUpdateDate(date);
 			schematronService.insert(schematron);
@@ -99,7 +99,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
 			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
 			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
+			schematron.setVersion(schematronFromBody.getVersion());
 			schematron.setInsertionDate(date);
 			schematron.setLastUpdateDate(date);
 

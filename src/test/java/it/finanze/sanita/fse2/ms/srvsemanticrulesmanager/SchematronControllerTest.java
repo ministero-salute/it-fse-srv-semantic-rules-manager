@@ -95,7 +95,7 @@ class SchematronControllerTest extends AbstractTest {
 	    SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setTemplateIdExtension("extension"); 
+	    dto.setVersion("extension"); 
 	    
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
@@ -152,7 +152,7 @@ class SchematronControllerTest extends AbstractTest {
 		SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setTemplateIdExtension("extension"); 
+	    dto.setVersion("extension"); 
 	    
 	    MockMvcRequestBuilders.multipart("http://127.0.0.1:9085/v1/schematron", dto); 
 	    
@@ -172,7 +172,7 @@ class SchematronControllerTest extends AbstractTest {
 		SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setTemplateIdExtension("extension"); 
+	    dto.setVersion("extension"); 
 	    
 	    
 	    MockMvcRequestBuilders.multipart("http://127.0.0.1:9085/v1/schematron", dto); 
@@ -198,7 +198,7 @@ class SchematronControllerTest extends AbstractTest {
 	    SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setTemplateIdExtension("extension"); 
+	    dto.setVersion("extension"); 
 	    
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
@@ -267,7 +267,7 @@ class SchematronControllerTest extends AbstractTest {
 		dto.setNameSchematron(TEST_NAME_SCHEMATRON); 
 		dto.setContentSchematron(TEST_CONTENT_SCHEMATRON);
 		dto.setTemplateIdRoot(TEST_ID_ROOT); 
-		dto.setTemplateIdExtension(TEST_ID_EXTENSION); 
+		dto.setVersion(TEST_ID_EXTENSION); 
 		dto.setInsertionDate(new Date()); 
 		dto.setLastUpdateDate(new Date()); 
 		
@@ -293,7 +293,7 @@ class SchematronControllerTest extends AbstractTest {
 		
 		dto.setNameSchematron(TEST_NAME_SCHEMATRON); 
 		dto.setTemplateIdRoot(TEST_ID_ROOT); 
-		dto.setTemplateIdExtension(TEST_ID_EXTENSION); 
+		dto.setVersion(TEST_ID_EXTENSION); 
 		dto.setInsertionDate(new Date()); 
 		dto.setLastUpdateDate(new Date()); 
 		
@@ -332,10 +332,10 @@ class SchematronControllerTest extends AbstractTest {
 		
 		assertEquals(SchematronBodyDTO.class, dto.getClass()); 
 		assertEquals(String.class, dto.getTemplateIdRoot().getClass()); 
-		assertEquals(String.class, dto.getTemplateIdExtension().getClass()); 
+		assertEquals(String.class, dto.getVersion().getClass()); 
 		
 		assertEquals("Root_AB", dto.getTemplateIdRoot()); 
-		assertEquals("Extension_AB", dto.getTemplateIdExtension()); 
+		assertEquals("Extension_AB", dto.getVersion()); 
 
 	} 
 	

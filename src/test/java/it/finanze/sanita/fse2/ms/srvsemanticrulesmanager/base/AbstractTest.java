@@ -102,7 +102,7 @@ public abstract class AbstractTest {
     	schematronA.setNameSchematron(SCHEMATRON_TEST_NAME_A); 
      	schematronA.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronA.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_A); 
-    	schematronA.setTemplateIdExtension(SCHEMATRON_TEST_EXT_A); 
+    	schematronA.setVersion(SCHEMATRON_TEST_EXT_A); 
     	schematronA.setInsertionDate(new Date()); 
     	schematronA.setLastUpdateDate(new Date()); 
     	
@@ -110,7 +110,7 @@ public abstract class AbstractTest {
     	schematronB.setNameSchematron(SCHEMATRON_TEST_NAME_B); 
      	schematronB.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronB.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_B); 
-    	schematronB.setTemplateIdExtension(SCHEMATRON_TEST_EXT_B);
+    	schematronB.setVersion(SCHEMATRON_TEST_EXT_B);
     	schematronB.setInsertionDate(new Date()); 
     	schematronB.setLastUpdateDate(new Date()); 
     	
@@ -118,7 +118,7 @@ public abstract class AbstractTest {
     	schematronC.setNameSchematron(SCHEMATRON_TEST_NAME_C); 
      	schematronC.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronC.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_C); 
-    	schematronC.setTemplateIdExtension(SCHEMATRON_TEST_EXT_C); 
+    	schematronC.setVersion(SCHEMATRON_TEST_EXT_C); 
     	schematronC.setInsertionDate(new Date()); 
     	schematronC.setLastUpdateDate(new Date()); 
     	

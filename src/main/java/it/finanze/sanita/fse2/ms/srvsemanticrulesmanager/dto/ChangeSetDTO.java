@@ -40,7 +40,7 @@ public class ChangeSetDTO implements Serializable {
 		@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
         String templateIdRoot;
         @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-        String templateIdExtension;
+        String version;
     }
 
 }

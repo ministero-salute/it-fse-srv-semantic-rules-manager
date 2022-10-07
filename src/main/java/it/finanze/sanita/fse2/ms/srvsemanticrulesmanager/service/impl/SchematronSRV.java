@@ -46,7 +46,7 @@ public class SchematronSRV implements ISchematronSRV {
 			SchematronETY ety = parseDtoToEty(dto); 
 			
 			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndTemplateIdExtension(
-						ety.getTemplateIdRoot(), ety.getTemplateIdExtension()); 
+						ety.getTemplateIdRoot(), ety.getVersion()); 
 			
 			if(!ObjectUtils.isEmpty(schematronIfPresent.getId())) {
 				log.error(Constants.Logs.ERROR_SCHEMATRON_ALREADY_PRESENT);
@@ -125,7 +125,7 @@ public class SchematronSRV implements ISchematronSRV {
 		output.setNameSchematron(schematronEty.getNameSchematron()); 
 		output.setContentSchematron(schematronEty.getContentSchematron()); 
 		output.setTemplateIdRoot(schematronEty.getTemplateIdRoot());
-		output.setTemplateIdExtension(schematronEty.getTemplateIdExtension()); 
+		output.setVersion(schematronEty.getVersion()); 
 		output.setInsertionDate(schematronEty.getInsertionDate()); 
 		output.setDeleted(schematronEty.isDeleted());
 		
@@ -142,7 +142,7 @@ public class SchematronSRV implements ISchematronSRV {
 		output.setNameSchematron(schematronDto.getNameSchematron()); 
 		output.setContentSchematron(schematronDto.getContentSchematron()); 
 		output.setTemplateIdRoot(schematronDto.getTemplateIdRoot());
-		output.setTemplateIdExtension(schematronDto.getTemplateIdExtension()); 
+		output.setVersion(schematronDto.getVersion()); 
 		output.setInsertionDate(schematronDto.getInsertionDate()); 
 		output.setDeleted(schematronDto.isDeleted()); 
 		

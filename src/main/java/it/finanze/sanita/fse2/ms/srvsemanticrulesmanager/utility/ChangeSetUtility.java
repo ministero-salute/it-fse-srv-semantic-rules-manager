@@ -15,7 +15,7 @@ public final class ChangeSetUtility {
 	 * @return
 	 */
 	public static ChangeSetDTO schematronToChangeset(SchematronETY entity) {
-		return new ChangeSetDTO(entity.getId(), new ChangeSetDTO.Payload(entity.getTemplateIdRoot(), entity.getTemplateIdExtension()));
+		return new ChangeSetDTO(entity.getId(), new ChangeSetDTO.Payload(entity.getTemplateIdRoot(), entity.getVersion()));
     }
 
 }

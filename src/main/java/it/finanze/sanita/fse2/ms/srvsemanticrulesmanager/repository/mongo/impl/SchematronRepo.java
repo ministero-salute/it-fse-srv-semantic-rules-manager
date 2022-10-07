@@ -67,7 +67,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public boolean update(SchematronETY ety) throws OperationException {
 
-        boolean removed = removeSchematron(ety.getTemplateIdRoot(), ety.getTemplateIdExtension());
+        boolean removed = removeSchematron(ety.getTemplateIdRoot(), ety.getVersion());
 
         if(removed){
             SchematronETY inserted = insert(ety);
@@ -93,7 +93,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 			
 			try {
 				mongoTemplate.updateFirst(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(schematron.getTemplateIdRoot())
-						.and(Constants.App.TEMPLATE_ID_EXTENSION).is(schematron.getTemplateIdExtension())
+						.and(Constants.App.TEMPLATE_ID_EXTENSION).is(schematron.getVersion())
 						.and(Constants.App.DELETED).ne(true)), update, getCollectionName()); 
 			} catch(MongoException ex) {
 				log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);

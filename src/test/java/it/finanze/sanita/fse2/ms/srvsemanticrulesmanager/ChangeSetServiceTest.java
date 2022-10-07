@@ -72,21 +72,21 @@ class ChangeSetServiceTest extends AbstractTest{
     	schematronA.setNameSchematron(SCHEMATRON_TEST_NAME_A); 
      	schematronA.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronA.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_A); 
-    	schematronA.setTemplateIdExtension(SCHEMATRON_TEST_EXT_A); 
+    	schematronA.setVersion(SCHEMATRON_TEST_EXT_A); 
         schematronA.setInsertionDate(oldInsertionDate);
     	
     	SchematronETY schematronB = new SchematronETY(); 
     	schematronB.setNameSchematron(SCHEMATRON_TEST_NAME_B); 
      	schematronB.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronB.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_B); 
-    	schematronB.setTemplateIdExtension(SCHEMATRON_TEST_EXT_B); 
+    	schematronB.setVersion(SCHEMATRON_TEST_EXT_B); 
         schematronB.setInsertionDate(insertionDate);
     	
     	SchematronETY schematronC = new SchematronETY(); 
     	schematronC.setNameSchematron(SCHEMATRON_TEST_NAME_C); 
      	schematronC.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronC.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_C); 
-    	schematronC.setTemplateIdExtension(SCHEMATRON_TEST_EXT_C); 
+    	schematronC.setVersion(SCHEMATRON_TEST_EXT_C); 
         schematronC.setInsertionDate(insertionDate);
         schematronC.setLastUpdateDate(lastUpdate);
 
@@ -94,7 +94,7 @@ class ChangeSetServiceTest extends AbstractTest{
     	schematronD.setNameSchematron(SCHEMATRON_TEST_NAME_D); 
      	schematronD.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronD.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_D); 
-    	schematronD.setTemplateIdExtension(SCHEMATRON_TEST_EXT_D); 
+    	schematronD.setVersion(SCHEMATRON_TEST_EXT_D); 
         schematronD.setInsertionDate(oldInsertionDate);
         schematronD.setLastUpdateDate(lastUpdate);
 
@@ -102,7 +102,7 @@ class ChangeSetServiceTest extends AbstractTest{
     	schematronE.setNameSchematron(SCHEMATRON_TEST_NAME_E); 
      	schematronE.setContentSchematron(new Binary(BsonBinarySubType.BINARY, SCHEMATRON_TEST_STRING.getBytes()));
     	schematronE.setTemplateIdRoot(SCHEMATRON_TEST_ROOT_E); 
-    	schematronE.setTemplateIdExtension(SCHEMATRON_TEST_EXT_E); 
+    	schematronE.setVersion(SCHEMATRON_TEST_EXT_E); 
         schematronE.setInsertionDate(oldInsertionDate);
         schematronE.setLastUpdateDate(lastUpdate);
         schematronE.setDeleted(true);
