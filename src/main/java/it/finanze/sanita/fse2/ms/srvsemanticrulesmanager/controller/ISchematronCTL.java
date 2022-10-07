@@ -34,6 +34,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumen
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.UploadSchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
@@ -53,11 +54,11 @@ public interface ISchematronCTL extends Serializable {
     @PostMapping(value = "/schematron",  produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Operation(summary = "Add schematron to MongoDB", description = "Servizio che consente di aggiungere uno schematron alla base dati.")
-    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class)))
+    @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = UploadSchematronResponseDTO.class)))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Creazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
-    ResponseEntity<SchematronResponseDTO> addSchematron(HttpServletRequest request, @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException;
+    ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException;
     
     @PutMapping(value = "/schematron",  produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })

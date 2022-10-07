@@ -27,6 +27,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.UploadSchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
@@ -54,7 +56,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private transient ISchematronSRV schematronService; 
  
 	@Override
-	public ResponseEntity<SchematronResponseDTO> addSchematron(HttpServletRequest request, 
+	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, 
 			      @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
 		log.info(Constants.Logs.CALLED_API_POST_SCHEMATRON); 
@@ -64,18 +66,20 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 		
 		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
 			SchematronDTO schematron = new SchematronDTO();
+			if(contentSchematron.getBytes().length==0) {
+				throw new BusinessException("Attenzione il file fornito risulta essere vuoto");
+			}
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
 			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
 			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
 			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
 			schematron.setInsertionDate(date); 
 			schematron.setLastUpdateDate(date);
-
 			schematronService.insert(schematron);
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
+			return new ResponseEntity<>(new UploadSchematronResponseDTO(getLogTraceInfo(),1), HttpStatus.CREATED); 
 		} 
 		
-		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
+		return new ResponseEntity<>(new UploadSchematronResponseDTO(getLogTraceInfo(),0), HttpStatus.NO_CONTENT); 
 		
 	}
 
