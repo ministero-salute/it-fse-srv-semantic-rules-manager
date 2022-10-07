@@ -62,9 +62,9 @@ public interface ISchematronCTL extends Serializable {
             @ApiResponse(responseCode = "201", description = "Creazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
         ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, 
-    @PathVariable @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
-    @PathVariable @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    @PathVariable @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String version,
+    @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
+    @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String version,
     @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException;
     
 
@@ -76,9 +76,9 @@ public interface ISchematronCTL extends Serializable {
             @ApiResponse(responseCode = "404", description = "Schematron non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
     ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request, 
-    @PathVariable @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
-    @PathVariable @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
-    @PathVariable @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") String version,
+    @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
+    @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") String version,
     @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException;
     
     @DeleteMapping(value = "/schematron/root/{templateIdRoot}/extension/{templateIdExtension}",  produces = {MediaType.APPLICATION_JSON_VALUE })
