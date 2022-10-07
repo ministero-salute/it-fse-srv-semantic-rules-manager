@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -58,20 +61,27 @@ public interface ISchematronCTL extends Serializable {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Creazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
-    ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException;
+        ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, 
+    @PathVariable @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
+    @PathVariable @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    @PathVariable @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String version,
+    @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException;
     
-    @PutMapping(value = "/schematron",  produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+
+    @PutMapping(value = "/schematron",  produces = {MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     @Operation(summary = "Update schematron on MongoDB", description = "Servizio che consente di aggiornare uno schematron sulla base dati.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class)))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Aggiornamento Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "Schematron non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
-    ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request, @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException;
+    ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request, 
+    @PathVariable @Parameter(description = "Schematron name", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Schematron name cannot be blank") String nameSchematron,
+    @PathVariable @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot, 
+    @PathVariable @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") String version,
+    @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException;
     
-    @DeleteMapping(value = "/schematron/root/{templateIdRoot}/extension/{templateIdExtension}",  produces = {
-			MediaType.APPLICATION_JSON_VALUE })
+    @DeleteMapping(value = "/schematron/root/{templateIdRoot}/extension/{templateIdExtension}",  produces = {MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Delete schematron from MongoDB given its Template ID Root and Template ID Extension", description = "Servizio che consente di cancellare uno schematron dalla base dati dato il Template ID Root e l'Extension.")
     @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class)))
     @ApiResponses(value = {
@@ -81,15 +91,16 @@ public interface ISchematronCTL extends Serializable {
     ResponseEntity<SchematronResponseDTO> deleteSchematron(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdExtension does not match the expected size") String templateIdExtension) throws DocumentNotFoundException, OperationException; 
     
     
-    @GetMapping(value = "/schematron/root/{templateIdRoot}/extension/{templateIdExtension}",  produces = {
- 			MediaType.APPLICATION_JSON_VALUE })
+     @GetMapping(value = "/schematron/root/{templateIdRoot}/extension/{templateIdExtension}",  produces = {MediaType.APPLICATION_JSON_VALUE })
      @Operation(summary = "Returns a schematron from MongoDB, given its Template ID Root and its Template ID Extension", description = "Servizio che consente di ritornare uno schematron dalla base dati dati il suo Template ID Root e Template ID Extension.")
      @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronResponseDTO.class)))
      @ApiResponses(value = {
              @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronDTO.class))),
              @ApiResponse(responseCode = "404", description = "Schematron non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))),
              @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
-    ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension(HttpServletRequest request, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot, @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdExtension does not match the expected size") String templateIdExtension) throws DocumentNotFoundException, OperationException; 
+    ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension(HttpServletRequest request, 
+        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size") String templateIdRoot, 
+        @PathVariable @Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE, message = "templateIdExtension does not match the expected size") String templateIdExtension) throws DocumentNotFoundException, OperationException; 
 
     @GetMapping(value = "/schematron/id/{id}", produces = {MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Returns a Schematron from MongoDB, given its ID", description = "Servizio che consente di ritornare uno Schematron dalla base dati dati il suo ID.")

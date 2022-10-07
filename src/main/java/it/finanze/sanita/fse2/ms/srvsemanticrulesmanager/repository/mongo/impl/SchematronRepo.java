@@ -81,7 +81,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public boolean removeSchematron(final String templateIdRoot, final String templateIdExtension) throws OperationException {
 		Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-				.and(Constants.App.TEMPLATE_ID_EXTENSION).is(templateIdExtension)); 
+				.and(Constants.App.VERSION).is(templateIdExtension)); 
 		
 		// Template ID Root and Extension uniquely determine a Schematron, we can then use findOne and take the first element s
 		SchematronETY schematron = mongoTemplate.findOne(query, SchematronETY.class, getCollectionName()); 
@@ -93,7 +93,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 			
 			try {
 				mongoTemplate.updateFirst(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(schematron.getTemplateIdRoot())
-						.and(Constants.App.TEMPLATE_ID_EXTENSION).is(schematron.getVersion())
+						.and(Constants.App.VERSION).is(schematron.getVersion())
 						.and(Constants.App.DELETED).ne(true)), update, getCollectionName()); 
 			} catch(MongoException ex) {
 				log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);
@@ -109,7 +109,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	public SchematronETY findByTemplateIdRootAndTemplateIdExtension(String templateIdRoot, String templateIdExtension) throws OperationException, DocumentNotFoundException {
 		try {
 			List<SchematronETY>  etyList = mongoTemplate.find(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-					.and(Constants.App.TEMPLATE_ID_EXTENSION).is(templateIdExtension).and(Constants.App.DELETED).ne(true)), SchematronETY.class, getCollectionName()); 
+					.and(Constants.App.VERSION).is(templateIdExtension).and(Constants.App.DELETED).ne(true)), SchematronETY.class, getCollectionName()); 
 			
 			return etyList.isEmpty() ? new SchematronETY() : etyList.get(0); 
 		} 

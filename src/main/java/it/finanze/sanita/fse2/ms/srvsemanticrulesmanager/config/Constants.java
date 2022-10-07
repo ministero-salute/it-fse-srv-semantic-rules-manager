@@ -109,8 +109,6 @@ public final class Constants {
 		
 		public static final String TEMPLATE_ID_ROOT = "template_id_root"; 
 		
-		public static final String TEMPLATE_ID_EXTENSION = "template_id_extension"; 
-		
 		public static final String DELETED = "deleted"; 
 		
 		public static final String SHA_256 = "SHA-256"; 

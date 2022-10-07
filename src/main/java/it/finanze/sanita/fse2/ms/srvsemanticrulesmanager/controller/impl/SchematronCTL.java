@@ -56,23 +56,22 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private transient ISchematronSRV schematronService; 
  
 	@Override
-	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, 
-			      @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(HttpServletRequest request, String nameSchematron,
+    String templateIdRoot, String version, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
 		log.info(Constants.Logs.CALLED_API_POST_SCHEMATRON); 
 		
 		Date date = new Date(); 
-		SchematronBodyDTO schematronFromBody = getSchematronJSONObject(request.getParameter(Constants.App.BODY)); 
 		
-		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
+		if(!contentSchematron.isEmpty()) {
 			SchematronDTO schematron = new SchematronDTO();
 			if(contentSchematron.getBytes().length==0) {
 				throw new BusinessException("Attenzione il file fornito risulta essere vuoto");
 			}
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
-			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
-			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setVersion(schematronFromBody.getVersion());
+			schematron.setNameSchematron(nameSchematron);
+			schematron.setTemplateIdRoot(templateIdRoot);
+			schematron.setVersion(version);
 			schematron.setInsertionDate(date); 
 			schematron.setLastUpdateDate(date);
 			schematronService.insert(schematron);
@@ -84,25 +83,21 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request,
-	SchematronBodyDTO body, MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException {
-		log.info(Constants.Logs.CALLED_API_PUT_SCHEMATRON); 
+	public ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request, String nameSchematron,
+    String templateIdRoot, String version, MultipartFile contentSchematron) throws IOException, OperationException {
 		
 		Date date = new Date();
 
 		boolean hasBeenUpdated = false; 
 		
-		SchematronBodyDTO schematronFromBody = getSchematronJSONObject(request.getParameter(Constants.App.BODY)); 
-		
-		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
+		if(!contentSchematron.isEmpty()) {
 			SchematronDTO schematron = new SchematronDTO();
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
-			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
-			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setVersion(schematronFromBody.getVersion());
+			schematron.setNameSchematron(nameSchematron);
+			schematron.setTemplateIdRoot(templateIdRoot);
+			schematron.setVersion(version);
 			schematron.setInsertionDate(date);
 			schematron.setLastUpdateDate(date);
-
 			
 			hasBeenUpdated = schematronService.update(schematron);
 		}
