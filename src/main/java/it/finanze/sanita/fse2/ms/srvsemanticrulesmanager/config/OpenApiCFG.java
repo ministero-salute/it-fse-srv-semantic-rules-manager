@@ -36,45 +36,37 @@ public class OpenApiCFG {
 	}
 
 	@Bean
-    public OpenApiCustomiser disableAdditionalResponseProperties() {
-        return openApi -> openApi.getComponents().
-            getSchemas().
-            values().
-            forEach( s -> s.setAdditionalProperties(false));
-    }
+	public OpenApiCustomiser disableAdditionalResponseProperties() {
+		return openApi -> openApi.getComponents().
+				getSchemas().
+				values().
+				forEach( s -> s.setAdditionalProperties(false));
+	}
 
 	@Bean
-    public OpenApiCustomiser binaryProperties() {
-        return openApi -> openApi
-			.getComponents()
-			.getSchemas()
-            .values()
-            .forEach(item -> {
-                if(item.getName().equalsIgnoreCase("binary")) {
-					item.getProperties().values().forEach(property -> {
-						if(((Schema) property).getName().equalsIgnoreCase("type")){
-							((Schema<Object>) property).setMaxLength(DEFAULT_BINARY_MAX_SIZE);
-							((Schema<Object>) property).setMinLength(DEFAULT_BINARY_MIN_SIZE);
-							System.out.println("Binary type setted");
-						} else if(((Schema) property).getName().equalsIgnoreCase("data")){
-							((Schema<Object>) property).setMaxItems(DEFAULT_ARRAY_MAX_SIZE);
-							((Schema<Object>) property).setMinItems(DEFAULT_ARRAY_MIN_SIZE);
-							((ArraySchema) property).getItems().setMaxLength(DEFAULT_ARRAY_MAX_SIZE);
-							((ArraySchema) property).getItems().setMinLength(DEFAULT_ARRAY_MIN_SIZE);
-							System.out.println("Binary data setted");
-						}
-					});
-					System.out.println("End binary");
-				}
-			});
-				// 	item.setMaxLength(DEFAULT_BINARY_MAX_SIZE);
-				// 	item.setMinLength(DEFAULT_BINARY_MIN_SIZE);
-				// 	item.setMaxItems(DEFAULT_ARRAY_MAX_SIZE);
-				// 	item.setMinItems(DEFAULT_ARRAY_MIN_SIZE);
-				// }
-}
+	public OpenApiCustomiser binaryProperties() {
+		return openApi -> openApi
+				.getComponents()
+				.getSchemas()
+				.values()
+				.forEach(item -> {
+					if(item.getName().equalsIgnoreCase("binary")) {
+						item.getProperties().values().forEach(property -> {
+							if(((Schema) property).getName().equalsIgnoreCase("type")){
+								((Schema<Object>) property).setMaxLength(DEFAULT_BINARY_MAX_SIZE);
+								((Schema<Object>) property).setMinLength(DEFAULT_BINARY_MIN_SIZE);
+							} else if(((Schema) property).getName().equalsIgnoreCase("data")){
+								((Schema<Object>) property).setMaxItems(DEFAULT_ARRAY_MAX_SIZE);
+								((Schema<Object>) property).setMinItems(DEFAULT_ARRAY_MIN_SIZE);
+								((ArraySchema) property).getItems().setMaxLength(DEFAULT_ARRAY_MAX_SIZE);
+								((ArraySchema) property).getItems().setMinLength(DEFAULT_ARRAY_MIN_SIZE);
+							}
+						});
+					}
+				}); 
+	}
 
-	
+
 	@Bean
 	public OpenApiCustomiser openApiCustomiser() {
 
@@ -118,7 +110,7 @@ public class OpenApiCFG {
 				if(schema.getProperties().get("content_schematron") != null){
 					schema.getProperties().get("content_schematron").setMaxLength(customOpenapi.getFileMaxLength());
 				}
-				
+
 
 			});
 
@@ -140,17 +132,17 @@ public class OpenApiCFG {
 	}
 
 	private void disableAdditionalPropertiesToMultipart(Content content) {
-        if (content.containsKey(MULTIPART_FORM_DATA_VALUE)) {
-            content.get(MULTIPART_FORM_DATA_VALUE).getSchema().setAdditionalProperties(false);
-        }
-    }
+		if (content.containsKey(MULTIPART_FORM_DATA_VALUE)) {
+			content.get(MULTIPART_FORM_DATA_VALUE).getSchema().setAdditionalProperties(false);
+		}
+	}
 
 	private void setAdditionalProperties(Schema<?> schema) {
 		if (schema == null) return;
 		schema.setAdditionalProperties(false);
 		handleSchema(schema);
 	}
-	
+
 	private void handleSchema(Schema<?> schema) {
 		getProperties(schema).forEach(this::handleArraySchema);
 		handleArraySchema(schema);
@@ -168,8 +160,8 @@ public class OpenApiCFG {
 	}
 
 	private <T> T getSchema(Schema<?> schema, Class<T> clazz) {
-	    try { return clazz.cast(schema); }
-	    catch(ClassCastException e) { return null; }
+		try { return clazz.cast(schema); }
+		catch(ClassCastException e) { return null; }
 	}
 
 }
