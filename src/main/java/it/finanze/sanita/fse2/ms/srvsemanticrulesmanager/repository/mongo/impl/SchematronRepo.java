@@ -23,7 +23,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotF
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,30 +43,25 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Autowired
 	private transient MongoTemplate mongoTemplate; 
-	
-	@Autowired
-	private transient ProfileUtility profileUtility; 
+	 
 		
-	String collection = Constants.ComponentScan.COLLECTION_NAME; 
-	
-	
 	@Override
 	public SchematronETY insert(SchematronETY ety) throws OperationException {
 		try {
-			return mongoTemplate.insert(ety, getCollectionName());
+			return mongoTemplate.insert(ety);
 		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_INSERTING_ETYS + ety , ex);
-			throw new OperationException(Constants.Logs.ERROR_INSERTING_ETYS + ety , ex);
+			log.error("Error inserting all etys" + ety , ex);
+			throw new OperationException("Error inserting all etys" + ety , ex);
 		} catch(Exception ex) {
-			log.error(Constants.Logs.ERROR_INSERTING_ETYS, ex);
-			throw new BusinessException(Constants.Logs.ERROR_INSERTING_ETYS, ex);
+			log.error("Error inserting all etys", ex);
+			throw new BusinessException("Error inserting all etys", ex);
 		}
 	}
 	
 	@Override
 	public boolean update(SchematronETY ety) throws OperationException {
 
-        boolean removed = removeSchematron(ety.getTemplateIdRoot(), ety.getVersion());
+        boolean removed = logicallyRemoveSchematron(ety.getTemplateIdRoot(), ety.getVersion());
 
         if(removed){
             SchematronETY inserted = insert(ety);
@@ -79,12 +73,12 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	}
 	
 	@Override
-	public boolean removeSchematron(final String templateIdRoot, final String templateIdExtension) throws OperationException {
+	public boolean logicallyRemoveSchematron(final String templateIdRoot, final String templateIdExtension) throws OperationException {
 		Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 				.and(Constants.App.VERSION).is(templateIdExtension)); 
 		
 		// Template ID Root and Extension uniquely determine a Schematron, we can then use findOne and take the first element s
-		SchematronETY schematron = mongoTemplate.findOne(query, SchematronETY.class, getCollectionName()); 
+		SchematronETY schematron = mongoTemplate.findOne(query, SchematronETY.class); 
 		
 		if(schematron != null) {
 			Update update = new Update(); 
@@ -94,7 +88,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 			try {
 				mongoTemplate.updateFirst(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(schematron.getTemplateIdRoot())
 						.and(Constants.App.VERSION).is(schematron.getVersion())
-						.and(Constants.App.DELETED).ne(true)), update, getCollectionName()); 
+						.and(Constants.App.DELETED).ne(true)), update, SchematronETY.class); 
 			} catch(MongoException ex) {
 				log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);
 				throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
@@ -106,15 +100,16 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	}
 	
 	@Override
-	public SchematronETY findByTemplateIdRootAndTemplateIdExtension(String templateIdRoot, String templateIdExtension) throws OperationException, DocumentNotFoundException {
+	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
 			List<SchematronETY>  etyList = mongoTemplate.find(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-					.and(Constants.App.VERSION).is(templateIdExtension).and(Constants.App.DELETED).ne(true)), SchematronETY.class, getCollectionName()); 
+					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
 			
 			return etyList.isEmpty() ? new SchematronETY() : etyList.get(0); 
 		} 
 		catch(MongoException e) {
-            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e); 
+			log.error("Error while retrieving schematron", e);
+            throw new OperationException("Error while retrieving schematron", e);
 		}
 
 	}
@@ -122,11 +117,11 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     @Override
     public SchematronETY findById(String id) throws OperationException {
         SchematronETY object = null;
-
         try {
-            object =  mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class, getCollectionName()); 
+            object =  mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
         } catch (MongoException e) {
-            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+        	log.error("Error while retrieving schematron", e);
+            throw new OperationException("Error while retrieving schematron", e);
         }
         return object;
     }
@@ -134,7 +129,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public List<SchematronETY> findAll() {
-		List<SchematronETY> etyList = mongoTemplate.findAll(SchematronETY.class, getCollectionName()); 
+		List<SchematronETY> etyList = mongoTemplate.findAll(SchematronETY.class); 
 				
 		return etyList.stream()
 				.filter(i -> !i.isDeleted())
@@ -148,7 +143,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 			Query query = new Query();
 			query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot));
 			query.addCriteria(Criteria.where(Constants.App.DELETED).ne(true)); 
-			output = mongoTemplate.exists(query, getCollectionName()); 
+			output = mongoTemplate.exists(query, SchematronETY.class); 
 		} catch(MongoException ex) {
 			log.error(Constants.Logs.ERROR_EXECUTE_EXIST_VERSION_QUERY + getClass() , ex);
 			throw new OperationException(Constants.Logs.ERROR_EXECUTE_EXIST_VERSION_QUERY + getClass(), ex);
@@ -173,7 +168,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         );
         try {
             // Execute
-            objects = mongoTemplate.find(q, SchematronETY.class, getCollectionName());
+            objects = mongoTemplate.find(q, SchematronETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
@@ -199,7 +194,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
                 .and(FIELD_DELETED).is(true)
         );
         try {
-            objects = mongoTemplate.find(q, SchematronETY.class, getCollectionName());
+            objects = mongoTemplate.find(q, SchematronETY.class);
         } catch (MongoException e) {
             throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_DELETIONS, e);
         }
@@ -214,21 +209,16 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
      */
     @Override
     public List<SchematronETY> getEveryActiveSchematron() throws OperationException {
-        List<SchematronETY> objects;
-        Query q = Query.query(Criteria.where(FIELD_DELETED).ne(true)); 
-        
+        List<SchematronETY> objects = null;
         try {
-            objects = mongoTemplate.find(q, SchematronETY.class, getCollectionName()); 
+        	Query q = Query.query(Criteria.where(FIELD_DELETED).ne(true)); 
+            objects = mongoTemplate.find(q, SchematronETY.class); 
         } catch (MongoException e) {
-            throw new OperationException(Constants.Logs.ERROR_UNABLE_RETRIEVE_EXTENSIONS, e);
+        	log.error("Unable to retrieve every available extension with their documents", e);
+            throw new OperationException("Unable to retrieve every available extension with their documents", e);
         }
         return objects;
     }
 
-	public String getCollectionName() {
-		return profileUtility.isTestProfile() ?  Constants.Profile.TEST_PREFIX + '-' + Constants.ComponentScan.COLLECTION_NAME : Constants.ComponentScan.COLLECTION_NAME; 
-	} 
-	
-	
 	
 }

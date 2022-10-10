@@ -56,7 +56,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(String templateIdRoot, String version, 
 			MultipartFile file,HttpServletRequest request) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
-		log.debug(Constants.Logs.CALLED_API_POST_SCHEMATRON); 
+		log.debug("Called POST /schematron"); 
 		
 		Date date = new Date(); 
 		if(!file.isEmpty()) {
@@ -95,7 +95,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 		if(hasBeenUpdated) {
 			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} else {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		
 	}
@@ -104,7 +104,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	@Override
 	public ResponseEntity<SchematronResponseDTO> deleteSchematron(String templateIdRoot, String version,HttpServletRequest request) throws DocumentNotFoundException, OperationException {
 		
-		log.debug(Constants.Logs.CALLED_API_DELETE_SCHEMATRON); 
+		log.debug("Called DELETE /schematron"); 
 		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, version); 	
 		
 		if(existsSchematron) {
@@ -118,16 +118,15 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension( 
 			String templateIdRoot, String version,HttpServletRequest request) throws DocumentNotFoundException, OperationException {
 		
-		log.debug(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION); 
-		SchematronDTO response =  schematronService.findByTemplateIdRootAndTemplateIdExtension(templateIdRoot, version); 
+		log.debug("Called GET /schematron by ID Root and Version"); 
+		SchematronDTO response =  schematronService.findByTemplateIdRootAndVersion(templateIdRoot, version); 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	} 
 	
 	@Override
 	public ResponseEntity<SchematronsDTO> getSchematrons(HttpServletRequest request) {
-		log.debug(Constants.Logs.CALLED_API_GET_SCHEMATRON);  
+		log.debug("Called GET /schematron");  
 		List<SchematronDTO> schematrons = schematronService.getSchematrons(); 
-
 		return new ResponseEntity<>(new SchematronsDTO(getLogTraceInfo(), schematrons), HttpStatus.OK); 
 	}  
 	
@@ -148,7 +147,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 
 	@Override
 	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request,  String id) throws OperationException, DocumentNotFoundException {
-		log.debug(Constants.Logs.CALLED_API_QUERY_ID); 
+		log.debug("Called GET /schematron by ID"); 
 		SchematronDocumentDTO doc = schematronService.findById(id); 
 		return new ResponseEntity<>(new GetDocumentResDTO(getLogTraceInfo(), doc), HttpStatus.OK);
 	}

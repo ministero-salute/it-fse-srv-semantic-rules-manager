@@ -104,7 +104,7 @@ class EntityDtoTest extends AbstractTest {
     	ChangeSetDTO changeset = new ChangeSetDTO(); 
     	
     	changeset.setId("id"); 
-    	changeset.setDescription(new ChangeSetDTO.Payload("templateIdRoot", "templateIdextension"));
+    	changeset.setDescription(new ChangeSetDTO.Payload("templateIdRoot", "version"));
     	
     	assertEquals(String.class, changeset.getId().getClass()); 
     	assertEquals(ChangeSetDTO.Payload.class, changeset.getDescription().getClass()); 

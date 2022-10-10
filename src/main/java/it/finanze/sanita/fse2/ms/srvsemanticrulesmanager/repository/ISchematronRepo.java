@@ -33,14 +33,14 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	boolean update(SchematronETY ety) throws OperationException;
 	
 	/**
-	 * Returns a Schematron identified by its {@code templateIdRoot} and {@code templateIdExtension}.
+	 * Returns a Schematron identified by its {@code templateIdRoot} and {@code version}.
 	 * 
-	 * @param templateIdRoot, templateIdExtension Primary key of the Schematron to return.
-	 * @return Schematron identified by its {@code templateIdRoot} and {@code templateIdExtension}.
+	 * @param templateIdRoot, version Primary key of the Schematron to return.
+	 * @return Schematron identified by its {@code templateIdRoot} and {@code version}.
 	 * @throws OperationException 
 	 * @throws DocumentNotFoundException 
 	 */
-	SchematronETY findByTemplateIdRootAndTemplateIdExtension(String templateIdRoot, String templateIdExtension) throws OperationException, DocumentNotFoundException;
+	SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException;
 
 	/**
 	 * Returns a Schematron identified by its {@code id}
@@ -56,7 +56,7 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	 * @param template_id_root, template_id_extension Primary key of the Schematron to return.
 	 * @throws OperationException 
 	 */
-	boolean removeSchematron(String templateIdRoot, String templateIdExtension) throws OperationException;
+	boolean logicallyRemoveSchematron(String templateIdRoot, String templateIdExtension) throws OperationException;
 
 	/**
 	 * Returns all schematrons.

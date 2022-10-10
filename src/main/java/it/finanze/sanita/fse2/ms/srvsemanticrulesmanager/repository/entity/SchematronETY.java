@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 /**
  * Model to save schematron.
  */
-@Document(collection = "schematron")
 @Data
 @NoArgsConstructor
+@Document(collection = "#{@schematronBean}")
 public class SchematronETY {
 
 	@Id

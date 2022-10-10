@@ -47,13 +47,13 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	/**
 	 * Find a schematron by Template Id Root and Template Id Extension.
 	 * @param templateIdRoot
-	 * @param templateIdExtension
+	 * @param version
 	 * @return SchematronDTO
 	 * @throws DocumentNotFoundException 
 	 * @throws OperationException 
 	 * @throws EmptyParameterException 
 	 */
-	SchematronDTO findByTemplateIdRootAndTemplateIdExtension(String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException; 
+	SchematronDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException; 
 
 	/**
 	 * Finds all schematrons.

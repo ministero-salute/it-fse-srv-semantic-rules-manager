@@ -14,7 +14,6 @@ import java.util.Date;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -65,7 +64,7 @@ class SchematronControllerTest extends AbstractTest {
     private final String TEST_ID_ROOT_NOT_FOUND = "Root_A_NF"; 
     private final String TEST_ID_EXTENSION_NOT_FOUND = "Ext_A_NF"; 
 
-	public final String TEST_JSON_SCHEMATRON = "{\"nameSchematron\":\"Test_AB\",\"templateIdRoot\":\"Root_AB\", \"templateIdExtension\":\"Extension_AB\"}"; 
+	public final String TEST_JSON_SCHEMATRON = "{\"nameSchematron\":\"Test_AB\",\"templateIdRoot\":\"Root_AB\", \"version\":\"1.0\"}"; 
 	public final Binary TEST_CONTENT_SCHEMATRON = new Binary(BsonBinarySubType.BINARY, "Hello World!".getBytes()); 
 
 	
@@ -78,7 +77,6 @@ class SchematronControllerTest extends AbstractTest {
 	@MockBean
 	private ISchematronSRV schematronService; 
 	
-    
 	
 	@BeforeAll
     public void setup() throws Exception {
@@ -95,7 +93,7 @@ class SchematronControllerTest extends AbstractTest {
 	    SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setVersion("extension"); 
+	    dto.setVersion("1.0"); 
 	    
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
@@ -128,8 +126,7 @@ class SchematronControllerTest extends AbstractTest {
 	void insertSchematronEmptyFileTest() throws Exception {
 	    MockMultipartFile multipartFile = new MockMultipartFile("content_schematron", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "".getBytes()); 
 
-	    MockMultipartHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.multipart("http://127.0.0.1:9085/v1/schematron"); 
+	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("http://127.0.0.1:9085/v1/schematron"); 
 	    
 	    builder.with(new RequestPostProcessor() {
 	        @Override
@@ -198,7 +195,7 @@ class SchematronControllerTest extends AbstractTest {
 	    SchematronBodyDTO dto = new SchematronBodyDTO(); 
 	    dto.setNameSchematron("name"); 
 	    dto.setTemplateIdRoot("root"); 
-	    dto.setVersion("extension"); 
+	    dto.setVersion("1.0"); 
 	    
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
@@ -274,7 +271,7 @@ class SchematronControllerTest extends AbstractTest {
 		schematronService.insert(dto); 
 		
 		
-		when(schematronService.findByTemplateIdRootAndTemplateIdExtension(TEST_ID_ROOT, TEST_ID_EXTENSION))
+		when(schematronService.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_EXTENSION))
 			.thenReturn(new SchematronDTO()); 
 	
 		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT, TEST_ID_EXTENSION)).andExpectAll(
@@ -300,7 +297,7 @@ class SchematronControllerTest extends AbstractTest {
 		schematronService.insert(dto); 
 		
 		
-		when(schematronService.findByTemplateIdRootAndTemplateIdExtension(TEST_ID_ROOT_INV, TEST_ID_EXTENSION))
+		when(schematronService.findByTemplateIdRootAndVersion(TEST_ID_ROOT_INV, TEST_ID_EXTENSION))
 			.thenReturn(new SchematronDTO()); 
 	
 		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT, TEST_ID_EXTENSION)).andExpectAll(
@@ -335,16 +332,9 @@ class SchematronControllerTest extends AbstractTest {
 		assertEquals(String.class, dto.getVersion().getClass()); 
 		
 		assertEquals("Root_AB", dto.getTemplateIdRoot()); 
-		assertEquals("Extension_AB", dto.getVersion()); 
+		assertEquals("1.0", dto.getVersion()); 
 
 	} 
 	
-	
-    @AfterAll
-    public void teardown() {
-        this.dropTestSchema();
-    } 
-	
-    
-	
+	 
 }

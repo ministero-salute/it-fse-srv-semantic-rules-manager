@@ -73,7 +73,7 @@ class SchematronRepositoryTest extends AbstractTest {
 
     	repository.insert(ety); 
     	
-    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndTemplateIdExtension(TEST_INS_ROOT, TEST_INS_EXTENSION); 
+    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndVersion(TEST_INS_ROOT, TEST_INS_EXTENSION); 
     	
     	assertEquals(SchematronETY.class, retrievedEty.getClass()); 
     	assertEquals(Binary.class, retrievedEty.getContentSchematron().getClass()); 
@@ -119,7 +119,7 @@ class SchematronRepositoryTest extends AbstractTest {
     	
     	assertTrue(repository.update(ety)); 
     	
-    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndTemplateIdExtension(TEST_UPD_ROOT, TEST_UPD_EXTENSION); 
+    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndVersion(TEST_UPD_ROOT, TEST_UPD_EXTENSION); 
     	
     	assertEquals(Binary.class, retrievedEty.getContentSchematron().getClass()); 
 
@@ -156,9 +156,9 @@ class SchematronRepositoryTest extends AbstractTest {
 
     	repository.insert(etyToDelete); 
    
-    	repository.removeSchematron(TEST_DEL_ROOT, TEST_DEL_EXTENSION); 
+    	repository.logicallyRemoveSchematron(TEST_DEL_ROOT, TEST_DEL_EXTENSION); 
    
-    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndTemplateIdExtension(TEST_DEL_ROOT, TEST_DEL_EXTENSION); 	
+    	SchematronETY retrievedEty = repository.findByTemplateIdRootAndVersion(TEST_DEL_ROOT, TEST_DEL_EXTENSION); 	
 
     	assertNull(retrievedEty.getNameSchematron()); 
     	assertNull(retrievedEty.getTemplateIdRoot()); 
@@ -182,7 +182,7 @@ class SchematronRepositoryTest extends AbstractTest {
 
     	repository.insert(etyToInsert); 
     	
-    	SchematronETY ety = repository.findByTemplateIdRootAndTemplateIdExtension(TEST_ID_ROOT, TEST_ID_EXTENSION); 
+    	SchematronETY ety = repository.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_EXTENSION); 
     	
     	
     	assertEquals(SchematronETY.class, ety.getClass()); 
@@ -226,16 +226,7 @@ class SchematronRepositoryTest extends AbstractTest {
     	assertEquals(true, existsEty); 
 
     } 
-    
-    @Test
-    void getCollectionNameTest() {
-    	String testDB = repository.getCollectionName(); 
-    	
-    	assertEquals(String.class, testDB.getClass()); 
-    	assertEquals("test-schematron", testDB); 
-    }
-    
-    
+     
     @AfterAll
     public void teardown() {
         this.dropTestSchema();

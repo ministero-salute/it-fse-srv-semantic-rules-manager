@@ -45,8 +45,8 @@ public final class MockRequests {
         return get("http://127.0.0.1:9085/v1/schematron").contentType(MediaType.MULTIPART_FORM_DATA);
     } 
     
-    public static MockHttpServletRequestBuilder querySchematronMockRequest(String root, String extension) {
-        return get("http://127.0.0.1:9085/v1/schematron/root/" + root + "/extension/" + extension)
+    public static MockHttpServletRequestBuilder querySchematronMockRequest(String root, String version) {
+        return get("http://127.0.0.1:9085/v1/schematron/root/" + root + "/version/" + version)
         			.contentType(MediaType.APPLICATION_JSON_VALUE); 
     } 
    

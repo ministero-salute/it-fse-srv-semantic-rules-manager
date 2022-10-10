@@ -107,13 +107,11 @@ class ChangeSetServiceTest extends AbstractTest{
         schematronE.setLastUpdateDate(lastUpdate);
         schematronE.setDeleted(true);
 
-
-    	
-        mongo.insert(schematronA, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronB, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronC, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronD, SCHEMATRON_TEST_COLLECTION_NAME);
-        mongo.insert(schematronE, SCHEMATRON_TEST_COLLECTION_NAME);
+        mongo.insert(schematronA);
+        mongo.insert(schematronB);
+        mongo.insert(schematronC);
+        mongo.insert(schematronD);
+        mongo.insert(schematronE);
     }
 
 

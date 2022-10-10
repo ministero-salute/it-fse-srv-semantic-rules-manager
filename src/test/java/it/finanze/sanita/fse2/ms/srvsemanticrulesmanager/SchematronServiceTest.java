@@ -103,7 +103,7 @@ class SchematronServiceTest extends AbstractTest {
 
     	schematronService.insert(dto); 
     	
-    	SchematronDTO returnedDto = schematronService.findByTemplateIdRootAndTemplateIdExtension(TEST_SCHEMATRON_ROOT_INS, TEST_SCHEMATRON_EXTENSION_INS); 
+    	SchematronDTO returnedDto = schematronService.findByTemplateIdRootAndVersion(TEST_SCHEMATRON_ROOT_INS, TEST_SCHEMATRON_EXTENSION_INS); 
     	
     	assertEquals(SchematronDTO.class, returnedDto.getClass()); 
     	assertEquals(Binary.class, returnedDto.getContentSchematron().getClass()); 
@@ -171,7 +171,7 @@ class SchematronServiceTest extends AbstractTest {
     	
     	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_DEL, TEST_SCHEMATRON_EXTENSION_DEL); 
     	
-    	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndTemplateIdExtension(
+    	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndVersion(
     			TEST_SCHEMATRON_ROOT_DEL, TEST_SCHEMATRON_EXTENSION_DEL)); 
 
     }
@@ -194,7 +194,7 @@ class SchematronServiceTest extends AbstractTest {
 
 		// FIND BY TEMPLATE ID ROOT AND TEMPLATE ID EXTENSION
 
-    	SchematronDTO returnedDto = schematronService.findByTemplateIdRootAndTemplateIdExtension(TEST_SCHEMATRON_ROOT_QUERY, TEST_SCHEMATRON_EXTENSION_QUERY); 
+    	SchematronDTO returnedDto = schematronService.findByTemplateIdRootAndVersion(TEST_SCHEMATRON_ROOT_QUERY, TEST_SCHEMATRON_EXTENSION_QUERY); 
     	
     	
     	assertEquals(SchematronDTO.class, returnedDto.getClass()); 
@@ -247,7 +247,7 @@ class SchematronServiceTest extends AbstractTest {
     	
     	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_QUERY_DEL, TEST_SCHEMATRON_EXTENSION_QUERY_DEL); 
 
-    	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndTemplateIdExtension(TEST_SCHEMATRON_ROOT_QUERY_DEL, TEST_SCHEMATRON_EXTENSION_QUERY_DEL)); 
+    	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndVersion(TEST_SCHEMATRON_ROOT_QUERY_DEL, TEST_SCHEMATRON_EXTENSION_QUERY_DEL)); 
 
     } 
     

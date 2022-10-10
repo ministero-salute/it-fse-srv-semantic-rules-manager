@@ -45,18 +45,17 @@ public class SchematronSRV implements ISchematronSRV {
 		try {
 			SchematronETY ety = parseDtoToEty(dto); 
 			
-			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndTemplateIdExtension(
-						ety.getTemplateIdRoot(), ety.getVersion()); 
+			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndVersion(ety.getTemplateIdRoot(), ety.getVersion()); 
 			
 			if(!ObjectUtils.isEmpty(schematronIfPresent.getId())) {
-				log.error(Constants.Logs.ERROR_SCHEMATRON_ALREADY_PRESENT);
-				throw new DocumentAlreadyPresentException(Constants.Logs.ERROR_SCHEMATRON_ALREADY_PRESENT); 
+				log.error("Error: schematron already present in the database");
+				throw new DocumentAlreadyPresentException("Error: schematron already present in the database"); 
 			}
 			
 			return schematronRepo.insert(ety); 
 		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_INSERT_SCHEMATRON , ex);
-			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON , ex);
+			log.error("Error inserting all ety schematron :" , ex);
+			throw new OperationException("Error inserting all ety schematron :" , ex);
 		}
 		
 	}
@@ -68,10 +67,9 @@ public class SchematronSRV implements ISchematronSRV {
 	} 
 	
 	@Override
-	public SchematronDTO findByTemplateIdRootAndTemplateIdExtension(final String templateIdRoot, 
-			final String templateIdExtension) throws DocumentNotFoundException, OperationException {
+	public SchematronDTO findByTemplateIdRootAndVersion(final String templateIdRoot,final String verson) throws DocumentNotFoundException, OperationException {
 		
-		SchematronETY output = schematronRepo.findByTemplateIdRootAndTemplateIdExtension(templateIdRoot, templateIdExtension); 
+		SchematronETY output = schematronRepo.findByTemplateIdRootAndVersion(templateIdRoot, verson); 
 		
 		if(ObjectUtils.isEmpty(output.getId())) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
@@ -95,9 +93,8 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public boolean deleteSchematron(String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
 		try {
-			return schematronRepo.removeSchematron(templateIdRoot, templateIdExtension); 
-		} 
-		catch(MongoException e) {
+			return schematronRepo.logicallyRemoveSchematron(templateIdRoot, templateIdExtension); 
+		} catch(MongoException e) {
 			throw new OperationException(e.getMessage(), e); 
 		}
 	}
@@ -170,23 +167,18 @@ public class SchematronSRV implements ISchematronSRV {
 
     @Override
 	public List<ChangeSetDTO> getDeletions(Date lastUpdate) throws OperationException {
+    	List<ChangeSetDTO> deletions = new ArrayList<>();
 		try {
-
-			List<ChangeSetDTO> deletions = new ArrayList<>();
-
 			if (lastUpdate != null) {
 				List<SchematronETY> deletionsETY = schematronRepo.getDeletions(lastUpdate);
 				deletions = deletionsETY.stream().map(ChangeSetUtility::schematronToChangeset)
 						.collect(Collectors.toList());
-
 			}
-
-			return deletions;
-
 		} catch (Exception e) {
-			log.error(Constants.Logs.ERROR_RETRIEVING_DELETIONS, e); 
-			throw new BusinessException(Constants.Logs.ERROR_RETRIEVING_DELETIONS, e); 
+			log.error("Error retrieving deletions", e); 
+			throw new BusinessException("Error retrieving deletions", e); 
 		}
+		return deletions;
 	}
 
 

@@ -4,7 +4,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -35,6 +37,10 @@ public class MongoDatabaseCFG {
 	private String mongoUri; 
  
     final List<Converter<?, ?>> conversions = new ArrayList<>();
+    
+    @Autowired
+    private ApplicationContext appContext;
+
 
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(){
@@ -45,8 +51,12 @@ public class MongoDatabaseCFG {
     @Primary
     public MongoTemplate mongoTemplate() {
         final MongoDatabaseFactory factory = mongoDatabaseFactory();
+
+        final MongoMappingContext mongoMappingContext = new MongoMappingContext();
+        mongoMappingContext.setApplicationContext(appContext);
+
         MappingMongoConverter converter =
-                new MappingMongoConverter(new DefaultDbRefResolver(factory), new MongoMappingContext());
+                new MappingMongoConverter(new DefaultDbRefResolver(factory), mongoMappingContext);
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return new MongoTemplate(factory, converter);
     }
