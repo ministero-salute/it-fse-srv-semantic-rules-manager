@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 /**
  * Model to save schematron.
  */
-@Document(collection = "#{@schematronBean}")
 @Data
 @NoArgsConstructor
+@Document(collection = "#{@schematronBean}")
 public class SchematronETY {
 
 	@Id
@@ -30,8 +30,8 @@ public class SchematronETY {
 	@Field(name = "template_id_root")
 	private String templateIdRoot;
 	
-	@Field(name = "template_id_extension")
-	private String templateIdExtension;
+	@Field(name = "version")
+	private String version;
 	
 	@Field(name = "insertion_date")
 	private Date insertionDate; 

@@ -44,6 +44,10 @@ public class MongoDatabaseCFG {
 	private String mongoUri; 
  
     final List<Converter<?, ?>> conversions = new ArrayList<>();
+    
+    @Autowired
+    private ApplicationContext appContext;
+
 
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(){
@@ -53,17 +57,13 @@ public class MongoDatabaseCFG {
     @Bean
     @Primary
     public MongoTemplate mongoTemplate() {
-        // Create new connection instance
-        MongoDatabaseFactory factory = mongoDatabaseFactory();
-        // Assign application context to mongo
+        final MongoDatabaseFactory factory = mongoDatabaseFactory();
+
         final MongoMappingContext mongoMappingContext = new MongoMappingContext();
         mongoMappingContext.setApplicationContext(appContext);
-        // Apply default mapper
-        MappingMongoConverter converter = new MappingMongoConverter(
-                new DefaultDbRefResolver(factory),
-                mongoMappingContext
-        );
-        // Set the default type mapper (removes custom "_class" column)
+
+        MappingMongoConverter converter =
+                new MappingMongoConverter(new DefaultDbRefResolver(factory), mongoMappingContext);
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         // Return the new instance
         return new MongoTemplate(factory, converter);

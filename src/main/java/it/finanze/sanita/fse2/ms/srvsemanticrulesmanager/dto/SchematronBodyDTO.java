@@ -19,6 +19,6 @@ public class SchematronBodyDTO {
 	private String templateIdRoot;
 
 	@Size(min = DEFAULT_STRING_MIN_SIZE, max = DEFAULT_STRING_MAX_SIZE)
-	private String templateIdExtension;
+	private String version;
 
 }

@@ -11,13 +11,11 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
@@ -27,6 +25,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.UploadSchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
@@ -54,100 +53,80 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private transient ISchematronSRV schematronService; 
  
 	@Override
-	public ResponseEntity<SchematronResponseDTO> addSchematron(HttpServletRequest request, 
-			      @RequestBody SchematronBodyDTO body, @RequestPart("content_schematron") MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
+	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(String templateIdRoot, String version, 
+			MultipartFile file,HttpServletRequest request) throws IOException, EmptyDocumentException, OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
-		log.info(Constants.Logs.CALLED_API_POST_SCHEMATRON); 
+		log.debug("Called POST /schematron"); 
 		
 		Date date = new Date(); 
-		SchematronBodyDTO schematronFromBody = getSchematronJSONObject(request.getParameter(Constants.App.BODY)); 
-		
-		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
-			SchematronDTO schematron = new SchematronDTO();
-			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
-			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
-			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
-			schematron.setInsertionDate(date); 
-			schematron.setLastUpdateDate(date);
-
-			schematronService.insert(schematron);
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.CREATED); 
+		if(!file.isEmpty()) {
+			SchematronDTO schematronDTO = new SchematronDTO();
+			schematronDTO.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+			schematronDTO.setNameSchematron(file.getOriginalFilename());
+			schematronDTO.setTemplateIdRoot(templateIdRoot);
+			schematronDTO.setVersion(version);
+			schematronDTO.setInsertionDate(date); 
+			schematronDTO.setLastUpdateDate(date);
+			schematronService.insert(schematronDTO);
+			return new ResponseEntity<>(new UploadSchematronResponseDTO(getLogTraceInfo(),1), HttpStatus.CREATED); 
 		} 
 		
-		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
+		return new ResponseEntity<>(new UploadSchematronResponseDTO(getLogTraceInfo(),0), HttpStatus.NO_CONTENT); 
 		
 	}
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> updateSchematron(HttpServletRequest request,
-	SchematronBodyDTO body, MultipartFile contentSchematron) throws IOException, EmptyDocumentException, OperationException {
-		log.info(Constants.Logs.CALLED_API_PUT_SCHEMATRON); 
+	public ResponseEntity<SchematronResponseDTO> updateSchematron(String templateIdRoot, String version, 
+			MultipartFile file,HttpServletRequest request) throws IOException, OperationException {
 		
 		Date date = new Date();
-
 		boolean hasBeenUpdated = false; 
-		
-		SchematronBodyDTO schematronFromBody = getSchematronJSONObject(request.getParameter(Constants.App.BODY)); 
-		
-		if(!contentSchematron.isEmpty() && schematronFromBody!=null) {
+		if(!file.isEmpty()) {
 			SchematronDTO schematron = new SchematronDTO();
-			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, contentSchematron.getBytes()));
-			schematron.setNameSchematron(schematronFromBody.getNameSchematron());
-			schematron.setTemplateIdRoot(schematronFromBody.getTemplateIdRoot());
-			schematron.setTemplateIdExtension(schematronFromBody.getTemplateIdExtension());
+			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+			schematron.setNameSchematron(file.getOriginalFilename());
+			schematron.setTemplateIdRoot(templateIdRoot);
+			schematron.setVersion(version);
 			schematron.setInsertionDate(date);
 			schematron.setLastUpdateDate(date);
-
-			
 			hasBeenUpdated = schematronService.update(schematron);
 		}
-	
 		
 		if(hasBeenUpdated) {
 			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
-		} 
-		else {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.NO_CONTENT); 
+		} else {
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
 		} 
 		
 	}
 	
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> deleteSchematron(HttpServletRequest request, String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
+	public ResponseEntity<SchematronResponseDTO> deleteSchematron(String templateIdRoot, String version,HttpServletRequest request) throws DocumentNotFoundException, OperationException {
 		
-		log.info(Constants.Logs.CALLED_API_DELETE_SCHEMATRON); 
-		
-		
-		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, templateIdExtension); 	
+		log.debug("Called DELETE /schematron"); 
+		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, version); 	
 		
 		if(existsSchematron) {
 			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK); 
-		} 
-		else {
+		} else {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
 		}
 	} 
 	
 	@Override
-	public ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension(HttpServletRequest request, 
-			String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
+	public ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension( 
+			String templateIdRoot, String version,HttpServletRequest request) throws DocumentNotFoundException, OperationException {
 		
-		log.info(Constants.Logs.CALLED_API_QUERY_ROOT_EXTENSION); 
-				
-		SchematronDTO response =  schematronService.findByTemplateIdRootAndTemplateIdExtension(templateIdRoot, templateIdExtension); 
-				
+		log.debug("Called GET /schematron by ID Root and Version"); 
+		SchematronDTO response =  schematronService.findByTemplateIdRootAndVersion(templateIdRoot, version); 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	} 
 	
 	@Override
 	public ResponseEntity<SchematronsDTO> getSchematrons(HttpServletRequest request) {
-		
-		log.info(Constants.Logs.CALLED_API_GET_SCHEMATRON);  
-		
+		log.debug("Called GET /schematron");  
 		List<SchematronDTO> schematrons = schematronService.getSchematrons(); 
-
 		return new ResponseEntity<>(new SchematronsDTO(getLogTraceInfo(), schematrons), HttpStatus.OK); 
 	}  
 	
@@ -168,13 +147,9 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 
 	@Override
 	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request,  String id) throws OperationException, DocumentNotFoundException {
-
-		log.info(Constants.Logs.CALLED_API_QUERY_ID); 
-
+		log.debug("Called GET /schematron by ID"); 
 		SchematronDocumentDTO doc = schematronService.findById(id); 
-
 		return new ResponseEntity<>(new GetDocumentResDTO(getLogTraceInfo(), doc), HttpStatus.OK);
-
 	}
 	
 	

@@ -28,7 +28,7 @@ public class SchematronDocumentDTO implements Serializable {
 	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String contentSchematron;
 	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
-	private String templateIdExtension;
+	private String version;
 	@Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
 	private String templateIdRoot;
 	private OffsetDateTime lastUpdateDate;
@@ -38,7 +38,7 @@ public class SchematronDocumentDTO implements Serializable {
 				e.getId(),
 				e.getNameSchematron(),
 				UtilsMisc.encodeBase64(e.getContentSchematron().getData()),
-				e.getTemplateIdExtension(),
+				e.getVersion(),
 				e.getTemplateIdRoot(),
 				UtilsMisc.convertToOffsetDateTime(e.getLastUpdateDate()));
 	}
