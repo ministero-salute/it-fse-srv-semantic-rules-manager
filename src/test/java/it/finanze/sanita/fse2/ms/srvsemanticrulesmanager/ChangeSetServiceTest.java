@@ -9,10 +9,7 @@ import java.util.List;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,8 +34,10 @@ class ChangeSetServiceTest extends AbstractTest{
     @Autowired
     private ISchematronSRV schematronSRV;
 
-
- 
+    @BeforeEach
+    void init() {
+        mongo.dropCollection(SchematronETY.class);
+    }
     
     @Test
     @DisplayName("Test Schematron ChangeSet Service")
