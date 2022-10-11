@@ -34,9 +34,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 @EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
 
-    @Autowired
-    private ApplicationContext appContext;
-
 	/** 
 	 * The Mongo URI 
 	 */
