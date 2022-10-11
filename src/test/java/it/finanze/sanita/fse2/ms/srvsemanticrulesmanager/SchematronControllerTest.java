@@ -15,7 +15,6 @@ import java.util.Date;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,7 +34,6 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.LinkedMultiValueMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoException;
 
 import brave.Tracer;
@@ -48,7 +46,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessExce
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
-import lombok.extern.slf4j.Slf4j;
 
 
 @WebMvcTest(SchematronCTL.class)
@@ -56,7 +53,6 @@ import lombok.extern.slf4j.Slf4j;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
 @AutoConfigureMockMvc
-@Slf4j
 class SchematronControllerTest extends AbstractTest {
 
     private final String TEST_SCHEMATRON_ID= "62dfca42dcbf3c671892df93"; 
@@ -91,7 +87,6 @@ class SchematronControllerTest extends AbstractTest {
 
 	@Test
 	void insertSchematron() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(); 
 	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
 
 		LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -101,7 +96,6 @@ class SchematronControllerTest extends AbstractTest {
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
-	    
 	    builder.with(new RequestPostProcessor() {
 	        @Override
 	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -110,7 +104,6 @@ class SchematronControllerTest extends AbstractTest {
 	            return request;
 	        }
 	    }); 
-	    
 	    
 	    mvc.perform(builder
 	            .file(new MockMultipartFile("file", multipartFile.getBytes()))
@@ -191,7 +184,6 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void updateSchematron() throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper(); 
 	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron.xml", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
 
 		LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
