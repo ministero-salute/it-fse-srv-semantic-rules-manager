@@ -6,6 +6,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 
@@ -29,10 +30,11 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	/**
 	 * Update a Schematron entity.
 	 * @param ety
-	 * @return boolean
 	 * @throws OperationException 
+	 * @throws InvalidVersionException
+	 * @throws DocumentNotFoundException
 	 */
-	boolean update(SchematronDTO ety) throws OperationException; 
+	void update(SchematronDTO ety) throws OperationException, InvalidVersionException, DocumentNotFoundException; 
 
 	/**
 	 * Delete a Schematron by templateIdRoot and templateIdExtension.

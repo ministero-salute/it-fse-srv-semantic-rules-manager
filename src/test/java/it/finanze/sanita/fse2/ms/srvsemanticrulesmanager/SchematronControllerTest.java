@@ -1,51 +1,45 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.deleteSchematronMockRequest;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.getSchematronByIdMockRequest;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.getSchematronsMockRequest;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.querySchematronMockRequest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-
+import brave.Tracer;
+import com.mongodb.MongoException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronBodyDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.LinkedMultiValueMap;
 
-import com.mongodb.MongoException;
+import java.util.ArrayList;
+import java.util.Date;
 
-import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronBodyDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(SchematronCTL.class)
@@ -55,10 +49,9 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 @AutoConfigureMockMvc
 class SchematronControllerTest extends AbstractTest {
 
-    private final String TEST_SCHEMATRON_ID= "62dfca42dcbf3c671892df93"; 
-	private final String TEST_NAME_SCHEMATRON = "Name_A"; 
+    private final String TEST_SCHEMATRON_ID= "62dfca42dcbf3c671892df93";
+	private final String TEST_NAME_SCHEMATRON = "Name_A";
     private final String TEST_ID_ROOT = "Root_A"; 
-    private final String TEST_ID_EXTENSION = "Ext_A"; 
     
     private final String TEST_ID_ROOT_INV = "Root_A_INV"; 
 
@@ -75,24 +68,24 @@ class SchematronControllerTest extends AbstractTest {
 	@MockBean
 	private Tracer tracer; 
 	
-	@MockBean
+	@SpyBean
 	private ISchematronSRV schematronService; 
 	
 	
-	@BeforeAll
+	@BeforeEach
     public void setup() throws Exception {
 		mongo.dropCollection(SchematronETY.class);
-		populateSchematron();
     }
+
+	@AfterAll
+	public void teardown() {
+		mongo.dropCollection(SchematronETY.class);
+	}
 
 	@Test
 	void insertSchematron() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 
-		LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.put("templateIdRoot", Collections.singletonList(TEST_ID_ROOT));
-		map.put("version", Collections.singletonList("1.0"));
-	    
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
@@ -100,15 +93,15 @@ class SchematronControllerTest extends AbstractTest {
 	        @Override
 	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
 	            request.setMethod("POST");
-	            request.setParameter("file", "test");
 	            return request;
 	        }
 	    }); 
 	    
 	    mvc.perform(builder
-	            .file(new MockMultipartFile("file", multipartFile.getBytes()))
-	            .params(map)
-	            .contentType(MediaType.MULTIPART_FORM_DATA))
+	            .file(multipartFile)
+				.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
+				.part(new MockPart("version", "1.0".getBytes()))
+				.contentType(MediaType.MULTIPART_FORM_DATA))
 	            .andExpect(MockMvcResultMatchers.status().isCreated());
 	} 
 	
@@ -126,37 +119,54 @@ class SchematronControllerTest extends AbstractTest {
 	        }
 	    });
 
-		LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.put("templateIdRoot", Collections.singletonList(TEST_ID_ROOT));
-		map.put("version", Collections.singletonList("1.0"));
-	    
-	    mvc.perform(builder
-	            .file(multipartFile)
-						.params(map)
-	            .contentType(MediaType.MULTIPART_FORM_DATA))
-	            .andExpect(status().is2xxSuccessful()); 
+		mvc.perform(builder
+						.file(new MockMultipartFile("file", multipartFile.getBytes()))
+						.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
+						.part(new MockPart("version", "1.0".getBytes()))
+						.contentType(MediaType.MULTIPART_FORM_DATA))
+	            .andExpect(status().isBadRequest()); 
 	}
     
+	@Test
+	void insertSchematronWithBusinessException() throws Exception {	    
+		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
+
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+
+	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
+	    
+
+	    builder.with(new RequestPostProcessor() {
+	        @Override
+	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+	            request.setMethod("POST");
+	            return request;
+	        }
+	    });
+
+		mvc.perform(builder
+						.file(multipartFile)
+						.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
+						.part(new MockPart("version", "1.0".getBytes()))
+						.contentType(MediaType.MULTIPART_FORM_DATA))
+	            .andExpect(status().is5xxServerError()); 
+	} 
     
 	@Test
-	void insertSchematronWithBusinessException() throws Exception {
-		
-		SchematronBodyDTO dto = new SchematronBodyDTO(); 
-	    dto.setNameSchematron("name"); 
-	    dto.setTemplateIdRoot("root"); 
-	    dto.setVersion("extension"); 
-	    
-	    MockMvcRequestBuilders.multipart("/v1/schematron", dto);
-	    
-        when(
-                schematronService.findById(anyString())
-            ).thenThrow(new BusinessException("Unknown id"));
-	   
-	    
-		mvc.perform(getSchematronByIdMockRequest(TEST_ID_ROOT_NOT_FOUND)).andExpectAll(
-	            status().isBadRequest()
-	        ); 
-	                
+	void getSchematronWithBusinessException() throws Exception {	    
+	    MockMvcRequestBuilders.multipart("/v1/schematron");
+
+		// invalid id -> bad request
+		mvc.perform(getSchematronByIdMockRequest(TEST_ID_ROOT_INV)).andExpectAll(
+				status().isBadRequest()
+		);
+
+		// when mongo fails for generic exception
+		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
+
+		mvc.perform(getSchematronByIdMockRequest("690000000000000000000000")).andExpectAll(
+				status().is5xxServerError()
+		);
 	} 
 	
 	@Test
@@ -168,15 +178,13 @@ class SchematronControllerTest extends AbstractTest {
 	    
 	    
 	    MockMvcRequestBuilders.multipart("/v1/schematron", dto);
-	    
-        when(
-                schematronService.findById(anyString())
-            ).thenThrow(new OperationException("Database Error", new MongoException("MongoDB: Error while inserting schematron"))); 
-	   
-	    
-		mvc.perform(getSchematronByIdMockRequest(TEST_ID_ROOT_NOT_FOUND)).andExpectAll(
-	            status().isBadRequest()
-	        ); 
+
+		// when mongo is down
+		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
+
+		mvc.perform(getSchematronByIdMockRequest("690000000000000000000000")).andExpectAll(
+				status().is5xxServerError()
+		);
 	                
 	}
 	
@@ -184,12 +192,8 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void updateSchematron() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron.xml", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
-
-		LinkedMultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.put("nameSchematron", Collections.singletonList("name"));
-		map.put("templateIdRoot", Collections.singletonList(TEST_ID_ROOT));
-		map.put("version", Collections.singletonList("1.0"));
+		this.insertSchematron();
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
@@ -197,17 +201,17 @@ class SchematronControllerTest extends AbstractTest {
 	    builder.with(new RequestPostProcessor() {
 	        @Override
 	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-	            request.setParameter("file", "test");
 				request.setMethod("PUT");
 	            return request;
 	        }
-	    }); 
-	    
-	    mvc.perform(builder
-	            .file(new MockMultipartFile("file", multipartFile.getBytes()))
-				.params(map)
-	            .contentType(MediaType.MULTIPART_FORM_DATA))
-	            .andExpect(status().is2xxSuccessful()); 
+	    });
+
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
+				.part(new MockPart("version", "1.1".getBytes()))
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().isOk());
 	    
 	} 
  	
@@ -229,16 +233,40 @@ class SchematronControllerTest extends AbstractTest {
 	    mvc.perform(builder
 	            .file(multipartFile)
 	            .contentType(MediaType.MULTIPART_FORM_DATA))
-	            .andExpect(status().is4xxClientError()); 
+	            .andExpect(status().isMethodNotAllowed()); 
 	    
 	} 
 	
+	@Test
+	void updateSchematronNotFound() throws Exception {
+		this.insertSchematron();
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    
+	    MockMultipartHttpServletRequestBuilder builder =
+	            MockMvcRequestBuilders.multipart("/v1/schematron");
+	    
+	    builder.with(new RequestPostProcessor() {
+	        @Override
+	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+				request.setMethod("PUT");
+	            return request;
+	        }
+	    });
+
+		mvc.perform(builder
+				.file(multipartFile)
+				.part(new MockPart("templateIdRoot", TEST_ID_ROOT_INV.getBytes()))
+				.part(new MockPart("version", "1.1".getBytes()))
+				.contentType(MediaType.MULTIPART_FORM_DATA))
+				.andExpect(status().isNotFound());
+	    
+	} 
+
 	
 	 @Test
 	void deleteSchematronNotFoundTest() throws Exception {
-		
 		mvc.perform(deleteSchematronMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_EXTENSION_NOT_FOUND)).andExpectAll(
-	            status().is4xxClientError()
+	            status().isNotFound()
 	        ); 
 	}  
 
@@ -246,58 +274,54 @@ class SchematronControllerTest extends AbstractTest {
 	 
 	@Test
 	void findSchematronByIdRootAndExtensionTest() throws Exception {
-		SchematronDTO dto = new SchematronDTO(); 
-		
-		dto.setId(TEST_SCHEMATRON_ID); 
-		dto.setNameSchematron(TEST_NAME_SCHEMATRON); 
+		SchematronDTO dto = new SchematronDTO();
+
+		dto.setId(TEST_SCHEMATRON_ID);
+		dto.setNameSchematron(TEST_NAME_SCHEMATRON);
 		dto.setContentSchematron(TEST_CONTENT_SCHEMATRON);
-		dto.setTemplateIdRoot(TEST_ID_ROOT); 
-		dto.setVersion(TEST_ID_EXTENSION); 
-		dto.setInsertionDate(new Date()); 
-		dto.setLastUpdateDate(new Date()); 
-		
-		schematronService.insert(dto); 
-		
-		
-		when(schematronService.findByTemplateIdRootAndVersion(TEST_ID_ROOT, TEST_ID_EXTENSION))
-			.thenReturn(new SchematronDTO()); 
-	
-		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT, TEST_ID_EXTENSION)).andExpectAll(
-	            status().is2xxSuccessful()
+		dto.setTemplateIdRoot("Root_AB");
+		dto.setVersion("1.0");
+		dto.setInsertionDate(new Date());
+		dto.setLastUpdateDate(new Date());
+
+		schematronService.insert(dto);
+
+		mvc.perform(querySchematronMockRequest("Root_AB", "1.0")).andExpectAll(
+	            status().isOk()
 	        );
-		
-		mvc.perform(getSchematronByIdMockRequest(TEST_SCHEMATRON_ID)).andExpectAll(
-	            status().is2xxSuccessful()
-	        );
-		
 	}
-	
+
 	@Test
-	void findSchematronByIdRootAndExtensionInvalidRootTest() throws Exception {
-		SchematronDTO dto = new SchematronDTO(); 
-		
-		dto.setNameSchematron(TEST_NAME_SCHEMATRON); 
-		dto.setTemplateIdRoot(TEST_ID_ROOT); 
-		dto.setVersion(TEST_ID_EXTENSION); 
-		dto.setInsertionDate(new Date()); 
-		dto.setLastUpdateDate(new Date()); 
-		
-		schematronService.insert(dto); 
-		
-		
-		when(schematronService.findByTemplateIdRootAndVersion(TEST_ID_ROOT_INV, TEST_ID_EXTENSION))
-			.thenReturn(new SchematronDTO()); 
-	
-		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT, TEST_ID_EXTENSION)).andExpectAll(
-	            status().is(200)
+	void findSchematronByIdTest() throws Exception {
+		SchematronDTO dto = new SchematronDTO();
+
+		dto.setId(TEST_SCHEMATRON_ID);
+		dto.setNameSchematron(TEST_NAME_SCHEMATRON);
+		dto.setContentSchematron(TEST_CONTENT_SCHEMATRON);
+		dto.setTemplateIdRoot("Root_AB");
+		dto.setVersion("1.0");
+		dto.setInsertionDate(new Date());
+		dto.setLastUpdateDate(new Date());
+
+		schematronService.insert(dto);
+
+		mvc.perform(MockRequests.getSchematronByIdMockRequest(TEST_SCHEMATRON_ID)).andExpectAll(
+	            status().isOk()
 	        );
-	} 
+	}
+
+	@Test
+	void findSchematronByIdNotFoundTest() throws Exception {
+		mvc.perform(MockRequests.getSchematronByIdMockRequest(TEST_SCHEMATRON_ID)).andExpectAll(
+	            status().isNotFound()
+	        );
+	}
 	
 	@Test
 	void findSchematronByIdRootAndExtensionInvalidRootAndExtensionTest() throws Exception {
 	
 		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_EXTENSION_NOT_FOUND)).andExpectAll(
-	            status().is(200)
+	            status().isNotFound()
 	        );
 	} 
 	
@@ -307,22 +331,8 @@ class SchematronControllerTest extends AbstractTest {
 			.thenReturn(new ArrayList<>()); 
 		
 		mvc.perform(getSchematronsMockRequest()).andExpectAll(
-	            status().is2xxSuccessful()
+	            status().isOk()
 	        );
 	} 
-	
-	@Test
-	void getSchematronJsonObject() {
-		SchematronBodyDTO dto = SchematronCTL.getSchematronJSONObject(TEST_JSON_SCHEMATRON); 
-		
-		assertEquals(SchematronBodyDTO.class, dto.getClass()); 
-		assertEquals(String.class, dto.getTemplateIdRoot().getClass()); 
-		assertEquals(String.class, dto.getVersion().getClass()); 
-		
-		assertEquals("Root_AB", dto.getTemplateIdRoot()); 
-		assertEquals("1.0", dto.getVersion()); 
-
-	} 
-	
-	 
 }
+

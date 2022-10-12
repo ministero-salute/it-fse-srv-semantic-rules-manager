@@ -16,6 +16,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.Erro
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc;
 
@@ -53,6 +55,18 @@ public final class ErrorBuilderDTO {
         );
     }
 
+    public static ErrorResponseDTO createInvalidVersionError(LogTraceInfoDTO trace, InvalidVersionException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            ex.getMessage(),
+            SC_CONFLICT,
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "version")
+        );
+
+    }
+
 
     public static ErrorResponseDTO createOperationError(LogTraceInfoDTO trace, OperationException ex) {
         return new ErrorResponseDTO(
@@ -86,8 +100,17 @@ public final class ErrorBuilderDTO {
             ErrorType.RESOURCE.toInstance(Resource.CONFLICT)
         );
     } 
-   
 
+    public static ErrorResponseDTO createInvalidContentError(LogTraceInfoDTO trace, InvalidContentException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            ex.getMessage(),
+            SC_BAD_REQUEST,
+            ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
+        );
 
+    }
 
 }

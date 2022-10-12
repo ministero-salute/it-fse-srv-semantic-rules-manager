@@ -24,6 +24,9 @@
 		<config.infra>${project.basedir}/infrastructure</config.infra>
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
+		<sonar.exclusions>
+			src/main/java/it/finanze/sanita/fse2/ms/srvsemanticrulesmanager/config/OpenApiCFG.java
+		</sonar.exclusions>
 	</properties>
 	<dependencies>
 

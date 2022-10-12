@@ -3,11 +3,7 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.handler;
 
 
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createConstraintError;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createDocumentAlreadyPresentError;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createDocumentNotFoundError;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createGenericError;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.createOperationError;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.*;
 
 import javax.validation.ConstraintViolationException;
 
@@ -24,6 +20,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceIn
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -120,9 +118,14 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 
+    @ExceptionHandler(InvalidVersionException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidVersionException(InvalidVersionException ex) {
+        ErrorResponseDTO out = createInvalidVersionError(getLogTraceInfo(), ex);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
-
-
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
 
     /**
      * Handle generic exception.
@@ -143,8 +146,15 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(out, headers, out.getStatus());
     } 
 
-    
-    
+    @ExceptionHandler(InvalidContentException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleInvalidContentException(InvalidContentException ex) {
+        ErrorResponseDTO out = createInvalidContentError(getLogTraceInfo(), ex);
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
     /**
      * Generate a new {@link LogTraceInfoDTO} instance
      * @return The new instance

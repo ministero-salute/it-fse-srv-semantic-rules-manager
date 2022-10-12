@@ -24,15 +24,6 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	SchematronETY insert(SchematronETY ety) throws OperationException;
 	
 	/**
-	 * Update a schematron on database: set as deleted the old version and insert a new one in database
-	 * 
-	 * @param ety Schematron to update.
-	 * @return Schematron updated.
-	 * @throws OperationException 
-	 */
-	boolean update(SchematronETY ety) throws OperationException;
-	
-	/**
 	 * Returns a Schematron identified by its {@code templateIdRoot} and {@code version}.
 	 * 
 	 * @param templateIdRoot, version Primary key of the Schematron to return.
@@ -53,7 +44,7 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	/**
 	 * Deletes a Schematron identified by its {@code template_id_root} and its {@code template_id_extension}.
 	 * 
-	 * @param template_id_root, template_id_extension Primary key of the Schematron to return.
+	 * @param templateIdRoot, template_id_extension Primary key of the Schematron to return.
 	 * @throws OperationException 
 	 */
 	boolean logicallyRemoveSchematron(String templateIdRoot, String templateIdExtension) throws OperationException;
@@ -75,4 +66,6 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
      * @throws OperationException If a data-layer error occurs
      */
     List<SchematronETY> getEveryActiveSchematron() throws OperationException;
+
+	SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
 }

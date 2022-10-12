@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +17,13 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ChangeSetUtility;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -44,34 +45,42 @@ public class SchematronSRV implements ISchematronSRV {
 	public SchematronETY insert(final SchematronDTO dto) throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 		try {
 			SchematronETY ety = parseDtoToEty(dto); 
-			
 			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndVersion(ety.getTemplateIdRoot(), ety.getVersion()); 
-			
-			if(!ObjectUtils.isEmpty(schematronIfPresent.getId())) {
+		
+			if (schematronIfPresent != null) {
 				log.error("Error: schematron already present in the database");
 				throw new DocumentAlreadyPresentException("Error: schematron already present in the database"); 
 			}
-			
+		
 			return schematronRepo.insert(ety); 
 		} catch(MongoException ex) {
 			log.error("Error inserting all ety schematron :" , ex);
 			throw new OperationException("Error inserting all ety schematron :" , ex);
 		}
-		
 	}
 	
 	@Override
-	public boolean update(SchematronDTO dto) throws OperationException {
-			SchematronETY ety = parseDtoToEty(dto); 
-			return schematronRepo.update(ety); 
-	} 
+	public void update(SchematronDTO dto) throws OperationException, InvalidVersionException, DocumentNotFoundException {
+		SchematronETY ety = parseDtoToEty(dto);
+
+		SchematronETY lastSchematron = schematronRepo.findByTemplateIdRoot(dto.getTemplateIdRoot());
+		
+		if (lastSchematron != null) {
+			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
+				schematronRepo.logicallyRemoveSchematron(ety.getTemplateIdRoot(), ety.getVersion());
+				schematronRepo.insert(ety);
+			} else {
+				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", dto.getVersion(), lastSchematron.getVersion()));
+			}
+		} else {
+			throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", dto.getTemplateIdRoot()));
+		}
+	}
 	
 	@Override
 	public SchematronDTO findByTemplateIdRootAndVersion(final String templateIdRoot,final String verson) throws DocumentNotFoundException, OperationException {
-		
 		SchematronETY output = schematronRepo.findByTemplateIdRootAndVersion(templateIdRoot, verson); 
-		
-		if(ObjectUtils.isEmpty(output.getId())) {
+		if (output == null) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
 		} 
 		
@@ -80,7 +89,6 @@ public class SchematronSRV implements ISchematronSRV {
 
 	@Override
 	public SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException {
-
 		SchematronETY output = schematronRepo.findById(id);
 
         if (output == null) {
@@ -101,8 +109,11 @@ public class SchematronSRV implements ISchematronSRV {
 	
 	@Override
 	public List<SchematronDTO> getSchematrons() {
-			List<SchematronETY> etyList = schematronRepo.findAll(); 
-			return buildDtoFromEty(etyList); 
+		List<SchematronETY> etyList = schematronRepo.findAll(); 
+		if (etyList == null || etyList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return buildDtoFromEty(etyList); 
 	}
 	
 	
@@ -126,7 +137,7 @@ public class SchematronSRV implements ISchematronSRV {
 		output.setInsertionDate(schematronEty.getInsertionDate()); 
 		output.setDeleted(schematronEty.isDeleted());
 		
-		if(schematronEty.getLastUpdateDate() != null) {
+		if (schematronEty.getLastUpdateDate() != null) {
 			output.setLastUpdateDate(schematronEty.getLastUpdateDate()); 
 		} 
 

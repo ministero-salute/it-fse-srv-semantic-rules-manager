@@ -7,6 +7,7 @@ import java.util.Date;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
@@ -85,7 +86,7 @@ public abstract class AbstractTest {
 			"files",
 			"modified");
 
-	@Autowired
+	@SpyBean
 	public MongoTemplate mongo;
 
 
@@ -125,14 +126,4 @@ public abstract class AbstractTest {
 
 
 	}
-
-	protected void initTestRepository() throws Exception {
-		populateSchematron();  
-	}
-
-	protected void dropTestSchema() {
-		mongo.dropCollection(SchematronETY.class); 
-	}
-
-
 }
