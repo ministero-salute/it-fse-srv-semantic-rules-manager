@@ -53,7 +53,6 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @return SchematronDTO
 	 * @throws DocumentNotFoundException 
 	 * @throws OperationException 
-	 * @throws EmptyParameterException 
 	 */
 	SchematronDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException; 
 
@@ -69,7 +68,6 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @return SchematronDocumentDTO
 	 * @throws OperationException
 	 * @throws DocumentNotFoundException
-	 * @throws ObjectIdNotValidException
 	 */
 	SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException;
 	

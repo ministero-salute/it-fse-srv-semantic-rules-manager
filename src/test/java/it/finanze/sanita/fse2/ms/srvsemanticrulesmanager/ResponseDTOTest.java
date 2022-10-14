@@ -5,17 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.Date;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ChangeSetResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronCreationErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 
 class ResponseDTOTest extends AbstractTest {
@@ -113,7 +108,7 @@ class ResponseDTOTest extends AbstractTest {
 	void schematronResponseDtoTest() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		SchematronResponseDTO dto = new SchematronResponseDTO(logTraceInfoDto); 
+		SchematronResponseDTO dto = new SchematronResponseDTO(logTraceInfoDto, 1, null, null);
 		
 		assertEquals(SchematronResponseDTO.class, dto.getClass()); 
 		assertEquals(String.class, dto.getSpanID().getClass()); 

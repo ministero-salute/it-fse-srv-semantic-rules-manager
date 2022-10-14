@@ -20,6 +20,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidConte
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 public final class ErrorBuilderDTO {
 
@@ -110,7 +111,17 @@ public final class ErrorBuilderDTO {
             SC_BAD_REQUEST,
             ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, "file")
         );
+    }
 
+    public static ErrorResponseDTO createMissingPartError(LogTraceInfoDTO trace, MissingServletRequestPartException ex) {
+        return new ErrorResponseDTO(
+                trace,
+                ErrorType.VALIDATION.getType(),
+                ErrorType.VALIDATION.getTitle(),
+                ex.getMessage(),
+                SC_BAD_REQUEST,
+                ErrorType.VALIDATION.toInstance(Validation.CONSTRAINT_FIELD, ex.getRequestPartName())
+        );
     }
 
 }

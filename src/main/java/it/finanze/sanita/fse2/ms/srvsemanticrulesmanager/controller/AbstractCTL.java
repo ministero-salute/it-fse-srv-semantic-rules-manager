@@ -1,18 +1,13 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller;
 
-import java.io.Serializable;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.multipart.MultipartFile;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-
 import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO; 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * 
@@ -33,21 +28,18 @@ public abstract class AbstractCTL implements Serializable {
 	private transient Tracer tracer;
 
 	protected boolean isValidFile(MultipartFile file) {
-
-		boolean isValid = false;
 		if (file != null && !file.isEmpty()) {
 			try {
-				final Path path = Paths.get(file.getOriginalFilename());
-				final String mimeType = Files.probeContentType(path);
 				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-
-				isValid = MimeTypeUtils.TEXT_XML_VALUE.equals(mimeType) && content.startsWith("<?xml") && content.contains("schema");
+				final String fileName = Optional.ofNullable(file.getOriginalFilename()).orElse("");
+				final boolean isSch = fileName.contains("sch");
+				return isSch && content.startsWith("<?xml") && content.contains("schema");
 			} catch (Exception e) {
-				isValid = false;
+				return false;
 			}
+		} else {
+			return false;
 		}
-
-		return isValid;
 	}
 
 	protected LogTraceInfoDTO getLogTraceInfo() {

@@ -52,11 +52,11 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		try {
 			return mongoTemplate.insert(ety);
 		} catch(MongoException ex) {
-			log.error("Error inserting all etys" + ety , ex);
-			throw new OperationException("Error inserting all etys" + ety , ex);
+			log.error(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety , ex);
+			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety , ex);
 		} catch(Exception ex) {
-			log.error("Error inserting all etys", ex);
-			throw new BusinessException("Error inserting all etys", ex);
+			log.error(Constants.Logs.ERROR_INSERT_SCHEMATRON, ex);
+			throw new BusinessException(Constants.Logs.ERROR_INSERT_SCHEMATRON, ex);
 		}
 	}
 	
@@ -86,8 +86,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
 		} 
 		catch(MongoException e) {
-			log.error("Error while retrieving schematron", e);
-            throw new OperationException("Error while retrieving schematron", e);
+			log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
 		}
 	}
 
@@ -96,8 +96,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         try {
             return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
         } catch (MongoException e) {
-        	log.error("Error while retrieving schematron", e);
-            throw new OperationException("Error while retrieving schematron", e);
+        	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
         }
     }
 
@@ -106,21 +106,6 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	public List<SchematronETY> findAll() {
         Query query = Query.query(Criteria.where(Constants.App.DELETED).ne(true));
 		return mongoTemplate.find(query, SchematronETY.class); 
-	}
-
-	@Override
-	public boolean existByTemplateIdRoot(final String templateIdRoot) throws OperationException {
-		boolean output = false;
-		try {
-			Query query = new Query();
-			query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot));
-			query.addCriteria(Criteria.where(Constants.App.DELETED).ne(true)); 
-			output = mongoTemplate.exists(query, SchematronETY.class); 
-		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_EXECUTE_EXIST_VERSION_QUERY + getClass() , ex);
-			throw new OperationException(Constants.Logs.ERROR_EXECUTE_EXIST_VERSION_QUERY + getClass(), ex);
-		}
-		return output;
 	}
 
 	/**

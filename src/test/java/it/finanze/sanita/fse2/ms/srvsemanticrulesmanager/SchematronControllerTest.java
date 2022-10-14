@@ -319,8 +319,7 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void findSchematronByIdRootAndExtensionInvalidRootAndExtensionTest() throws Exception {
-	
-		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT_NOT_FOUND, TEST_ID_EXTENSION_NOT_FOUND)).andExpectAll(
+		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT_NOT_FOUND, "1.0")).andExpectAll(
 	            status().isNotFound()
 	        );
 	} 

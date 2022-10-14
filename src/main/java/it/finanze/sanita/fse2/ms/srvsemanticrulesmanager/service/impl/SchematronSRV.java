@@ -78,8 +78,8 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 	
 	@Override
-	public SchematronDTO findByTemplateIdRootAndVersion(final String templateIdRoot,final String verson) throws DocumentNotFoundException, OperationException {
-		SchematronETY output = schematronRepo.findByTemplateIdRootAndVersion(templateIdRoot, verson); 
+	public SchematronDTO findByTemplateIdRootAndVersion(final String templateIdRoot,final String version) throws DocumentNotFoundException, OperationException {
+		SchematronETY output = schematronRepo.findByTemplateIdRootAndVersion(templateIdRoot, version);
 		if (output == null) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
 		} 

@@ -20,12 +20,10 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronC
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.UploadSchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
@@ -49,8 +47,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private transient ISchematronSRV schematronService;
 
 	@Override
-	public ResponseEntity<UploadSchematronResponseDTO> addSchematron(String templateIdRoot, String version,
-			MultipartFile file, HttpServletRequest request) throws IOException, EmptyDocumentException,
+	public ResponseEntity<SchematronResponseDTO> addSchematron(String templateIdRoot, String version,
+															   MultipartFile file, HttpServletRequest request) throws IOException,
 			OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
 
 		log.debug("Called POST /schematron");
@@ -65,7 +63,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematronDTO.setInsertionDate(date);
 			schematronDTO.setLastUpdateDate(date);
 			schematronService.insert(schematronDTO);
-			return new ResponseEntity<>(new UploadSchematronResponseDTO(getLogTraceInfo(), 1), HttpStatus.CREATED);
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), 1, null, null), HttpStatus.CREATED);
 		} else {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
@@ -90,7 +88,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), null, 1, null), HttpStatus.OK);
 	}
 
 	@Override
@@ -100,7 +98,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, version);
 
 		if (existsSchematron) {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo()), HttpStatus.OK);
+			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), null, null, 1), HttpStatus.OK);
 		} else {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
 		}

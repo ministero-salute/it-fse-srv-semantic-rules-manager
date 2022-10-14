@@ -20,13 +20,18 @@ public class SchematronResponseDTO extends ResponseDTO {
 	 */
 	private static final long serialVersionUID = 5857196886068379718L;
  
+	private Integer insertedSchematron;
+	private Integer updatedSchematron;
+	private Integer deletedSchematron;
 
 	public SchematronResponseDTO() {
 		super();
 	}
 
-	public SchematronResponseDTO(final LogTraceInfoDTO traceInfo) {
+	public SchematronResponseDTO(LogTraceInfoDTO traceInfo, Integer insertedSchematron, Integer updatedSchematron, Integer deletedSchematron) {
 		super(traceInfo);
+		this.insertedSchematron = insertedSchematron;
+		this.updatedSchematron = updatedSchematron;
+		this.deletedSchematron = deletedSchematron;
 	}
-	
 }

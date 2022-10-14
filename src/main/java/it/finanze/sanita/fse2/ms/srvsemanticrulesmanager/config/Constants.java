@@ -162,11 +162,12 @@ public final class Constants {
 		 
 		 public static final String ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST = "The requested document does not exists"; 
 
-		 public static final String ERROR_INVALID_OBJECT_ID = "The following string is not a valid object id: "; 
+		 public static final String ERROR_INVALID_OBJECT_ID = "The following string is not a valid object id: ";
+        public static final String ERROR_INSERT_SCHEMATRON = "Error inserting all etys";
+		public static final String ERROR_RETRIEVING_SCHEMATRON = "Error while retrieving schematron";
 
 
-			
-		 private Logs() {
+		private Logs() {
 				//This method is intentionally left blank. 
 			}
 

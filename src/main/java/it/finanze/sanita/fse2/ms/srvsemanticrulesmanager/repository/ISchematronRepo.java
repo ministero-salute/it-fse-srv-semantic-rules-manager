@@ -56,9 +56,6 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	 */
 	List<SchematronETY> findAll();
 
-	
-	boolean existByTemplateIdRoot(String templateIdRoot) throws OperationException;
-
 	/**
      * Retrieves all the not-deleted extensions with their documents data
      *
@@ -67,5 +64,11 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
      */
     List<SchematronETY> getEveryActiveSchematron() throws OperationException;
 
+	/**
+	 * Find schematron by templateIdRoot
+	 * @param templateIdRoot
+	 * @return
+	 * @throws OperationException
+	 */
 	SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
 }
