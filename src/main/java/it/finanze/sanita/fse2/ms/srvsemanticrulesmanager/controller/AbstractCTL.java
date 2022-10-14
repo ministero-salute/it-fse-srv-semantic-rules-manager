@@ -2,6 +2,7 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller;
 
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,8 +32,8 @@ public abstract class AbstractCTL implements Serializable {
 		if (file != null && !file.isEmpty()) {
 			try {
 				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-				final String fileName = Optional.ofNullable(file.getOriginalFilename()).orElse("");
-				final boolean isSch = fileName.contains("sch");
+				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
+				final boolean isSch = extension.contains("sch");
 				return isSch && content.startsWith("<?xml") && content.contains("schema");
 			} catch (Exception e) {
 				return false;
