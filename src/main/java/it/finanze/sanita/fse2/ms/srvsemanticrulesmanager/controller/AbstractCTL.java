@@ -33,7 +33,7 @@ public abstract class AbstractCTL implements Serializable {
 			try {
 				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
 				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
-				final boolean isSch = extension.contains("sch");
+				final boolean isSch = extension.equals("sch");
 				return isSch && content.startsWith("<?xml") && content.contains("schema");
 			} catch (Exception e) {
 				return false;
