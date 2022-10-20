@@ -84,7 +84,7 @@ class SchematronControllerTest extends AbstractTest {
 
 	@Test
 	void insertSchematron() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
@@ -107,7 +107,7 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void insertSchematronEmptyFileTest() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "".getBytes());
 
 	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
@@ -131,7 +131,7 @@ class SchematronControllerTest extends AbstractTest {
 	void insertSchematronWithBusinessException() throws Exception {	    
 		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
 
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 
 	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
@@ -193,7 +193,7 @@ class SchematronControllerTest extends AbstractTest {
 	@Test
 	void updateSchematron() throws Exception {
 		this.insertSchematron();
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
@@ -217,7 +217,7 @@ class SchematronControllerTest extends AbstractTest {
  	
 	@Test
 	void updateSchematronInvalidMethod() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron.xml", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron.sch", MediaType.APPLICATION_JSON_VALUE, "Hello World!".getBytes());
 
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
@@ -240,7 +240,7 @@ class SchematronControllerTest extends AbstractTest {
 	@Test
 	void updateSchematronNotFound() throws Exception {
 		this.insertSchematron();
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.xml", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
 	    
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");

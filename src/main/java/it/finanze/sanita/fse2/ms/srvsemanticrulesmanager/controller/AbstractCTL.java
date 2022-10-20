@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -31,10 +30,8 @@ public abstract class AbstractCTL implements Serializable {
 	protected boolean isValidFile(MultipartFile file) {
 		if (file != null && !file.isEmpty()) {
 			try {
-				final String content = new String(file.getBytes(), StandardCharsets.UTF_8);
 				final String extension = Optional.ofNullable(FilenameUtils.getExtension(file.getOriginalFilename())).orElse("");
-				final boolean isSch = extension.equals("sch");
-				return isSch && content.startsWith("<?xml") && content.contains("schema");
+				return extension.equals("sch");
 			} catch (Exception e) {
 				return false;
 			}
