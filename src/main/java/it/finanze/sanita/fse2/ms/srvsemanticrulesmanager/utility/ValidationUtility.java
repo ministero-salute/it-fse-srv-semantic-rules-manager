@@ -21,12 +21,17 @@ public class ValidationUtility {
 	public static boolean isMajorVersion(final String newVersion, final String lastVersion) {
 		boolean isMajor = false;
 		String[] lastVersionChunks = lastVersion.split("\\.");
-		String [] newVersionChunks = newVersion.split("\\.");
-	
-		if (Integer.valueOf(lastVersionChunks[0]) < Integer.valueOf(newVersionChunks[0])) {
+		String[] newVersionChunks = newVersion.split("\\.");
+
+		int lastVersionMajor = Integer.parseInt(lastVersionChunks[0]);
+		int newVersionMajor = Integer.parseInt(newVersionChunks[0]);
+		int lastVersionMinor = Integer.parseInt(lastVersionChunks[1]);
+		int newVersionMinor = Integer.parseInt(newVersionChunks[1]);
+
+		if (lastVersionMajor < newVersionMajor) {
 			isMajor = true;
-		} else if (Integer.valueOf(lastVersionChunks[0]).equals(Integer.valueOf(newVersionChunks[0]))) {
-			isMajor = Integer.valueOf(lastVersionChunks[1]) < Integer.valueOf(newVersionChunks[1]);
+		} else if (lastVersionMajor == newVersionMajor) {
+			isMajor = lastVersionMinor < newVersionMinor;
 		}
 		
 		return isMajor;
