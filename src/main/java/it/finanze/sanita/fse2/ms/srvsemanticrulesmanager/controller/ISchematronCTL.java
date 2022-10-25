@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -38,12 +39,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumen
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.EmptyDocumentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.ValidObjectId;
 
 /**
@@ -69,8 +64,8 @@ public interface ISchematronCTL extends Serializable {
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestPart("file") MultipartFile file, HttpServletRequest request)
-                        throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException,
-                        DocumentNotFoundException, InvalidContentException;
+            throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException,
+            DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
 
         @PutMapping(value = "/schematron", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
                         MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -86,7 +81,7 @@ public interface ISchematronCTL extends Serializable {
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestPart("file") MultipartFile file, HttpServletRequest request)
-                        throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException;
+            throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException;
 
         @DeleteMapping(value = "/schematron/root/{templateIdRoot}/version/{version}", produces = {
                         MediaType.APPLICATION_JSON_VALUE })

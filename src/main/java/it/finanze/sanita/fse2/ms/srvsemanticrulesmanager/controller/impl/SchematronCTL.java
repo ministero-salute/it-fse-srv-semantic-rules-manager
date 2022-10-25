@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentD
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,12 +49,13 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	@Override
 	public ResponseEntity<SchematronResponseDTO> addSchematron(String templateIdRoot, String version,
 															   MultipartFile file, HttpServletRequest request) throws IOException,
-			OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException {
+		OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException {
 
 		log.debug("Called POST /schematron");
 
 		Date date = new Date();
 		if (isValidFile(file)) {
+			SchematronValidator.verify(file);
 			SchematronDTO schematronDTO = new SchematronDTO();
 			schematronDTO.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 			schematronDTO.setNameSchematron(file.getOriginalFilename());
@@ -75,10 +73,11 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	@Override
 	public ResponseEntity<SchematronResponseDTO> updateSchematron(String templateIdRoot, String version,
 			MultipartFile file, HttpServletRequest request)
-			throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException {
+		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException {
 
 		Date date = new Date();
 		if (isValidFile(file)) {
+			SchematronValidator.verify(file);
 			SchematronDTO schematron = new SchematronDTO();
 			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
 			schematron.setNameSchematron(file.getOriginalFilename());

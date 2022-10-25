@@ -4,11 +4,6 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error;
 
 
-import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
-import static org.apache.http.HttpStatus.SC_CONFLICT;
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -22,8 +17,12 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotF
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.SchematronValidatorException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.*;
+import static org.apache.http.HttpStatus.*;
 
 public final class ErrorBuilderDTO {
 
@@ -91,6 +90,17 @@ public final class ErrorBuilderDTO {
             ex.getMessage(),
             SC_NOT_FOUND,
             ErrorType.RESOURCE.toInstance(Resource.NOT_FOUND)
+        );
+    }
+
+    public static ErrorResponseDTO createSchematronValidatorException(LogTraceInfoDTO trace, SchematronValidatorException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.IO.getType(),
+            ErrorType.IO.getTitle(),
+            ex.getMessage(),
+            SC_UNPROCESSABLE_ENTITY,
+            ErrorType.IO.toInstance(IO.CONVERSION)
         );
     }
 

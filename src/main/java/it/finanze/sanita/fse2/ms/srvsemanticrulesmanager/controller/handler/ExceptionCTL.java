@@ -10,6 +10,7 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.err
 
 import javax.validation.ConstraintViolationException;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.SchematronValidatorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersi
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import lombok.extern.slf4j.Slf4j;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.*;
+
 /**
  *	Exceptions handler
  *  @author G. Baittiner
@@ -45,6 +48,17 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
     @Autowired
     private Tracer tracer;
 
+    @ExceptionHandler(SchematronValidatorException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleSchematronValidatorException(SchematronValidatorException ex) {
+        // Log me
+        log.error("HANDLER handleSchematronValidatorException()", ex);
+        // Create error DTO
+        ErrorResponseDTO out = createSchematronValidatorException(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
 
     /**
      * Handle document not found exception.

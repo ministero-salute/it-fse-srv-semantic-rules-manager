@@ -146,7 +146,7 @@ public final class Constants {
 		public static final String ERROR_INSERT_SCHEMATRON = "Error inserting all etys";
 		
 		public static final String ERROR_RETRIEVING_SCHEMATRON = "Error while retrieving schematron";
-
+		public static final String ERR_VAL_INVALID_SCHEMATRON_IO = "Impossibile elaborare il contenuto dello schematron";
 
 		private Logs() {
 			//This method is intentionally left blank. 

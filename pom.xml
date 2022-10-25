@@ -165,6 +165,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- SCHEMATRON VALIDATOR -->
+		<dependency>
+			<groupId>com.helger</groupId>
+			<artifactId>ph-schematron</artifactId>
+			<version>5.6.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
