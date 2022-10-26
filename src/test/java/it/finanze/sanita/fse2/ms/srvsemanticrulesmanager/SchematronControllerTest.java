@@ -13,7 +13,10 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.Schem
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +31,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -37,7 +41,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,14 +56,14 @@ class SchematronControllerTest extends AbstractTest {
 
     private final String TEST_SCHEMATRON_ID= "62dfca42dcbf3c671892df93";
 	private final String TEST_NAME_SCHEMATRON = "Name_A";
-    private final String TEST_ID_ROOT = "Root_A"; 
-    
-    private final String TEST_ID_ROOT_INV = "Root_A_INV"; 
+    private final String TEST_ID_ROOT = "Root_A";
+	private final String TEST_ID_VERSION = "1.0";
+	private final String TEST_ID_NEXT_VERSION = "1.1";
+
+    private final String TEST_ID_ROOT_INV = "Root_A_INV";
 
     private final String TEST_ID_ROOT_NOT_FOUND = "Root_A_NF"; 
-    private final String TEST_ID_EXTENSION_NOT_FOUND = "Ext_A_NF"; 
-
-	public final String TEST_JSON_SCHEMATRON = "{\"nameSchematron\":\"Test_AB\",\"templateIdRoot\":\"Root_AB\", \"version\":\"1.0\"}"; 
+    private final String TEST_ID_EXTENSION_NOT_FOUND = "Ext_A_NF";
 	public final Binary TEST_CONTENT_SCHEMATRON = new Binary(BsonBinarySubType.BINARY, "Hello World!".getBytes());
 
 	
@@ -73,7 +78,7 @@ class SchematronControllerTest extends AbstractTest {
 	
 	
 	@BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
 		mongo.dropCollection(SchematronETY.class);
     }
 
@@ -84,26 +89,31 @@ class SchematronControllerTest extends AbstractTest {
 
 	@Test
 	void insertSchematron() throws Exception {
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+		// Read from the resource files a valid sch file
+		MockMultipartFile file = createFromResourceSCH("file", true);
+		// Create request adding the previous file as payload
+		MockHttpServletRequestBuilder req = insertSchematronByTemplateAndVersion(
+			TEST_ID_ROOT,
+			TEST_ID_VERSION,
+			file
+		);
+		// Perform request and verify
+		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isCreated());
+	}
 
-	    MockMultipartHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.multipart("/v1/schematron");
-	    
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-	            request.setMethod("POST");
-	            return request;
-	        }
-	    }); 
-	    
-	    mvc.perform(builder
-	            .file(multipartFile)
-				.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
-				.part(new MockPart("version", "1.0".getBytes()))
-				.contentType(MediaType.MULTIPART_FORM_DATA))
-	            .andExpect(MockMvcResultMatchers.status().isCreated());
-	} 
+	@Test
+	void insertSchematronInvalid() throws Exception {
+		// Read from the resource files an invalid sch file
+		MockMultipartFile file = createFromResourceSCH("file", false);
+		// Create request adding the previous file as payload
+		MockHttpServletRequestBuilder req = insertSchematronByTemplateAndVersion(
+			TEST_ID_ROOT,
+			TEST_ID_VERSION,
+			file
+		);
+		// Perform request and verify
+		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isUnprocessableEntity());
+	}
 	
 	@Test
 	void insertSchematronEmptyFileTest() throws Exception {
@@ -131,7 +141,7 @@ class SchematronControllerTest extends AbstractTest {
 	void insertSchematronWithBusinessException() throws Exception {	    
 		Mockito.doThrow(new BusinessException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
 
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
+	    MockMultipartFile multipartFile = createFromResourceSCH("file", true);
 
 	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
@@ -192,27 +202,17 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void updateSchematron() throws Exception {
+		// Insert schematron
 		this.insertSchematron();
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
-	    
-	    MockMultipartHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.multipart("/v1/schematron");
-	    
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-				request.setMethod("PUT");
-	            return request;
-	        }
-	    });
-
-		mvc.perform(builder
-				.file(multipartFile)
-				.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
-				.part(new MockPart("version", "1.1".getBytes()))
-				.contentType(MediaType.MULTIPART_FORM_DATA))
-				.andExpect(status().isOk());
-	    
+		// Read from the resource files a valid sch file
+		MockMultipartFile file = createFromResourceSCH("file", true);
+		// Create request adding the previous file as payload, root and next version
+		MockHttpServletRequestBuilder req = updateSchematronByTemplateAndVersion(
+			TEST_ID_ROOT,
+			TEST_ID_NEXT_VERSION,
+			file
+		);
+		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isOk());
 	} 
  	
 	@Test
@@ -239,27 +239,17 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void updateSchematronNotFound() throws Exception {
+		// Insert schematron
 		this.insertSchematron();
-	    MockMultipartFile multipartFile = new MockMultipartFile("file", "schematron_post.sch", MediaType.APPLICATION_JSON_VALUE, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>!<schema><schema>".getBytes());
-	    
-	    MockMultipartHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.multipart("/v1/schematron");
-	    
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-				request.setMethod("PUT");
-	            return request;
-	        }
-	    });
-
-		mvc.perform(builder
-				.file(multipartFile)
-				.part(new MockPart("templateIdRoot", TEST_ID_ROOT_INV.getBytes()))
-				.part(new MockPart("version", "1.1".getBytes()))
-				.contentType(MediaType.MULTIPART_FORM_DATA))
-				.andExpect(status().isNotFound());
-	    
+		// Read from the resource files a valid sch file
+	    MockMultipartFile file = createFromResourceSCH("file", true);
+		// Create request adding the previous file as payload, an invalid root and next version
+		MockHttpServletRequestBuilder req = updateSchematronByTemplateAndVersion(
+			TEST_ID_ROOT_INV,
+			TEST_ID_NEXT_VERSION,
+			file
+		);
+		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isNotFound());
 	} 
 
 	
