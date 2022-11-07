@@ -36,7 +36,6 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.err
 
 /**
  *	Exceptions handler
- *  @author G. Baittiner
  */
 @ControllerAdvice
 @Slf4j
