@@ -31,9 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
- *	@author vincenzoingenito
- *  @author Guido Rocco
-	@author Riccardo Bonesi
  *
  *	Schematron service.
  */

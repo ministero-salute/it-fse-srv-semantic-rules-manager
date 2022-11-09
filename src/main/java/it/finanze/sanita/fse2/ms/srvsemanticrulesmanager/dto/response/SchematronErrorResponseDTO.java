@@ -17,7 +17,6 @@ import lombok.EqualsAndHashCode;
 /**
  * The Class ValidationErrorResponseDTO.
  *
- * @author CPIERASC
  * 
  * 	Error response.
  */

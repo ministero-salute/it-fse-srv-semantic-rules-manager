@@ -10,8 +10,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationExc
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 
 /**
- *	@author vincenzoingenito
-	@author Riccardo Bonesi
  *
  *	Schemamatron interface repository.
  */

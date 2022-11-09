@@ -14,7 +14,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author Riccardo Bonesi
  * 
  * The Class SchematronsDTO, used to return the list of all schematrons.
  */
