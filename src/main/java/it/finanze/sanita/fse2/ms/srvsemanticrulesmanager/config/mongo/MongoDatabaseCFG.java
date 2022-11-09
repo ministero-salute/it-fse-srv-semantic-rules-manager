@@ -29,7 +29,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 
 /**
  * 
- * @author vincenzoingenito
  *
  *	Configuration for MongoDB.
  */

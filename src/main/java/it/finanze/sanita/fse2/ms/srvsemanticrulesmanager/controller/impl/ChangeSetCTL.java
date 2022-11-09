@@ -21,7 +21,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 
 /** 
  * 
- * @author Riccardo Bonesi
  */
 @RestController
 public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL{

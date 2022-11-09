@@ -44,7 +44,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.ValidObjectI
 /**
  * Schematron Controller.
  * 
- * @author Guido Rocco
  */
 @RequestMapping(path = "/v1")
 @Tag(name = "Schematron Controller")

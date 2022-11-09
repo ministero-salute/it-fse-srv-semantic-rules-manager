@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 /**
  * The Class SchematronCreationResponseDTO.
  *
- * @author Guido Rocco
  * 
  * 	Schematron Creation Response.
  */

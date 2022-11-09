@@ -29,7 +29,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.NoFutureDate
 /**
  * ChangeSet retriever controller
  *
- * @author Riccardo Bonesi
  */
 @RequestMapping(path = "/v1/changeset")
 @Tag(name = "Change Set controller")

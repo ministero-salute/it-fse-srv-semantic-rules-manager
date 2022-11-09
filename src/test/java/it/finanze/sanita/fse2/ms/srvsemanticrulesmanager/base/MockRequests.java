@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base;
 
 import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;

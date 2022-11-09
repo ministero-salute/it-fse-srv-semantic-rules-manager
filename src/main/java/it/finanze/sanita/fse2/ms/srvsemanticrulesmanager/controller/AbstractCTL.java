@@ -14,7 +14,6 @@ import java.util.Optional;
 
 /**
  * 
- * @author CPIERASC
  *
  *	Abstract controller.
  */

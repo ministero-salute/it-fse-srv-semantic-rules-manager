@@ -31,8 +31,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author Riccardo Bonesi
- * @author Guido Rocco
  */
 @RestController
 @Slf4j
