@@ -237,3 +237,4 @@ GitHub.sublime-settings
 
 .checkstyle
 .classpath
+/.apt_generated_tests/
