@@ -4,13 +4,11 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.handler;
 
 
-
-
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.*;
-
-import javax.validation.ConstraintViolationException;
-
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.SchematronValidatorException;
+import brave.Tracer;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,18 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.ConstraintViolationException;
+import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.*;
 
@@ -56,6 +48,25 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
         // Set HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        return new ResponseEntity<>(out, headers, out.getStatus());
+    }
+
+    /**
+     * Handles exceptions thrown by the inability to convert a certain value from a type X to a type Y.
+     * (e.g. {@link String} to {@link Date})
+     *
+     * @param ex exception
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    protected ResponseEntity<ErrorResponseDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        // Log me
+        log.error("HANDLER MethodArgumentTypeMismatchException()", ex);
+        // Create error DTO
+        ErrorResponseDTO out = createArgumentMismatchError(getLogTraceInfo(), ex);
+        // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+        // Bye bye
         return new ResponseEntity<>(out, headers, out.getStatus());
     }
 

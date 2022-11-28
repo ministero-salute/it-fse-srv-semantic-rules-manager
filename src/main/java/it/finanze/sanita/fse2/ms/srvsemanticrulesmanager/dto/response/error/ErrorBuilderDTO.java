@@ -4,24 +4,21 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error;
 
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Resource;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Server;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Validation;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.SchematronValidatorException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants.Logs.ERR_VAL_UNABLE_CONVERT;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.IO;
 import static org.apache.http.HttpStatus.*;
 
 public final class ErrorBuilderDTO {
@@ -101,6 +98,21 @@ public final class ErrorBuilderDTO {
             ex.getMessage(),
             SC_UNPROCESSABLE_ENTITY,
             ErrorType.IO.toInstance(IO.CONVERSION)
+        );
+    }
+
+    public static ErrorResponseDTO createArgumentMismatchError(LogTraceInfoDTO trace, MethodArgumentTypeMismatchException ex) {
+        return new ErrorResponseDTO(
+            trace,
+            ErrorType.VALIDATION.getType(),
+            ErrorType.VALIDATION.getTitle(),
+            String.format(
+                ERR_VAL_UNABLE_CONVERT,
+                ex.getName(),
+                ex.getParameter().getParameter().getType().getSimpleName()
+            ),
+            SC_BAD_REQUEST,
+            ErrorType.VALIDATION.toInstance(ErrorInstance.Validation.CONSTRAINT_FIELD, ex.getName())
         );
     }
 
