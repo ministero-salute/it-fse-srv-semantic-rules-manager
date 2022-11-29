@@ -59,7 +59,7 @@ public class SchematronSRV implements ISchematronSRV {
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
 				if(!repository.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
-					repository.logicallyRemoveSchematronUpdate(lastSchematron.getTemplateIdRoot());
+					repository.deleteByTemplateIdRoot(lastSchematron.getTemplateIdRoot());
 					repository.insert(dto);
 				} else {
 					throw new DocumentAlreadyPresentException("File già presente");

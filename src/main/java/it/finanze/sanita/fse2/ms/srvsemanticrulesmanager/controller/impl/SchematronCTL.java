@@ -36,7 +36,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 
 	@Override
 	public SchematronResponseDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
-		OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException {
+		OperationException, DocumentAlreadyPresentException, InvalidContentException, SchematronValidatorException {
 
 		// Check file consistency
 		if (isValidFile(file)) {
@@ -52,8 +52,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> updateSchematron(String templateIdRoot, String version,
-			MultipartFile file, HttpServletRequest request)
+	public SchematronResponseDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
 		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 
 		if (isValidFile(file)) {
@@ -63,7 +62,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), null, 1, null), HttpStatus.OK);
+		return new SchematronResponseDTO(getLogTraceInfo(), null, 1, null);
 	}
 
 	@Override

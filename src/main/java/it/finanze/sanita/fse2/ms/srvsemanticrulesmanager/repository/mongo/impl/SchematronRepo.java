@@ -79,25 +79,6 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		}
 		return (int) res.getModifiedCount();
 	}
-	
-	@Override
-	public boolean logicallyRemoveSchematronUpdate(final String templateIdRoot) throws OperationException {
-
-		Query query = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
-
-		Update update = new Update();
-		update.set(FIELD_DELETED, true);
-		update.set(FIELD_LAST_UPDATE, new Date());
-
-		try {
-			UpdateResult updateResult = mongoTemplate.updateMulti(query, update, SchematronETY.class);
-			return updateResult.getModifiedCount() > 0;
-		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);
-			throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
-		}
-	}
-	
 	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
@@ -226,20 +207,4 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     	
     	return output;
     }
-    
-	@Override
-	public boolean checkMajorVersion(final String templateIdRoot, final String version) throws OperationException, DocumentNotFoundException {
-		boolean output = false;
-		try {
-			Query query = new Query();
-			query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_VERSION).gt(version)
-			.and(FIELD_DELETED).ne(true));
-			
-			output = mongoTemplate.exists(query, SchematronETY.class);
-		} catch(MongoException e) {
-			log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
-            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
-		}
-		return output;
-	}
 }
