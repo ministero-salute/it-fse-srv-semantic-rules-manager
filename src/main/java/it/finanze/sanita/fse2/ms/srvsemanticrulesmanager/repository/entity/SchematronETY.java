@@ -3,8 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity;
 
+import java.io.IOException;
 import java.util.Date;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
+import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Model to save schematron.
@@ -43,6 +47,18 @@ public class SchematronETY {
 	private Date lastUpdateDate; 
 	
 	@Field(name = "deleted")
-	private boolean deleted; 
-	 
+	private boolean deleted;
+
+	public static SchematronETY fromMultipart(String templateIdRoot, String version, MultipartFile file) throws IOException {
+		SchematronETY sch = new SchematronETY();
+		Date timestamp = new Date();
+		sch.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+		sch.setNameSchematron(file.getOriginalFilename());
+		sch.setTemplateIdRoot(templateIdRoot);
+		sch.setVersion(version);
+		sch.setInsertionDate(timestamp);
+		sch.setLastUpdateDate(timestamp);
+		return sch;
+	}
+
 }

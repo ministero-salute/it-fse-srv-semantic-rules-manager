@@ -27,12 +27,11 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @throws DocumentAlreadyPresentException 
 	 * @throws DocumentNotFoundException 
 	 */
-	SchematronETY insert(SchematronDTO ety) throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException;
+	SchematronETY insert(SchematronETY ety) throws OperationException, DocumentAlreadyPresentException;
 
 	/**
 	 * Update a Schematron entity.
-	 * @param ety
-	 * @throws OperationException 
+	 * @throws OperationException
 	 * @throws InvalidVersionException
 	 * @throws DocumentNotFoundException
 	 * @throws DocumentAlreadyPresentException

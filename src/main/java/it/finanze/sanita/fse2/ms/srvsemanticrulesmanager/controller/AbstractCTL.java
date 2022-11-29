@@ -17,14 +17,7 @@ import java.util.Optional;
  *
  *	Abstract controller.
  */
-public abstract class AbstractCTL implements Serializable {
-
-
-	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = -7177691577253703309L; 
-	
+public abstract class AbstractCTL {
 	
 	@Autowired
 	private transient Tracer tracer;

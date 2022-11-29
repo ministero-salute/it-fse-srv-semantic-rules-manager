@@ -42,27 +42,15 @@ public class SchematronSRV implements ISchematronSRV {
 	private SchematronRepo schematronRepo;
 	
 	@Override
-	public SchematronETY insert(final SchematronDTO dto) throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
-		try {
-			SchematronETY ety = parseDtoToEty(dto); 
-			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndVersion(ety.getTemplateIdRoot(), ety.getVersion()); 
-		
-			boolean majorVersion = schematronRepo.checkMajorVersion(ety.getTemplateIdRoot(), ety.getVersion());
-			if(majorVersion) {
-				log.error("Error: Schematron con vesion maggiore già esistente sulla base dati");
-				throw new DocumentAlreadyPresentException("Error: Schematron con vesion maggiore già esistente sulla base dati");
-			}
-			
-			if (schematronIfPresent != null) {
-				log.error("Error: schematron already present in the database");
-				throw new DocumentAlreadyPresentException("Error: schematron already present in the database"); 
-			}
-		
-			return schematronRepo.insert(ety); 
-		} catch(MongoException ex) {
-			log.error("Error inserting all ety schematron :" , ex);
-			throw new OperationException("Error inserting all ety schematron :" , ex);
+	public SchematronETY insert(final SchematronETY ety) throws OperationException, DocumentAlreadyPresentException {
+
+		SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRoot(ety.getTemplateIdRoot());
+
+		if (schematronIfPresent != null) {
+			throw new DocumentAlreadyPresentException("Error: schematron already present in the database");
 		}
+
+		return schematronRepo.insert(ety);
 	}
 	
 	@Override

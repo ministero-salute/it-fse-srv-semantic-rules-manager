@@ -30,6 +30,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronR
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import lombok.extern.slf4j.Slf4j;
 
+import static org.springframework.data.mongodb.core.query.Criteria.*;
+
 /**
  *
  *	Schematron repository.
@@ -50,20 +52,18 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		
 	@Override
 	public SchematronETY insert(SchematronETY ety) throws OperationException {
+		SchematronETY sch;
 		try {
-			return mongoTemplate.insert(ety);
+			sch = mongoTemplate.insert(ety);
 		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety , ex);
-			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety , ex);
-		} catch(Exception ex) {
-			log.error(Constants.Logs.ERROR_INSERT_SCHEMATRON, ex);
-			throw new BusinessException(Constants.Logs.ERROR_INSERT_SCHEMATRON, ex);
+			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety, ex);
 		}
+		return sch;
 	}
 	
 	@Override
 	public boolean logicallyRemoveSchematron(final String templateIdRoot, final String version) throws OperationException {
-		Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+		Query query = Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 				.and(Constants.App.VERSION).is(version)
 				.and(Constants.App.DELETED).ne(true));
 
@@ -82,7 +82,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public boolean logicallyRemoveSchematronUpdate(final String templateIdRoot) throws OperationException {
-		Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+		Query query = Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 				.and(Constants.App.DELETED).ne(true));
 
 		Update update = new Update();
@@ -101,7 +101,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
-			return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+			return mongoTemplate.findOne(Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
 		} 
 		catch(MongoException e) {
@@ -113,7 +113,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     @Override
     public SchematronETY findById(String id) throws OperationException {
         try {
-            return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
+            return mongoTemplate.findOne(Query.query(where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class);
         } catch (MongoException e) {
         	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
             throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
@@ -123,7 +123,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public List<SchematronETY> findAll() {
-        Query query = Query.query(Criteria.where(Constants.App.DELETED).ne(true));
+        Query query = Query.query(where(Constants.App.DELETED).ne(true));
 		return mongoTemplate.find(query, SchematronETY.class); 
 	}
 
@@ -140,7 +140,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         List<SchematronETY> objects;
         // Create query
         Query q = Query.query(
-            Criteria.where(FIELD_INSERTION_DATE).gt(lastUpdate).and(FIELD_DELETED).ne(true)
+            where(FIELD_INSERTION_DATE).gt(lastUpdate).and(FIELD_DELETED).ne(true)
         );
         try {
             // Execute
@@ -165,7 +165,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         List<SchematronETY> objects;
         // Create query
         Query q = Query.query(
-            Criteria.where(FIELD_LAST_UPDATE).gt(lastUpdate)
+            where(FIELD_LAST_UPDATE).gt(lastUpdate)
                 .and(FIELD_INSERTION_DATE).lte(lastUpdate)
                 .and(FIELD_DELETED).is(true)
         );
@@ -185,9 +185,9 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
      */
     @Override
     public List<SchematronETY> getEveryActiveSchematron() throws OperationException {
-        List<SchematronETY> objects = null;
+        List<SchematronETY> objects;
         try {
-        	Query q = Query.query(Criteria.where(FIELD_DELETED).ne(true)); 
+        	Query q = Query.query(where(FIELD_DELETED).ne(true));
             objects = mongoTemplate.find(q, SchematronETY.class); 
         } catch (MongoException e) {
         	log.error("Unable to retrieve every available extension with their documents", e);
@@ -200,16 +200,13 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     public SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
+            query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
             query.with(Sort.by(Direction.DESC, "insertion_date"));
 
             return mongoTemplate.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
 			log.error("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
 			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
-		} catch (Exception ex) {
-			log.error("Generic error encountered while retrieving schematron", ex);
-			throw new BusinessException("Generic error encountered while retrieving schematron", ex);
 		}
     }
     
@@ -218,7 +215,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     	boolean output = false;
     	try {
             Query query = new Query();
-            query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true).
+            query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true).
             		and(Constants.App.VERSION).is(version));
 
             output = mongoTemplate.exists(query, SchematronETY.class);
@@ -235,7 +232,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		boolean output = false;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.VERSION).gt(version)
+			query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.VERSION).gt(version)
 			.and(Constants.App.DELETED).ne(true));
 			
 			output = mongoTemplate.exists(query, SchematronETY.class);

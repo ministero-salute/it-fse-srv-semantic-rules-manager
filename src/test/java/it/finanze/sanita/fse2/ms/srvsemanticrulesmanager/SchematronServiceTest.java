@@ -99,7 +99,7 @@ class SchematronServiceTest extends AbstractTest {
     
     @Test
     void insertTest() throws DocumentNotFoundException, OperationException, DocumentAlreadyPresentException {
-    	SchematronDTO dto = new SchematronDTO(); 
+		SchematronETY dto = new SchematronETY();
     	
     	Date date = new Date(); 
     	
@@ -133,7 +133,7 @@ class SchematronServiceTest extends AbstractTest {
     
     @Test
     void insertSchematronIfPresent() throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
-    	SchematronDTO dto = new SchematronDTO(); 
+		SchematronETY dto = new SchematronETY();
     	
     	Date date = new Date(); 
     	
@@ -144,9 +144,9 @@ class SchematronServiceTest extends AbstractTest {
     	dto.setInsertionDate(date); 
     	dto.setLastUpdateDate(date); 
 
-    	schematronService.insert(dto); 
-    	
-    	SchematronDTO dtoNew = new SchematronDTO(); 
+    	schematronService.insert(dto);
+
+		SchematronETY dtoNew = new SchematronETY();
     	
     	
     	dtoNew.setNameSchematron(TEST_SCHEMATRON_NAME_INS_THROW); 
@@ -165,7 +165,7 @@ class SchematronServiceTest extends AbstractTest {
 
     @Test
     void deleteSchematron() throws DocumentNotFoundException, OperationException, DocumentAlreadyPresentException {
-    	SchematronDTO dto = new SchematronDTO(); 
+		SchematronETY dto = new SchematronETY();
     	
     	Date date = new Date(); 
     	
@@ -188,7 +188,7 @@ class SchematronServiceTest extends AbstractTest {
     
     @Test
     void findTest() throws Exception {
-    	SchematronDTO dto = new SchematronDTO(); 
+		SchematronETY dto = new SchematronETY();
     	
     	Date date = new Date(); 
     	
@@ -241,7 +241,7 @@ class SchematronServiceTest extends AbstractTest {
     
     @Test
     void findByTemplateIdRootAndTemplateIdExtensionDeletedElementTest() throws DocumentNotFoundException, OperationException, DocumentAlreadyPresentException {
-    	SchematronDTO dto = new SchematronDTO(); 
+		SchematronETY dto = new SchematronETY();
     	
     	Date date = new Date(); 
     	
@@ -264,7 +264,7 @@ class SchematronServiceTest extends AbstractTest {
     @Test
     void getSchematronsTest() throws OperationException, DocumentAlreadyPresentException, DocumentNotFoundException {
 
-    	SchematronDTO dtoFirst = new SchematronDTO(); 
+		SchematronETY dtoFirst = new SchematronETY();
     	
     	Date date = new Date(); 
     	

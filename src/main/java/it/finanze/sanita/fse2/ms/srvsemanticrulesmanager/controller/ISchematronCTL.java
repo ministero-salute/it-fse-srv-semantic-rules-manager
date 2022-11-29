@@ -15,16 +15,11 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,10 +54,11 @@ public interface ISchematronCTL extends Serializable {
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "409", description = "Conflitto riscontrato sulla risorsa", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronErrorResponseDTO.class))) })
-        ResponseEntity<SchematronResponseDTO> addSchematron(
+        @ResponseStatus(HttpStatus.CREATED)
+        SchematronResponseDTO addSchematron(
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestPart("file") MultipartFile file, HttpServletRequest request)
+                        @RequestPart("file") MultipartFile file)
             throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException,
             DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
 

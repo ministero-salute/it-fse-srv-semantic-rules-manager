@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -36,36 +37,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = 3796163429050020208L;
-
 	@Autowired
-	private transient ISchematronSRV schematronService;
+	private ISchematronSRV service;
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> addSchematron(String templateIdRoot, String version,
-															   MultipartFile file, HttpServletRequest request) throws IOException,
+	public SchematronResponseDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
 		OperationException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException {
 
-		log.debug("Called POST /schematron");
-
-		Date date = new Date();
+		// Check file consistency
 		if (isValidFile(file)) {
+			// Verify integrity
 			SchematronValidator.verify(file);
-			SchematronDTO schematronDTO = new SchematronDTO();
-			schematronDTO.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-			schematronDTO.setNameSchematron(file.getOriginalFilename());
-			schematronDTO.setTemplateIdRoot(templateIdRoot);
-			schematronDTO.setVersion(version);
-			schematronDTO.setInsertionDate(date);
-			schematronDTO.setLastUpdateDate(date);
-			schematronService.insert(schematronDTO);
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), 1, null, null), HttpStatus.CREATED);
+			// Insert into database
+			service.insert(SchematronETY.fromMultipart(templateIdRoot, version, file));
 		} else {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
+
+		return new SchematronResponseDTO(getLogTraceInfo(), 1, null, null);
 	}
 
 	@Override
@@ -83,7 +72,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			schematron.setVersion(version);
 			schematron.setInsertionDate(date);
 			schematron.setLastUpdateDate(date);
-			schematronService.update(schematron);
+			service.update(schematron);
 		} else {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
@@ -95,7 +84,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<SchematronResponseDTO> deleteSchematron(String templateIdRoot, String version,
 			HttpServletRequest request) throws DocumentNotFoundException, OperationException {
 		log.debug("Called DELETE /schematron");
-		boolean existsSchematron = schematronService.deleteSchematron(templateIdRoot, version);
+		boolean existsSchematron = service.deleteSchematron(templateIdRoot, version);
 
 		if (existsSchematron) {
 			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), null, null, 1), HttpStatus.OK);
@@ -110,14 +99,14 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throws DocumentNotFoundException, OperationException {
 
 		log.debug("Called GET /schematron by ID Root and Version");
-		SchematronDTO response = schematronService.findByTemplateIdRootAndVersion(templateIdRoot, version);
+		SchematronDTO response = service.findByTemplateIdRootAndVersion(templateIdRoot, version);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@Override
 	public ResponseEntity<SchematronsDTO> getSchematrons(HttpServletRequest request) {
 		log.debug("Called GET /schematron");
-		List<SchematronDTO> schematrons = schematronService.getSchematrons();
+		List<SchematronDTO> schematrons = service.getSchematrons();
 		return new ResponseEntity<>(new SchematronsDTO(getLogTraceInfo(), schematrons), HttpStatus.OK);
 	}
 
@@ -125,7 +114,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request, String id)
 			throws OperationException, DocumentNotFoundException {
 		log.debug("Called GET /schematron by ID");
-		SchematronDocumentDTO doc = schematronService.findById(id);
+		SchematronDocumentDTO doc = service.findById(id);
 		return new ResponseEntity<>(new GetDocumentResDTO(getLogTraceInfo(), doc), HttpStatus.OK);
 	}
 

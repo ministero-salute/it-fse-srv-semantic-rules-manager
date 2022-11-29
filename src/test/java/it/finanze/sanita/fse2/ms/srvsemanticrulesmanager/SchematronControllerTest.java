@@ -267,7 +267,7 @@ class SchematronControllerTest extends AbstractTest {
 	 
 	@Test
 	void findSchematronByIdRootAndExtensionTest() throws Exception {
-		SchematronDTO dto = new SchematronDTO();
+		SchematronETY dto = new SchematronETY();
 
 		dto.setId(TEST_SCHEMATRON_ID);
 		dto.setNameSchematron(TEST_NAME_SCHEMATRON);
@@ -286,7 +286,7 @@ class SchematronControllerTest extends AbstractTest {
 
 	@Test
 	void findSchematronByIdTest() throws Exception {
-		SchematronDTO dto = new SchematronDTO();
+		SchematronETY dto = new SchematronETY();
 
 		dto.setId(TEST_SCHEMATRON_ID);
 		dto.setNameSchematron(TEST_NAME_SCHEMATRON);
