@@ -4,24 +4,8 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl;
 
 
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import com.mongodb.client.result.UpdateResult;
-import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
-
 import com.mongodb.MongoException;
-
+import com.mongodb.client.result.UpdateResult;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
@@ -29,10 +13,22 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationExc
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY.*;
-import static org.springframework.data.mongodb.core.query.Criteria.*;
-import static org.springframework.data.mongodb.core.query.Query.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  *
@@ -86,8 +82,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public boolean logicallyRemoveSchematronUpdate(final String templateIdRoot) throws OperationException {
-		Query query = query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-				.and(Constants.App.DELETED).ne(true));
+
+		Query query = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
 
 		Update update = new Update();
 		update.set(FIELD_DELETED, true);
@@ -105,8 +101,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
-			return mongoTemplate.findOne(query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
+			return mongoTemplate.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)
+					.and(FIELD_VERSION).is(version).and(FIELD_DELETED).ne(true)), SchematronETY.class);
 		} 
 		catch(MongoException e) {
 			log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
@@ -117,7 +113,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     @Override
     public SchematronETY findById(String id) throws OperationException {
         try {
-            return mongoTemplate.findOne(query(where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class);
+            return mongoTemplate.findOne(query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true)), SchematronETY.class);
         } catch (MongoException e) {
         	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
             throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
@@ -127,7 +123,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public List<SchematronETY> findAll() {
-        Query query = query(where(Constants.App.DELETED).ne(true));
+        Query query = query(where(FIELD_DELETED).ne(true));
 		return mongoTemplate.find(query, SchematronETY.class); 
 	}
 
@@ -204,8 +200,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     public SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
         try {
             Query query = new Query();
-            query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true));
-            query.with(Sort.by(Direction.DESC, "insertion_date"));
+            query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
+            query.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 
             return mongoTemplate.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
@@ -219,8 +215,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     	boolean output = false;
     	try {
             Query query = new Query();
-            query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true).
-            		and(Constants.App.VERSION).is(version));
+            query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true).
+            		and(FIELD_VERSION).is(version));
 
             output = mongoTemplate.exists(query, SchematronETY.class);
 		}  catch (Exception ex) {
@@ -236,8 +232,8 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		boolean output = false;
 		try {
 			Query query = new Query();
-			query.addCriteria(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.VERSION).gt(version)
-			.and(Constants.App.DELETED).ne(true));
+			query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_VERSION).gt(version)
+			.and(FIELD_DELETED).ne(true));
 			
 			output = mongoTemplate.exists(query, SchematronETY.class);
 		} catch(MongoException e) {

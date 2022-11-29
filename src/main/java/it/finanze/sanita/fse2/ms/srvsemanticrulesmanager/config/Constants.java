@@ -81,35 +81,6 @@ public final class Constants {
 
 	}
 
-	public static final class App {
-
-		public static final String JWT_TOKEN_AUDIENCE = "eds-semantic";
-
-		public static final String BODY = "body";
-
-		public static final String MONGO_ID = "_id"; 
-
-		public static final String FILENAME = "filename";
-
-		public static final String VERSION = "version";
-
-		public static final String CONTENT_FILE = "content_file"; 
-
-		public static final String CONTENT_SCHEMATRON = "content_schematron"; 
-
-		public static final String LAST_UPDATE = "last_update_date"; 
-
-		public static final String TEMPLATE_ID_ROOT = "template_id_root"; 
-
-		public static final String DELETED = "deleted"; 
-
-
-		private App() {
-			//This method is intentionally left blank.
-		}
-
-	}
-
 	public static final class Logs {
 
 		public static final String ERROR_DELETE_SCHEMATRON = "Error while deleting ety schematron :"; 

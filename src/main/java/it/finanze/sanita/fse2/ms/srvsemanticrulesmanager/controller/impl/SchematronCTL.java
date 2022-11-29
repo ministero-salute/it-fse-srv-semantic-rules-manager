@@ -3,33 +3,27 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 /**
  */
@@ -62,17 +56,9 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			MultipartFile file, HttpServletRequest request)
 		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 
-		Date date = new Date();
 		if (isValidFile(file)) {
 			SchematronValidator.verify(file);
-			SchematronDTO schematron = new SchematronDTO();
-			schematron.setContentSchematron(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-			schematron.setNameSchematron(file.getOriginalFilename());
-			schematron.setTemplateIdRoot(templateIdRoot);
-			schematron.setVersion(version);
-			schematron.setInsertionDate(date);
-			schematron.setLastUpdateDate(date);
-			service.update(schematron);
+			service.update(SchematronETY.fromMultipart(templateIdRoot, version, file));
 		} else {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
@@ -86,13 +72,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public ResponseEntity<SchematronDTO> getSchematronByTemplateIdRootAndTemplateIdExtension(
-			String templateIdRoot, String version, HttpServletRequest request)
-			throws DocumentNotFoundException, OperationException {
-
-		log.debug("Called GET /schematron by ID Root and Version");
-		SchematronDTO response = service.findByTemplateIdRootAndVersion(templateIdRoot, version);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+	public SchematronDTO getSchematronByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return service.findByTemplateIdRoot(templateIdRoot);
 	}
 
 	@Override

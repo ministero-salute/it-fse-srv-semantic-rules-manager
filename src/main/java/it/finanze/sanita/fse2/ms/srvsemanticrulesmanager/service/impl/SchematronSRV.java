@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mongodb.MongoException;
-
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
@@ -54,20 +52,19 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 	
 	@Override
-	public void update(SchematronDTO dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException {
-		SchematronETY ety = parseDtoToEty(dto);
+	public void update(SchematronETY dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException {
 
 		SchematronETY lastSchematron = repository.findByTemplateIdRoot(dto.getTemplateIdRoot());
-		
+
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
 				if(!repository.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
 					repository.logicallyRemoveSchematronUpdate(lastSchematron.getTemplateIdRoot());
-					repository.insert(ety);
+					repository.insert(dto);
 				} else {
 					throw new DocumentAlreadyPresentException("File già presente");
 				}
-				
+
 			} else {
 				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", dto.getVersion(), lastSchematron.getVersion()));
 			}
@@ -84,6 +81,15 @@ public class SchematronSRV implements ISchematronSRV {
 		} 
 		
 		return parseEtyToDto(output); 
+	}
+
+	@Override
+	public SchematronDTO findByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		SchematronETY output = repository.findByTemplateIdRoot(templateIdRoot);
+		if (output == null) {
+			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
+		}
+		return parseEtyToDto(output);
 	}
 
 	@Override

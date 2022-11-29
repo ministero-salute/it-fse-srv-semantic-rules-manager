@@ -36,7 +36,7 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @throws DocumentNotFoundException
 	 * @throws DocumentAlreadyPresentException
 	 */
-	void update(SchematronDTO dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException;
+	void update(SchematronETY dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException;
 
 	/**
 	 * Delete a Schematron by templateIdRoot and templateIdExtension.
@@ -55,13 +55,15 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @throws DocumentNotFoundException 
 	 * @throws OperationException 
 	 */
-	SchematronDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException; 
+	SchematronDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException;
+
+	SchematronDTO findByTemplateIdRoot(String templateIdRoot)  throws DocumentNotFoundException, OperationException;
 
 	/**
 	 * Finds all schematrons.
 	 * @return List<SchematronDTO>
 	 */
-	List<SchematronDTO> getSchematrons(); 
+	List<SchematronDTO> getSchematrons();
 
 	/**
 	 * Retrieves the Schematron by identifier
