@@ -67,7 +67,7 @@ public class SchematronSRV implements ISchematronSRV {
 		
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
-				if(schematronRepo.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
+				if(!schematronRepo.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
 					schematronRepo.logicallyRemoveSchematron(lastSchematron.getTemplateIdRoot(), lastSchematron.getVersion());
 					schematronRepo.insert(ety);
 				} else {
