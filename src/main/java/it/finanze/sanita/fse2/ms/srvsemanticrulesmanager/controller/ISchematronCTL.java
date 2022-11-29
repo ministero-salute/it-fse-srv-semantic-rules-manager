@@ -80,7 +80,8 @@ public interface ISchematronCTL extends Serializable {
                         @RequestPart("templateIdRoot") @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart("version") @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestPart("file") MultipartFile file, HttpServletRequest request)
-            throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException;
+            throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException,
+            DocumentAlreadyPresentException;
 
         @DeleteMapping(value = "/schematron/root/{templateIdRoot}/version/{version}", produces = {
                         MediaType.APPLICATION_JSON_VALUE })

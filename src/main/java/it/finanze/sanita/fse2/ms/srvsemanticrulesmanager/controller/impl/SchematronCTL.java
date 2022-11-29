@@ -71,7 +71,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	@Override
 	public ResponseEntity<SchematronResponseDTO> updateSchematron(String templateIdRoot, String version,
 			MultipartFile file, HttpServletRequest request)
-		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException {
+		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 
 		Date date = new Date();
 		if (isValidFile(file)) {

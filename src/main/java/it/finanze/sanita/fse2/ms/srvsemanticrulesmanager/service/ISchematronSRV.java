@@ -35,8 +35,9 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * @throws OperationException 
 	 * @throws InvalidVersionException
 	 * @throws DocumentNotFoundException
+	 * @throws DocumentAlreadyPresentException
 	 */
-	void update(SchematronDTO ety) throws OperationException, InvalidVersionException, DocumentNotFoundException; 
+	void update(SchematronDTO dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException;
 
 	/**
 	 * Delete a Schematron by templateIdRoot and templateIdExtension.

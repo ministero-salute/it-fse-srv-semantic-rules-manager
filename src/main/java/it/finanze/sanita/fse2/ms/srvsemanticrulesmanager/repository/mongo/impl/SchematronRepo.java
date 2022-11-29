@@ -194,4 +194,21 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 			throw new BusinessException("Generic error encountered while retrieving schematron", ex);
 		}
     }
+    
+    @Override
+    public boolean checkExist(final String templateIdRoot,final String version) {
+    	boolean output = false;
+    	try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.DELETED).ne(true).
+            		and(Constants.App.VERSION).is(version));
+
+            output = mongoTemplate.exists(query, SchematronETY.class);
+		}  catch (Exception ex) {
+			log.error("Generic error encountered while check exists schematron:", ex);
+			throw new BusinessException("Generic error encountered while check exists schematron:", ex);
+		}
+    	
+    	return output;
+    }
 }

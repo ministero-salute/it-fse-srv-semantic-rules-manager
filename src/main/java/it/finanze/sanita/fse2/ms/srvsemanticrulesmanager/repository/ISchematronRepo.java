@@ -72,4 +72,6 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	 * @throws OperationException
 	 */
 	SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException;
+	
+	boolean checkExist(String templateIdRoot,String version);
 }
