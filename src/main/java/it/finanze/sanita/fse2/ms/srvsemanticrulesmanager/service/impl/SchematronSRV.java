@@ -47,6 +47,12 @@ public class SchematronSRV implements ISchematronSRV {
 			SchematronETY ety = parseDtoToEty(dto); 
 			SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRootAndVersion(ety.getTemplateIdRoot(), ety.getVersion()); 
 		
+			boolean majorVersion = schematronRepo.checkMajorVersion(ety.getTemplateIdRoot(), ety.getVersion());
+			if(majorVersion) {
+				log.error("Error: Schematron con vesion maggiore già esistente sulla base dati");
+				throw new DocumentAlreadyPresentException("Error: Schematron con vesion maggiore già esistente sulla base dati");
+			}
+			
 			if (schematronIfPresent != null) {
 				log.error("Error: schematron already present in the database");
 				throw new DocumentAlreadyPresentException("Error: schematron already present in the database"); 
@@ -68,7 +74,7 @@ public class SchematronSRV implements ISchematronSRV {
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
 				if(!schematronRepo.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
-					schematronRepo.logicallyRemoveSchematron(lastSchematron.getTemplateIdRoot(), lastSchematron.getVersion());
+					schematronRepo.logicallyRemoveSchematronUpdate(lastSchematron.getTemplateIdRoot());
 					schematronRepo.insert(ety);
 				} else {
 					throw new DocumentAlreadyPresentException("File già presente");

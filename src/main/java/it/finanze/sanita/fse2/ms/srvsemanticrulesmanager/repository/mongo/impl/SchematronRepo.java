@@ -81,6 +81,24 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	}
 	
 	@Override
+	public boolean logicallyRemoveSchematronUpdate(final String templateIdRoot) throws OperationException {
+		Query query = Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+				.and(Constants.App.DELETED).ne(true));
+
+		Update update = new Update();
+		update.set(FIELD_DELETED, true);
+		update.set(FIELD_LAST_UPDATE, new Date());
+
+		try {
+			UpdateResult updateResult = mongoTemplate.updateMulti(query, update, SchematronETY.class);
+			return updateResult.getModifiedCount() > 0;
+		} catch(MongoException ex) {
+			log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);
+			throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
+		}
+	}
+	
+	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
 			return mongoTemplate.findOne(Query.query(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
@@ -211,4 +229,20 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     	
     	return output;
     }
+    
+	@Override
+	public boolean checkMajorVersion(final String templateIdRoot, final String version) throws OperationException, DocumentNotFoundException {
+		boolean output = false;
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot).and(Constants.App.VERSION).gt(version)
+			.and(Constants.App.DELETED).ne(true));
+			
+			output = mongoTemplate.exists(query, SchematronETY.class);
+		} catch(MongoException e) {
+			log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+		}
+		return output;
+	}
 }
