@@ -127,7 +127,7 @@ class ResponseDTOTest extends AbstractTest {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
 		SchematronErrorResponseDTO dto = new SchematronErrorResponseDTO(logTraceInfoDto, IN_TYPE_TEST, IN_TITLE_TEST,
-				IN_DETAIL_TEST, IN_STATUS_TEST, IN_INSTANCE_TEST, IN_TX_ID_TEST); 
+				IN_DETAIL_TEST, IN_STATUS_TEST, IN_INSTANCE_TEST); 
 		
 		
 		assertEquals(SchematronErrorResponseDTO.class, dto.getClass()); 
@@ -136,39 +136,14 @@ class ResponseDTOTest extends AbstractTest {
 		assertEquals(String.class, dto.getDetail().getClass()); 
 		assertEquals(Integer.class, dto.getStatus().getClass()); 
 		assertEquals(String.class, dto.getInstance().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass()); 
 		
 		assertEquals(IN_TYPE_TEST, dto.getType()); 
 		assertEquals(IN_TITLE_TEST, dto.getTitle()); 
 		assertEquals(IN_DETAIL_TEST, dto.getDetail()); 
 		assertEquals(IN_STATUS_TEST, dto.getStatus()); 
 		assertEquals(IN_INSTANCE_TEST, dto.getInstance()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
 	}
 	
-	@Test
-	void schematronCreationErrorResponseDtoTest() {
-		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-
-		SchematronCreationErrorResponseDTO dto = new SchematronCreationErrorResponseDTO(logTraceInfoDto, IN_TYPE_TEST, IN_TITLE_TEST,
-				IN_DETAIL_TEST, IN_STATUS_TEST, IN_INSTANCE_TEST, IN_TX_ID_TEST); 
-		
-		
-		assertEquals(SchematronCreationErrorResponseDTO.class, dto.getClass()); 
-		assertEquals(String.class, dto.getType().getClass()); 
-		assertEquals(String.class, dto.getTitle().getClass()); 
-		assertEquals(String.class, dto.getDetail().getClass()); 
-		assertEquals(Integer.class, dto.getStatus().getClass()); 
-		assertEquals(String.class, dto.getInstance().getClass()); 
-		assertEquals(String.class, dto.getTransactionId().getClass()); 
-		
-		assertEquals(IN_TYPE_TEST, dto.getType()); 
-		assertEquals(IN_TITLE_TEST, dto.getTitle()); 
-		assertEquals(IN_DETAIL_TEST, dto.getDetail()); 
-		assertEquals(IN_STATUS_TEST, dto.getStatus()); 
-		assertEquals(IN_INSTANCE_TEST, dto.getInstance()); 
-		assertEquals(IN_TX_ID_TEST, dto.getTransactionId()); 
-	} 
 	
 	@Test
 	void changesetResponseDtoTest() {
