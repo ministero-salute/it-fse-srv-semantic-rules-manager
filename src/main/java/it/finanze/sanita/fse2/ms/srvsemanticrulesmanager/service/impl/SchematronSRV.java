@@ -39,31 +39,31 @@ import lombok.extern.slf4j.Slf4j;
 public class SchematronSRV implements ISchematronSRV {
 
 	@Autowired
-	private SchematronRepo schematronRepo;
+	private SchematronRepo repository;
 	
 	@Override
 	public SchematronETY insert(final SchematronETY ety) throws OperationException, DocumentAlreadyPresentException {
 
-		SchematronETY schematronIfPresent = schematronRepo.findByTemplateIdRoot(ety.getTemplateIdRoot());
+		SchematronETY schematronIfPresent = repository.findByTemplateIdRoot(ety.getTemplateIdRoot());
 
 		if (schematronIfPresent != null) {
 			throw new DocumentAlreadyPresentException("Error: schematron already present in the database");
 		}
 
-		return schematronRepo.insert(ety);
+		return repository.insert(ety);
 	}
 	
 	@Override
 	public void update(SchematronDTO dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException {
 		SchematronETY ety = parseDtoToEty(dto);
 
-		SchematronETY lastSchematron = schematronRepo.findByTemplateIdRoot(dto.getTemplateIdRoot());
+		SchematronETY lastSchematron = repository.findByTemplateIdRoot(dto.getTemplateIdRoot());
 		
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
-				if(!schematronRepo.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
-					schematronRepo.logicallyRemoveSchematronUpdate(lastSchematron.getTemplateIdRoot());
-					schematronRepo.insert(ety);
+				if(!repository.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
+					repository.logicallyRemoveSchematronUpdate(lastSchematron.getTemplateIdRoot());
+					repository.insert(ety);
 				} else {
 					throw new DocumentAlreadyPresentException("File già presente");
 				}
@@ -78,7 +78,7 @@ public class SchematronSRV implements ISchematronSRV {
 	
 	@Override
 	public SchematronDTO findByTemplateIdRootAndVersion(final String templateIdRoot,final String version) throws DocumentNotFoundException, OperationException {
-		SchematronETY output = schematronRepo.findByTemplateIdRootAndVersion(templateIdRoot, version);
+		SchematronETY output = repository.findByTemplateIdRootAndVersion(templateIdRoot, version);
 		if (output == null) {
 			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND); 
 		} 
@@ -88,7 +88,7 @@ public class SchematronSRV implements ISchematronSRV {
 
 	@Override
 	public SchematronDocumentDTO findById(String id) throws OperationException, DocumentNotFoundException {
-		SchematronETY output = schematronRepo.findById(id);
+		SchematronETY output = repository.findById(id);
 
         if (output == null) {
             throw new DocumentNotFoundException(Constants.Logs.ERROR_REQUESTED_DOCUMENT_DOES_NOT_EXIST);
@@ -98,17 +98,17 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 	
 	@Override
-	public boolean deleteSchematron(String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException {
-		try {
-			return schematronRepo.logicallyRemoveSchematron(templateIdRoot, templateIdExtension); 
-		} catch(MongoException e) {
-			throw new OperationException(e.getMessage(), e); 
-		}
+	public int deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		// Check existence
+		SchematronETY root = repository.findByTemplateIdRoot(templateIdRoot);
+		if(root == null) throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
+		// Execute query
+		return repository.deleteByTemplateIdRoot(templateIdRoot);
 	}
 	
 	@Override
 	public List<SchematronDTO> getSchematrons() {
-		List<SchematronETY> etyList = schematronRepo.findAll(); 
+		List<SchematronETY> etyList = repository.findAll();
 		if (etyList == null || etyList.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -166,9 +166,9 @@ public class SchematronSRV implements ISchematronSRV {
 		List<SchematronETY> insertions;
 
 		if (lastUpdate != null) {
-			insertions = schematronRepo.getInsertions(lastUpdate);
+			insertions = repository.getInsertions(lastUpdate);
 		} else {
-			insertions = schematronRepo.getEveryActiveSchematron();
+			insertions = repository.getEveryActiveSchematron();
 		}
 
 		return insertions.stream().map(ChangeSetUtility::schematronToChangeset).collect(Collectors.toList());
@@ -180,7 +180,7 @@ public class SchematronSRV implements ISchematronSRV {
     	List<ChangeSetDTO> deletions = new ArrayList<>();
 		try {
 			if (lastUpdate != null) {
-				List<SchematronETY> deletionsETY = schematronRepo.getDeletions(lastUpdate);
+				List<SchematronETY> deletionsETY = repository.getDeletions(lastUpdate);
 				deletions = deletionsETY.stream().map(ChangeSetUtility::schematronToChangeset)
 						.collect(Collectors.toList());
 			}

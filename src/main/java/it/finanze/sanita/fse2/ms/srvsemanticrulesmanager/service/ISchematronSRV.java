@@ -41,12 +41,11 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	/**
 	 * Delete a Schematron by templateIdRoot and templateIdExtension.
 	 * @param templateIdRoot
-	 * @param templateIdExtension
 	 * @return boolean
 	 * @throws DocumentNotFoundException 
 	 * @throws OperationException 
 	 */
-	boolean deleteSchematron(String templateIdRoot, String templateIdExtension) throws DocumentNotFoundException, OperationException; 
+	int deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException;
 	
 	/**
 	 * Find a schematron by Template Id Root and Template Id Extension.

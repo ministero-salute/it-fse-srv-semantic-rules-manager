@@ -81,16 +81,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public ResponseEntity<SchematronResponseDTO> deleteSchematron(String templateIdRoot, String version,
-			HttpServletRequest request) throws DocumentNotFoundException, OperationException {
-		log.debug("Called DELETE /schematron");
-		boolean existsSchematron = service.deleteSchematron(templateIdRoot, version);
-
-		if (existsSchematron) {
-			return new ResponseEntity<>(new SchematronResponseDTO(getLogTraceInfo(), null, null, 1), HttpStatus.OK);
-		} else {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
-		}
+	public SchematronResponseDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return new SchematronResponseDTO(getLogTraceInfo(), null, null, service.deleteSchematron(templateIdRoot));
 	}
 
 	@Override

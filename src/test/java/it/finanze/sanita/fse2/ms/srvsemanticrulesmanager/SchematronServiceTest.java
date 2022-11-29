@@ -178,7 +178,7 @@ class SchematronServiceTest extends AbstractTest {
 
     	schematronService.insert(dto); 
     	
-    	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_DEL, TEST_SCHEMATRON_EXTENSION_DEL); 
+    	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_DEL);
     	
     	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndVersion(
     			TEST_SCHEMATRON_ROOT_DEL, TEST_SCHEMATRON_EXTENSION_DEL)); 
@@ -254,7 +254,7 @@ class SchematronServiceTest extends AbstractTest {
 
     	schematronService.insert(dto); 
     	
-    	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_QUERY_DEL, TEST_SCHEMATRON_EXTENSION_QUERY_DEL); 
+    	schematronService.deleteSchematron(TEST_SCHEMATRON_ROOT_QUERY_DEL);
 
     	assertThrows(DocumentNotFoundException.class, () -> schematronService.findByTemplateIdRootAndVersion(TEST_SCHEMATRON_ROOT_QUERY_DEL, TEST_SCHEMATRON_EXTENSION_QUERY_DEL)); 
 

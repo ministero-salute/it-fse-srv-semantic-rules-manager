@@ -43,12 +43,12 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	SchematronETY findById(String id) throws OperationException;
 	
 	/**
-	 * Deletes a Schematron identified by its {@code template_id_root} and its {@code template_id_extension}.
+	 * Deletes a Schematron identified by its {@code template_id_root}
 	 * 
 	 * @param templateIdRoot, template_id_extension Primary key of the Schematron to return.
 	 * @throws OperationException 
 	 */
-	boolean logicallyRemoveSchematron(String templateIdRoot, String templateIdExtension) throws OperationException;
+	int deleteByTemplateIdRoot(String templateIdRoot) throws OperationException;
 
 	/**
 	 * Returns all schematrons.

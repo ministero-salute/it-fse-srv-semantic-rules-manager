@@ -30,7 +30,9 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronR
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import lombok.extern.slf4j.Slf4j;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY.*;
 import static org.springframework.data.mongodb.core.query.Criteria.*;
+import static org.springframework.data.mongodb.core.query.Query.*;
 
 /**
  *
@@ -62,27 +64,29 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	}
 	
 	@Override
-	public boolean logicallyRemoveSchematron(final String templateIdRoot, final String version) throws OperationException {
-		Query query = Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
-				.and(Constants.App.VERSION).is(version)
-				.and(Constants.App.DELETED).ne(true));
-
+	public int deleteByTemplateIdRoot(final String templateIdRoot) throws OperationException {
+		// Working var
+		UpdateResult res;
+		// Create query
+		Query query = query(
+			where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true)
+		);
+		// Define update operation
 		Update update = new Update();
-		update.set(FIELD_DELETED, true);
 		update.set(FIELD_LAST_UPDATE, new Date());
-
+		update.set(FIELD_DELETED, true);
+		// Execute
 		try {
-			UpdateResult updateResult = mongoTemplate.updateFirst(query, update, SchematronETY.class);
-			return updateResult.getModifiedCount() > 0;
+			 res = mongoTemplate.updateMulti(query, update, SchematronETY.class);
 		} catch(MongoException ex) {
-			log.error(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass() , ex);
 			throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
 		}
+		return (int) res.getModifiedCount();
 	}
 	
 	@Override
 	public boolean logicallyRemoveSchematronUpdate(final String templateIdRoot) throws OperationException {
-		Query query = Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+		Query query = query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 				.and(Constants.App.DELETED).ne(true));
 
 		Update update = new Update();
@@ -101,7 +105,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
-			return mongoTemplate.findOne(Query.query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
+			return mongoTemplate.findOne(query(where(Constants.App.TEMPLATE_ID_ROOT).is(templateIdRoot)
 					.and(Constants.App.VERSION).is(version).and(Constants.App.DELETED).ne(true)), SchematronETY.class); 
 		} 
 		catch(MongoException e) {
@@ -113,7 +117,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     @Override
     public SchematronETY findById(String id) throws OperationException {
         try {
-            return mongoTemplate.findOne(Query.query(where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class);
+            return mongoTemplate.findOne(query(where(Constants.App.MONGO_ID).is(new ObjectId(id)).and(Constants.App.DELETED).ne(true)), SchematronETY.class);
         } catch (MongoException e) {
         	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
             throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
@@ -123,7 +127,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	
 	@Override
 	public List<SchematronETY> findAll() {
-        Query query = Query.query(where(Constants.App.DELETED).ne(true));
+        Query query = query(where(Constants.App.DELETED).ne(true));
 		return mongoTemplate.find(query, SchematronETY.class); 
 	}
 
@@ -139,7 +143,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         // Working var
         List<SchematronETY> objects;
         // Create query
-        Query q = Query.query(
+        Query q = query(
             where(FIELD_INSERTION_DATE).gt(lastUpdate).and(FIELD_DELETED).ne(true)
         );
         try {
@@ -164,7 +168,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         // Working var
         List<SchematronETY> objects;
         // Create query
-        Query q = Query.query(
+        Query q = query(
             where(FIELD_LAST_UPDATE).gt(lastUpdate)
                 .and(FIELD_INSERTION_DATE).lte(lastUpdate)
                 .and(FIELD_DELETED).is(true)
@@ -187,7 +191,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     public List<SchematronETY> getEveryActiveSchematron() throws OperationException {
         List<SchematronETY> objects;
         try {
-        	Query q = Query.query(where(FIELD_DELETED).ne(true));
+        	Query q = query(where(FIELD_DELETED).ne(true));
             objects = mongoTemplate.find(q, SchematronETY.class); 
         } catch (MongoException e) {
         	log.error("Unable to retrieve every available extension with their documents", e);

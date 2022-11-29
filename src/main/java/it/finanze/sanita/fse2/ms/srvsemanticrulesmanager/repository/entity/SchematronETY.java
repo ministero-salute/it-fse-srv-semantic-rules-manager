@@ -6,7 +6,6 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity;
 import java.io.IOException;
 import java.util.Date;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
@@ -17,6 +16,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.IChangeSetRepo.*;
+
 /**
  * Model to save schematron.
  */
@@ -25,28 +26,34 @@ import org.springframework.web.multipart.MultipartFile;
 @Document(collection = "#{@schematronBean}")
 public class SchematronETY {
 
+	public static final String FIELD_ID = "_id";
+	public static final String FIELD_CONTENT = "content_schematron";
+	public static final String FIELD_NAME = "name_schematron";
+	public static final String FIELD_TEMPLATE_ID_ROOT = "template_id_root";
+	public static final String FIELD_VERSION = "version";
+
 	@Id
 	private String id;
 	
-	@Field(name = "content_schematron")
+	@Field(name = FIELD_CONTENT)
 	private Binary contentSchematron;
 
-	@Field(name = "name_schematron")
+	@Field(name = FIELD_NAME)
 	private String nameSchematron;
 
-	@Field(name = "template_id_root")
+	@Field(name = FIELD_TEMPLATE_ID_ROOT)
 	private String templateIdRoot;
 	
-	@Field(name = "version")
+	@Field(name = FIELD_VERSION)
 	private String version;
 	
-	@Field(name = "insertion_date")
+	@Field(name = FIELD_INSERTION_DATE)
 	private Date insertionDate; 
 	
-	@Field(name = "last_update_date")
+	@Field(name = FIELD_LAST_UPDATE)
 	private Date lastUpdateDate; 
 	
-	@Field(name = "deleted")
+	@Field(name = FIELD_DELETED)
 	private boolean deleted;
 
 	public static SchematronETY fromMultipart(String templateIdRoot, String version, MultipartFile file) throws IOException {
