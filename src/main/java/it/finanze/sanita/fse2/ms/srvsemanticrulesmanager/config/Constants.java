@@ -57,7 +57,7 @@ public final class Constants {
 		/**
 		 * The name of the MongoDB Collection 
 		 */
-		public static final String COLLECTION_SCHEMATRON = "schematron";  
+		public static final String COLLECTION_SCHEMATRON = "schematron_eds";  
 
 		private Collections() {
 
