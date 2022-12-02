@@ -4,11 +4,11 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.SchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.CrudDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -95,9 +95,9 @@ class ResponseDTOTest extends AbstractTest {
 	@Test
 	void schematronResponseDtoNoArgsTest() {
 
-		SchematronResponseDTO dto = new SchematronResponseDTO(); 
+		CrudDocumentResDTO dto = new CrudDocumentResDTO();
 		
-		assertEquals(SchematronResponseDTO.class, dto.getClass()); 
+		assertEquals(CrudDocumentResDTO.class, dto.getClass());
 
 		
 	}
@@ -106,9 +106,9 @@ class ResponseDTOTest extends AbstractTest {
 	void schematronResponseDtoTest() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		SchematronResponseDTO dto = new SchematronResponseDTO(logTraceInfoDto, 1, null, null);
+		CrudDocumentResDTO dto = new CrudDocumentResDTO(logTraceInfoDto, 1, null, null);
 		
-		assertEquals(SchematronResponseDTO.class, dto.getClass()); 
+		assertEquals(CrudDocumentResDTO.class, dto.getClass());
 		assertEquals(String.class, dto.getSpanID().getClass()); 
 		assertEquals(String.class, dto.getTraceID().getClass()); 
 		

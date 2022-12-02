@@ -4,6 +4,7 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,11 @@ public class SchematronDocumentDTO {
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private OffsetDateTime lastUpdateDate;
 
+	@AllArgsConstructor
+	public static class Options {
+		private final boolean binary;
+	}
+
 	public static SchematronDocumentDTO fromEntity(SchematronETY e) {
 		SchematronDocumentDTO out = new SchematronDocumentDTO();
 		out.setId(e.getId());
@@ -50,6 +56,11 @@ public class SchematronDocumentDTO {
 			convertToOffsetDateTime(e.getLastUpdateDate())
 		);
 		return out;
+	}
+
+	public SchematronDocumentDTO applyOptions(Options o) {
+		if(!o.binary) contentSchematron = null;
+		return this;
 	}
 
 }

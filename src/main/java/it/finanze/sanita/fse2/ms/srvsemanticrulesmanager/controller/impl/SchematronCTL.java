@@ -6,9 +6,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.CrudDocumentResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.SchematronResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.SchematronsDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
+
 /**
  */
 @RestController
@@ -31,7 +33,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private ISchematronSRV service;
 
 	@Override
-	public SchematronResponseDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
+	public CrudDocumentResDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
 		OperationException, DocumentAlreadyPresentException, InvalidContentException, SchematronValidatorException {
 
 		// Check file consistency
@@ -44,11 +46,11 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new SchematronResponseDTO(getLogTraceInfo(), 1, null, null);
+		return new CrudDocumentResDTO(getLogTraceInfo(), 1, null, null);
 	}
 
 	@Override
-	public SchematronResponseDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
+	public CrudDocumentResDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
 		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 
 		if (isValidFile(file)) {
@@ -58,24 +60,24 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new SchematronResponseDTO(getLogTraceInfo(), null, 1, null);
+		return new CrudDocumentResDTO(getLogTraceInfo(), null, 1, null);
 	}
 
 	@Override
-	public SchematronResponseDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return new SchematronResponseDTO(getLogTraceInfo(), null, null, service.deleteSchematron(templateIdRoot));
+	public CrudDocumentResDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return new CrudDocumentResDTO(getLogTraceInfo(), null, null, service.deleteSchematron(templateIdRoot));
 	}
 
 	@Override
-	public SchematronDocumentDTO getSchematronByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return service.findByTemplateIdRoot(templateIdRoot);
+	public SchematronDocumentDTO getSchematronByTemplateIdRoot(String templateIdRoot, boolean binary) throws DocumentNotFoundException, OperationException {
+		return service.findByTemplateIdRoot(templateIdRoot).applyOptions(new Options(binary));
 	}
 
 	@Override
-	public SchematronsDTO getSchematrons() {
+	public GetDocumentsResDTO getSchematrons(boolean binary) {
 		log.debug("Called GET /schematron");
 		List<SchematronDocumentDTO> schematrons = service.getSchematrons();
-		return new SchematronsDTO(getLogTraceInfo(), schematrons);
+		return new GetDocumentsResDTO(getLogTraceInfo(), schematrons, new Options(binary));
 	}
 
 	@Override

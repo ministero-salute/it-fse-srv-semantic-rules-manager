@@ -11,7 +11,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MIN_SIZE;
 
@@ -21,16 +23,20 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.Validati
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SchematronsDTO extends ResponseDTO {
+public class GetDocumentsResDTO extends ResponseDTO {
 
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
 	private List<SchematronDocumentDTO> schematrons;
 
 
-	public SchematronsDTO(final LogTraceInfoDTO traceInfo, final List<SchematronDocumentDTO> inSchematrons) {
-		super(traceInfo);
-		schematrons = inSchematrons;
+	public GetDocumentsResDTO(LogTraceInfoDTO info, List<SchematronDocumentDTO> data, Options o) {
+		super(info);
+		this.schematrons = applyOptions(data, o);
+	}
+
+	private List<SchematronDocumentDTO> applyOptions(List<SchematronDocumentDTO> documents, Options options) {
+		return documents.stream().map(d -> d.applyOptions(options)).collect(Collectors.toList());
 	}
 
 }

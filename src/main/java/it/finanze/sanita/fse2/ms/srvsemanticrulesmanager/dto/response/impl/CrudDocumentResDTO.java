@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SchematronResponseDTO extends ResponseDTO {
+public class CrudDocumentResDTO extends ResponseDTO {
 
 	/**
 	 * Serial Version UID
@@ -26,11 +26,11 @@ public class SchematronResponseDTO extends ResponseDTO {
 	private Integer updatedSchematron;
 	private Integer deletedSchematron;
 
-	public SchematronResponseDTO() {
+	public CrudDocumentResDTO() {
 		super();
 	}
 
-	public SchematronResponseDTO(LogTraceInfoDTO traceInfo, Integer insertedSchematron, Integer updatedSchematron, Integer deletedSchematron) {
+	public CrudDocumentResDTO(LogTraceInfoDTO traceInfo, Integer insertedSchematron, Integer updatedSchematron, Integer deletedSchematron) {
 		super(traceInfo);
 		this.insertedSchematron = insertedSchematron;
 		this.updatedSchematron = updatedSchematron;
