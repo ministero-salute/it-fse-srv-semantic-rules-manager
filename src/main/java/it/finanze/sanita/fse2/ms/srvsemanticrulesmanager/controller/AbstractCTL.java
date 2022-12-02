@@ -4,12 +4,11 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller;
 
 import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Serializable;
 import java.util.Optional;
 
 /**

@@ -4,7 +4,7 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error;
 
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Resource;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Server;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.Validation;

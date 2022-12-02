@@ -9,8 +9,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronBodyDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -29,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,7 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
@@ -124,13 +120,10 @@ class SchematronControllerTest extends AbstractTest {
 
 	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-	            request.setMethod("POST");
-	            return request;
-	        }
-	    });
+	    builder.with(request -> {
+			request.setMethod("POST");
+			return request;
+		});
 
 		mvc.perform(builder
 						.file(new MockMultipartFile("file", multipartFile.getBytes()))
@@ -149,13 +142,10 @@ class SchematronControllerTest extends AbstractTest {
 	    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
 
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-	            request.setMethod("POST");
-	            return request;
-	        }
-	    });
+	    builder.with(request -> {
+			request.setMethod("POST");
+			return request;
+		});
 
 		mvc.perform(builder
 						.file(multipartFile)
@@ -183,15 +173,7 @@ class SchematronControllerTest extends AbstractTest {
 	} 
 	
 	@Test
-	void insertSchematronWithOperationException() throws Exception {
-		SchematronBodyDTO dto = new SchematronBodyDTO(); 
-	    dto.setNameSchematron("name"); 
-	    dto.setTemplateIdRoot("root"); 
-	    dto.setVersion("extension"); 
-	    
-	    
-	    MockMvcRequestBuilders.multipart("/v1/schematron", dto);
-
+	void getSchematronWithOperationException() throws Exception {
 		// when mongo is down
 		Mockito.doThrow(new MongoException("")).when(mongo).findOne(any(Query.class), eq(SchematronETY.class));
 
@@ -225,13 +207,10 @@ class SchematronControllerTest extends AbstractTest {
 	    MockMultipartHttpServletRequestBuilder builder =
 	            MockMvcRequestBuilders.multipart("/v1/schematron");
 	    
-	    builder.with(new RequestPostProcessor() {
-	        @Override
-	        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-	            request.setMethod("PATCH");
-	            return request;
-	        }
-	    }); 
+	    builder.with(request -> {
+			request.setMethod("PATCH");
+			return request;
+		});
 	    
 	    mvc.perform(builder
 	            .file(multipartFile)
@@ -276,12 +255,13 @@ class SchematronControllerTest extends AbstractTest {
 		dto.setVersion("1.0");
 		dto.setInsertionDate(new Date());
 		dto.setLastUpdateDate(new Date());
+		dto.setDeleted(false);
 
 		schematronService.insert(dto);
 
-		mvc.perform(querySchematronMockRequest("Root_AB", "1.0")).andExpectAll(
+		mvc.perform(querySchematronMockRequest("Root_AB")).andExpectAll(
 	            status().isOk()
-	        );
+		);
 	}
 
 	@Test
@@ -312,7 +292,7 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void findSchematronByIdRootAndExtensionInvalidRootAndExtensionTest() throws Exception {
-		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT_NOT_FOUND, "1.0")).andExpectAll(
+		mvc.perform(querySchematronMockRequest(TEST_ID_ROOT_NOT_FOUND)).andExpectAll(
 	            status().isNotFound()
 	        );
 	} 

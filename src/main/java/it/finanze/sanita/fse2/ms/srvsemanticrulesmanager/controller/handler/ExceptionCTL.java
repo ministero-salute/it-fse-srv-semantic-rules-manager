@@ -5,7 +5,7 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.handler;
 
 
 import brave.Tracer;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import lombok.extern.slf4j.Slf4j;

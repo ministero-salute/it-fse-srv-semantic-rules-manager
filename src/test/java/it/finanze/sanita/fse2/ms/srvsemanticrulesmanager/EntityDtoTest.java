@@ -3,10 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Date;
-
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+import java.time.OffsetDateTime;
+import java.util.Date;
+
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc.convertToOffsetDateTime;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ComponentScan
@@ -38,34 +39,29 @@ class EntityDtoTest extends AbstractTest {
     // Test Cases 
     @Test
     void createSchematronDto() {
-    	SchematronDTO schematron = new SchematronDTO(); 
-    	Date dateNow = new Date(); 
+    	SchematronDocumentDTO schematron = new SchematronDocumentDTO();
+    	Date dateNow = new Date();
     	
     	schematron.setNameSchematron(TEST_SCHEMATRON_NAME); 
-    	schematron.setContentSchematron(TEST_SCHEMATRON_CONTENT); 
+    	schematron.setContentSchematron(SCHEMATRON_TEST_STRING);
     	schematron.setTemplateIdRoot(TEST_SCHEMATRON_ROOT); 
     	schematron.setVersion(TEST_SCHEMATRON_EXT); 
-    	schematron.setInsertionDate(dateNow); 
-    	schematron.setLastUpdateDate(dateNow); 
+    	schematron.setLastUpdateDate(convertToOffsetDateTime(dateNow));
     	
     	
-    	assertEquals(schematron.getClass(), SchematronDTO.class); 
+    	assertEquals(schematron.getClass(), SchematronDocumentDTO.class);
     	
     	assertEquals(String.class, schematron.getNameSchematron().getClass()); 
-    	assertEquals(Binary.class, schematron.getContentSchematron().getClass()); 
+    	assertEquals(String.class, schematron.getContentSchematron().getClass());
     	assertEquals(String.class, schematron.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, schematron.getVersion().getClass()); 
-    	assertEquals(Date.class, schematron.getInsertionDate().getClass()); 
-    	assertEquals(Date.class, schematron.getLastUpdateDate().getClass()); 
+    	assertEquals(OffsetDateTime.class, schematron.getLastUpdateDate().getClass());
     	
     	assertEquals(TEST_SCHEMATRON_NAME, schematron.getNameSchematron()); 
-    	assertEquals(TEST_SCHEMATRON_CONTENT, schematron.getContentSchematron()); 
+    	assertEquals(new String(TEST_SCHEMATRON_CONTENT.getData()), schematron.getContentSchematron());
     	assertEquals(TEST_SCHEMATRON_ROOT, schematron.getTemplateIdRoot()); 
     	assertEquals(TEST_SCHEMATRON_EXT, schematron.getVersion()); 
-    	assertEquals(dateNow, schematron.getInsertionDate()); 
-    	assertEquals(dateNow, schematron.getLastUpdateDate()); 
-
-
+    	assertEquals(convertToOffsetDateTime(dateNow), schematron.getLastUpdateDate());
     	
     } 
     

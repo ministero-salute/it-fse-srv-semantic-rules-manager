@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.IChangeSetCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ChangeSetResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 
@@ -24,11 +24,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
  */
 @RestController
 public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL{
-
-    /**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = -805992420464600570L;
 
     @Autowired
     private transient ISchematronSRV schematronSRV;
@@ -41,7 +36,7 @@ public class ChangeSetCTL extends AbstractCTL implements IChangeSetCTL{
         List<ChangeSetDTO> deletions = schematronSRV.getDeletions(lastUpdate);
         
 
-        ChangeSetResponseDTO response = new ChangeSetResponseDTO();
+        ChangeSetResDTO response = new ChangeSetResDTO();
         LogTraceInfoDTO info = getLogTraceInfo();
         response.setSpanID(info.getSpanID());
         response.setTraceID(info.getTraceID());

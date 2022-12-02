@@ -3,9 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base;
 
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,6 +14,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 public final class MockRequests {
 
@@ -89,9 +89,8 @@ public final class MockRequests {
         return get("/v1/schematron").contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
-    public static MockHttpServletRequestBuilder querySchematronMockRequest(String root, String version) {
-        return get("/v1/schematron/root/" + root + "/version/" + version)
-        			.contentType(MediaType.APPLICATION_JSON_VALUE); 
+    public static MockHttpServletRequestBuilder querySchematronMockRequest(String root) {
+        return get("/v1/schematron/" + root).contentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     public static MockMultipartFile createFromResourceSCH(String field, boolean isValid) throws IOException {

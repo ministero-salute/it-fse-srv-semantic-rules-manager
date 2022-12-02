@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response;
+package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MAX_SIZE;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MIN_SIZE;
@@ -12,24 +12,18 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.ChangeSetDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * DTO for Change Set status endpoint response.
  *
- * 
  */
 @Getter
 @Setter
-public class ChangeSetResponseDTO extends ResponseDTO {
-
-
-	/**
-	 * Serial Version UID 
-	 */
-	private static final long serialVersionUID = 21641254425604264L; 
+public class ChangeSetResDTO extends ResponseDTO {
 
 	  /**
      * Trace id log.
@@ -42,8 +36,7 @@ public class ChangeSetResponseDTO extends ResponseDTO {
      */
     @Schema(maxLength = DEFAULT_STRING_MAX_SIZE)
     private String spanID;
-	
-	
+
 	private Date lastUpdate;
 	private Date timestamp;
 
@@ -56,12 +49,12 @@ public class ChangeSetResponseDTO extends ResponseDTO {
 	@Schema(minimum = DEFAULT_ARRAY_MIN_SIZE + "", maximum = DEFAULT_ARRAY_MAX_SIZE + "")
 	private int totalNumberOfElements;
 
-	public ChangeSetResponseDTO() {
+	public ChangeSetResDTO() {
 		super();
 	}
 
 
-	public ChangeSetResponseDTO(final LogTraceInfoDTO traceInfo, final Date inLastUpdate, final Date inTimestamp, final List<ChangeSetDTO> inInsertions, final List<ChangeSetDTO> inDeletions, final int inTotalNumberOfElements) {
+	public ChangeSetResDTO(final LogTraceInfoDTO traceInfo, final Date inLastUpdate, final Date inTimestamp, final List<ChangeSetDTO> inInsertions, final List<ChangeSetDTO> inDeletions, final int inTotalNumberOfElements) {
 		super(traceInfo);
 		this.lastUpdate = inLastUpdate;
 		this.timestamp = inTimestamp;

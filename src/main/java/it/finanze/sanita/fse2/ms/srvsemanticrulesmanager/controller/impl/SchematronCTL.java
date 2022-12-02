@@ -5,23 +5,19 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.SchematronsDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.SchematronResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.SchematronsDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -71,23 +67,21 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public SchematronDTO getSchematronByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+	public SchematronDocumentDTO getSchematronByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		return service.findByTemplateIdRoot(templateIdRoot);
 	}
 
 	@Override
-	public ResponseEntity<SchematronsDTO> getSchematrons(HttpServletRequest request) {
+	public SchematronsDTO getSchematrons() {
 		log.debug("Called GET /schematron");
-		List<SchematronDTO> schematrons = service.getSchematrons();
-		return new ResponseEntity<>(new SchematronsDTO(getLogTraceInfo(), schematrons), HttpStatus.OK);
+		List<SchematronDocumentDTO> schematrons = service.getSchematrons();
+		return new SchematronsDTO(getLogTraceInfo(), schematrons);
 	}
 
 	@Override
-	public ResponseEntity<GetDocumentResDTO> getSchematronById(HttpServletRequest request, String id)
-			throws OperationException, DocumentNotFoundException {
+	public GetDocumentResDTO getSchematronById(String id) throws OperationException, DocumentNotFoundException {
 		log.debug("Called GET /schematron by ID");
-		SchematronDocumentDTO doc = service.findById(id);
-		return new ResponseEntity<>(new GetDocumentResDTO(getLogTraceInfo(), doc), HttpStatus.OK);
+		return new GetDocumentResDTO(getLogTraceInfo(), service.findById(id));
 	}
 
 }
