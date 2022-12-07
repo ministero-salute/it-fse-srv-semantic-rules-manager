@@ -6,7 +6,10 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.impl;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -130,21 +133,21 @@ public class SchematronSRV implements ISchematronSRV {
 
     @Override
 	public List<ChangeSetDTO> getDeletions(Date lastUpdate) throws OperationException {
+
     	List<ChangeSetDTO> deletions = new ArrayList<>();
-		try {
-			if (lastUpdate != null) {
-				List<SchematronETY> deletionsETY = repository.getDeletions(lastUpdate);
-				deletions = deletionsETY.stream().map(ChangeSetUtility::schematronToChangeset)
-						.collect(Collectors.toList());
-			}
-		} catch (Exception e) {
-			log.error("Error retrieving deletions", e); 
-			throw new BusinessException("Error retrieving deletions", e); 
+
+		if (lastUpdate != null) {
+			List<SchematronETY> deletionsETY = repository.getDeletions(lastUpdate);
+			deletions = deletionsETY.stream().map(ChangeSetUtility::schematronToChangeset).collect(Collectors.toList());
 		}
+
 		return deletions;
 	}
 
+	@Override
+	public long getCollectionSize() throws OperationException {
+		return repository.getActiveDocumentCount();
+	}
 
 
-	
 }

@@ -4,10 +4,10 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository;
 
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+
 import java.util.Date;
 import java.util.List;
-
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 
 public interface IChangeSetRepo<T> {
 
@@ -32,4 +32,12 @@ public interface IChangeSetRepo<T> {
      * @throws OperationException If a data-layer error occurs
      */
     List<T> getDeletions(Date lastUpdate) throws OperationException;
+
+    /**
+     * Count all the not-deleted extensions items
+     *
+     * @return Number of active documents
+     * @throws OperationException If a data-layer error occurs
+     */
+    long getActiveDocumentCount() throws OperationException;
 }

@@ -3,19 +3,18 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MAX_SIZE;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_ARRAY_MIN_SIZE;
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
-import lombok.Getter;
-import lombok.Setter;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.*;
 
 /**
  * DTO for Change Set status endpoint response.
@@ -23,6 +22,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChangeSetResDTO extends ResponseDTO {
 
 	  /**
@@ -47,20 +48,7 @@ public class ChangeSetResDTO extends ResponseDTO {
 	private List<ChangeSetDTO> deletions;
 
 	@Schema(minimum = DEFAULT_ARRAY_MIN_SIZE + "", maximum = DEFAULT_ARRAY_MAX_SIZE + "")
-	private int totalNumberOfElements;
+	private long totalNumberOfElements;
 
-	public ChangeSetResDTO() {
-		super();
-	}
-
-
-	public ChangeSetResDTO(final LogTraceInfoDTO traceInfo, final Date inLastUpdate, final Date inTimestamp, final List<ChangeSetDTO> inInsertions, final List<ChangeSetDTO> inDeletions, final int inTotalNumberOfElements) {
-		super(traceInfo);
-		this.lastUpdate = inLastUpdate;
-		this.timestamp = inTimestamp;
-		this.insertions = inInsertions;
-		this.deletions = inDeletions;
-		this.totalNumberOfElements = inTotalNumberOfElements;
-	}
-	
+	private long collectionSize;
 }

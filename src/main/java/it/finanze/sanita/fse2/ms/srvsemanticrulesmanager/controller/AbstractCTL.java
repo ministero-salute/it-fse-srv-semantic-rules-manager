@@ -19,7 +19,7 @@ import java.util.Optional;
 public abstract class AbstractCTL {
 	
 	@Autowired
-	private transient Tracer tracer;
+	private Tracer tracer;
 
 	protected boolean isValidFile(MultipartFile file) {
 		if (file != null && !file.isEmpty()) {

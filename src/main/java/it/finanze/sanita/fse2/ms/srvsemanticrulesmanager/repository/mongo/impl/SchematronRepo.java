@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -157,6 +158,28 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         }
         return objects;
     }
+
+	/**
+	 * Count all the not-deleted extensions items
+	 *
+	 * @return Number of active documents
+	 * @throws OperationException If a data-layer error occurs
+	 */
+	@Override
+	public long getActiveDocumentCount() throws OperationException {
+		// Working var
+		long size;
+		// Create query
+		Query q = query(where(FIELD_DELETED).ne(true));
+		try {
+			// Execute count
+			size = mongoTemplate.count(q, SchematronETY.class);
+		}catch (MongoException e) {
+			// Catch data-layer runtime exceptions and turn into a checked exception
+			throw new OperationException(ERR_REP_COUNT_ACTIVE_DOC, e);
+		}
+		return size;
+	}
 
 	/**
      * Retrieves all the not-deleted extensions with their data

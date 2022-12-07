@@ -95,7 +95,8 @@ public final class Constants {
 
 		public static final String ERROR_UNABLE_FIND_MODIFICATIONS = "Unable to retrieve change-set modifications"; 
 
-		public static final String ERROR_UNABLE_FIND_DELETIONS = "Unable to retrieve change-set deletions"; 
+		public static final String ERROR_UNABLE_FIND_DELETIONS = "Unable to retrieve change-set deletions";
+		public static final String ERR_REP_COUNT_ACTIVE_DOC = "Impossibile conteggiare ogni estensione attiva";
 
 		public static final String ERROR_UNABLE_RETRIEVE_AVAILABLE_DICTIONARY = "Unable to retrieve every available dictionary"; 
 
