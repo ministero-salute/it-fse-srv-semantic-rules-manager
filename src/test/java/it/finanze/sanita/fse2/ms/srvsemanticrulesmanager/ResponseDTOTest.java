@@ -143,8 +143,9 @@ class ResponseDTOTest extends AbstractTest {
 	@Test
 	void changesetResponseDtoInitTest() {
 		LogTraceInfoDTO logTraceInfo = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
-		ChangeSetResDTO changesetResponse = new ChangeSetResDTO(logTraceInfo, new Date(), new Date(),
-			new ArrayList<>(), new ArrayList<>(), 1);
+		ChangeSetResDTO changesetResponse = new ChangeSetResDTO(
+			logTraceInfo.getTraceID(), logTraceInfo.getSpanID(), new Date(), new Date(),
+			new ArrayList<>(), new ArrayList<>(), 1, 1);
 		
 		assertEquals(ArrayList.class, changesetResponse.getInsertions().getClass()); 
 		assertEquals(ArrayList.class, changesetResponse.getDeletions().getClass()); 
