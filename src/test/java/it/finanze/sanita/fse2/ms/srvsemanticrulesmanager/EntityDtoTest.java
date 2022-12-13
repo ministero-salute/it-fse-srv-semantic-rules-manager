@@ -42,23 +42,27 @@ class EntityDtoTest extends AbstractTest {
     	SchematronDocumentDTO schematron = new SchematronDocumentDTO();
     	Date dateNow = new Date();
     	
-    	schematron.setNameSchematron(TEST_SCHEMATRON_NAME); 
-    	schematron.setContentSchematron(SCHEMATRON_TEST_STRING);
+    	schematron.setName(TEST_SCHEMATRON_NAME); 
+    	schematron.setContent(SCHEMATRON_TEST_STRING);
     	schematron.setTemplateIdRoot(TEST_SCHEMATRON_ROOT); 
     	schematron.setVersion(TEST_SCHEMATRON_EXT); 
     	schematron.setLastUpdateDate(convertToOffsetDateTime(dateNow));
+//    	schematron.setInsertionDate(convertToOffsetDateTime(dateNow));
+//    	schematron.setDeleted(false);
     	
     	
     	assertEquals(schematron.getClass(), SchematronDocumentDTO.class);
     	
-    	assertEquals(String.class, schematron.getNameSchematron().getClass()); 
-    	assertEquals(String.class, schematron.getContentSchematron().getClass());
+    	assertEquals(String.class, schematron.getName().getClass()); 
+    	assertEquals(String.class, schematron.getContent().getClass());
     	assertEquals(String.class, schematron.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, schematron.getVersion().getClass()); 
     	assertEquals(OffsetDateTime.class, schematron.getLastUpdateDate().getClass());
+    	assertEquals(String.class, schematron.getVersion().getClass()); 
+
     	
-    	assertEquals(TEST_SCHEMATRON_NAME, schematron.getNameSchematron()); 
-    	assertEquals(new String(TEST_SCHEMATRON_CONTENT.getData()), schematron.getContentSchematron());
+    	assertEquals(TEST_SCHEMATRON_NAME, schematron.getName()); 
+    	assertEquals(new String(TEST_SCHEMATRON_CONTENT.getData()), schematron.getContent());
     	assertEquals(TEST_SCHEMATRON_ROOT, schematron.getTemplateIdRoot()); 
     	assertEquals(TEST_SCHEMATRON_EXT, schematron.getVersion()); 
     	assertEquals(convertToOffsetDateTime(dateNow), schematron.getLastUpdateDate());

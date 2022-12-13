@@ -27,12 +27,12 @@ public class GetDocumentsResDTO extends ResponseDTO {
 
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
-	private List<SchematronDocumentDTO> schematrons;
+	private List<SchematronDocumentDTO> items;
 
 
 	public GetDocumentsResDTO(LogTraceInfoDTO info, List<SchematronDocumentDTO> data, Options o) {
 		super(info);
-		this.schematrons = applyOptions(data, o);
+		this.items = applyOptions(data, o);
 	}
 
 	private List<SchematronDocumentDTO> applyOptions(List<SchematronDocumentDTO> documents, Options options) {

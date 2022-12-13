@@ -22,21 +22,26 @@ public class SchematronDocumentDTO {
 
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private String id; 
-
-	@Size(max = DEFAULT_BINARY_MAX_SIZE)
-	private String contentSchematron;
-
+	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
-	private String nameSchematron; 
-
+	private String name;
+	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private String templateIdRoot; 
-
+	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private String version;
+
+	@Size(max = DEFAULT_STRING_MAX_SIZE)
+	private OffsetDateTime insertionDate;
 	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private OffsetDateTime lastUpdateDate;
+
+	private boolean deleted;
+
+	@Size(max = DEFAULT_BINARY_MAX_SIZE)
+	private String content;
 
 	@AllArgsConstructor
 	public static class Options {
@@ -46,8 +51,8 @@ public class SchematronDocumentDTO {
 	public static SchematronDocumentDTO fromEntity(SchematronETY e) {
 		SchematronDocumentDTO out = new SchematronDocumentDTO();
 		out.setId(e.getId());
-		out.setNameSchematron(e.getNameSchematron());
-		out.setContentSchematron(
+		out.setName(e.getNameSchematron());
+		out.setContent(
 			encodeBase64(e.getContentSchematron().getData())
 		);
 		out.setVersion(e.getVersion());
@@ -55,11 +60,13 @@ public class SchematronDocumentDTO {
 		out.setLastUpdateDate(
 			convertToOffsetDateTime(e.getLastUpdateDate())
 		);
+		out.setInsertionDate(convertToOffsetDateTime(e.getInsertionDate()));
+		out.setDeleted(e.isDeleted());
 		return out;
 	}
 
 	public SchematronDocumentDTO applyOptions(Options o) {
-		if(!o.binary) contentSchematron = null;
+		if(!o.binary) content = null;
 		return this;
 	}
 

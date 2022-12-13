@@ -107,16 +107,16 @@ class SchematronServiceTest extends AbstractTest {
     	SchematronDocumentDTO returnedDto = schematronService.findByTemplateIdRootAndVersion(TEST_SCHEMATRON_ROOT_INS, TEST_SCHEMATRON_EXTENSION_INS);
     	
     	assertEquals(SchematronDocumentDTO.class, returnedDto.getClass());
-    	assertEquals(String.class, returnedDto.getContentSchematron().getClass());
-    	assertEquals(String.class, returnedDto.getNameSchematron().getClass()); 
+    	assertEquals(String.class, returnedDto.getContent().getClass());
+    	assertEquals(String.class, returnedDto.getName().getClass()); 
     	assertEquals(String.class, returnedDto.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, returnedDto.getVersion().getClass()); 
     	assertEquals(OffsetDateTime.class, returnedDto.getLastUpdateDate().getClass());
     	
-    	assertEquals(TEST_SCHEMATRON_NAME_INS, returnedDto.getNameSchematron()); 
+    	assertEquals(TEST_SCHEMATRON_NAME_INS, returnedDto.getName()); 
     	assertEquals(TEST_SCHEMATRON_ROOT_INS, returnedDto.getTemplateIdRoot()); 
     	assertEquals(TEST_SCHEMATRON_EXTENSION_INS, returnedDto.getVersion()); 
-    	assertEquals(encodeBase64(TEST_SCHEMATRON_CONTENT_INS.getData()), returnedDto.getContentSchematron());
+    	assertEquals(encodeBase64(TEST_SCHEMATRON_CONTENT_INS.getData()), returnedDto.getContent());
     	assertEquals(UtilsMisc.convertToOffsetDateTime(date), returnedDto.getLastUpdateDate());
     	 	
     } 
@@ -197,16 +197,16 @@ class SchematronServiceTest extends AbstractTest {
     	
     	
     	assertEquals(SchematronDocumentDTO.class, returnedDto.getClass());
-    	assertEquals(String.class, returnedDto.getContentSchematron().getClass());
-    	assertEquals(String.class, returnedDto.getNameSchematron().getClass()); 
+    	assertEquals(String.class, returnedDto.getContent().getClass());
+    	assertEquals(String.class, returnedDto.getName().getClass()); 
     	assertEquals(String.class, returnedDto.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, returnedDto.getVersion().getClass()); 
     	assertEquals(OffsetDateTime.class, returnedDto.getLastUpdateDate().getClass());
     	
-    	assertEquals(TEST_SCHEMATRON_NAME_QUERY, returnedDto.getNameSchematron()); 
+    	assertEquals(TEST_SCHEMATRON_NAME_QUERY, returnedDto.getName()); 
     	assertEquals(TEST_SCHEMATRON_ROOT_QUERY, returnedDto.getTemplateIdRoot()); 
     	assertEquals(TEST_SCHEMATRON_EXTENSION_QUERY, returnedDto.getVersion()); 
-    	assertEquals(encodeBase64(TEST_SCHEMATRON_CONTENT_DEL.getData()), returnedDto.getContentSchematron());
+    	assertEquals(encodeBase64(TEST_SCHEMATRON_CONTENT_DEL.getData()), returnedDto.getContent());
     	assertEquals(convertToOffsetDateTime(date), returnedDto.getLastUpdateDate());
 
 
@@ -275,8 +275,8 @@ class SchematronServiceTest extends AbstractTest {
     	assertTrue(dtoGetList.size() > 0); 
     	
     	assertEquals(SchematronDocumentDTO.class, dtoElem.getClass());
-    	assertEquals(String.class, dtoElem.getContentSchematron().getClass());
-    	assertEquals(String.class, dtoElem.getNameSchematron().getClass()); 
+    	assertEquals(String.class, dtoElem.getContent().getClass());
+    	assertEquals(String.class, dtoElem.getName().getClass()); 
     	assertEquals(String.class, dtoElem.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, dtoElem.getVersion().getClass()); 
     	assertEquals(OffsetDateTime.class, dtoElem.getLastUpdateDate().getClass());
