@@ -3,25 +3,32 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.CrudDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentsResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
-
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.DelDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PutDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentAlreadyPresentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidContentException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.InvalidVersionException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.SchematronValidatorException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.schematron.SchematronValidator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  */
@@ -33,7 +40,7 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private ISchematronSRV service;
 
 	@Override
-	public CrudDocumentResDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
+	public PostDocsResDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
 		OperationException, DocumentAlreadyPresentException, InvalidContentException, SchematronValidatorException {
 
 		// Check file consistency
@@ -46,11 +53,11 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new CrudDocumentResDTO(getLogTraceInfo(), 1, null, null);
+		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
-	public CrudDocumentResDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
+	public PutDocsResDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
 		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 
 		if (isValidFile(file)) {
@@ -60,12 +67,12 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 			throw new InvalidContentException("One or more files appear to be invalid");
 		}
 
-		return new CrudDocumentResDTO(getLogTraceInfo(), null, 1, null);
+		return new PutDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
-	public CrudDocumentResDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return new CrudDocumentResDTO(getLogTraceInfo(), null, null, service.deleteSchematron(templateIdRoot));
+	public DelDocsResDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+		return new DelDocsResDTO(getLogTraceInfo(), service.deleteSchematron(templateIdRoot));
 	}
 
 	@Override

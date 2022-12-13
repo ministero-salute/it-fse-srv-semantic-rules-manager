@@ -3,18 +3,21 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.CrudDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.ChangeSetResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.DelDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PutDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 
 class ResponseDTOTest extends AbstractTest {
 	
@@ -90,25 +93,45 @@ class ResponseDTOTest extends AbstractTest {
 		
 		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
 		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
-	} 
+	}
 	
 	@Test
-	void schematronResponseDtoNoArgsTest() {
+	void postResponseDtoTest() {
+		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		CrudDocumentResDTO dto = new CrudDocumentResDTO();
+		PostDocsResDTO dto = new PostDocsResDTO(logTraceInfoDto, 1);
 		
-		assertEquals(CrudDocumentResDTO.class, dto.getClass());
-
+		assertEquals(PostDocsResDTO.class, dto.getClass());
+		assertEquals(String.class, dto.getSpanID().getClass()); 
+		assertEquals(String.class, dto.getTraceID().getClass()); 
+		
+		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
+		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
 		
 	}
 	
 	@Test
-	void schematronResponseDtoTest() {
+	void putResponseDtoTest() {
 		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
 
-		CrudDocumentResDTO dto = new CrudDocumentResDTO(logTraceInfoDto, 1, null, null);
+		PutDocsResDTO dto = new PutDocsResDTO(logTraceInfoDto, 1);
 		
-		assertEquals(CrudDocumentResDTO.class, dto.getClass());
+		assertEquals(PutDocsResDTO.class, dto.getClass());
+		assertEquals(String.class, dto.getSpanID().getClass()); 
+		assertEquals(String.class, dto.getTraceID().getClass()); 
+		
+		assertEquals(SPAN_ID_TEST, dto.getSpanID()); 
+		assertEquals(TRACE_ID_TEST, dto.getTraceID()); 
+		
+	}
+	
+	@Test
+	void deleteResponseDtoTest() {
+		LogTraceInfoDTO logTraceInfoDto = new LogTraceInfoDTO(SPAN_ID_TEST, TRACE_ID_TEST); 
+
+		DelDocsResDTO dto = new DelDocsResDTO(logTraceInfoDto, 1);
+		
+		assertEquals(DelDocsResDTO.class, dto.getClass());
 		assertEquals(String.class, dto.getSpanID().getClass()); 
 		assertEquals(String.class, dto.getTraceID().getClass()); 
 		
