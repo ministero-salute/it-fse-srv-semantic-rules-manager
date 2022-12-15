@@ -46,7 +46,6 @@ public interface ISchematronCTL extends Serializable {
         @PostMapping(value = "/schematron", produces = {
                         MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
         @Operation(summary = "Add schematron to MongoDB", description = "Servizio che consente di aggiungere uno schematron alla base dati.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = PostDocsResDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Creazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -62,7 +61,6 @@ public interface ISchematronCTL extends Serializable {
         @PutMapping(value = "/schematron", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
                         MediaType.MULTIPART_FORM_DATA_VALUE })
         @Operation(summary = "Update schematron on MongoDB", description = "Servizio che consente di aggiornare uno schematron sulla base dati.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = PutDocsResDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Aggiornamento Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PutDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -78,7 +76,6 @@ public interface ISchematronCTL extends Serializable {
 
         @DeleteMapping(value = "/schematron/{templateIdRoot}", produces = {MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Delete schematron from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare uno schematron dalla base dati dato il Template ID Root")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Cancellazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -92,24 +89,23 @@ public interface ISchematronCTL extends Serializable {
 
         @GetMapping(value = "/schematron/{templateIdRoot}", produces = {MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a schematron from MongoDB, given its Template ID Root", description = "Servizio che consente di ritornare uno schematron dalla base dati dati il suo Template ID Root e Version.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = SchematronDocumentDTO.class)))
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronDocumentDTO.class))),
+                @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocumentsResDTO.class))),
                 @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                 @ApiResponse(responseCode = "404", description = "Schematron non trovato sul database", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
                 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class)))
         })
-        SchematronDocumentDTO getSchematronByTemplateIdRoot(
+        GetDocumentsResDTO getSchematronByTemplateIdRoot(
             @NotBlank(message = "templateIdRoot cannot be blank")
             @PathVariable
             @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size")
             String templateIdRoot,
-            @RequestParam(value = "includeBinary", defaultValue = "false") @Parameter(description = "Include binary content") boolean binary
+            @RequestParam(value = "includeBinary", defaultValue = "false") @Parameter(description = "Include binary content") boolean binary,
+            @RequestParam(value = API_QP_INCLUDE_DELETED, defaultValue = "false") @Parameter(description = "Include deleted content") boolean deleted
         ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = "/schematron/id/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns a Schematron from MongoDB, given its ID", description = "Servizio che consente di ritornare uno Schematron dalla base dati dati il suo ID.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = GetDocumentResDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SchematronDocumentDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -119,7 +115,6 @@ public interface ISchematronCTL extends Serializable {
 
         @GetMapping(value = "/schematron", produces = {MediaType.APPLICATION_JSON_VALUE })
         @Operation(summary = "Returns the list of all schematrons from MongoDB", description = "Servizio che consente di ritornare la lista degli schematron dalla base dati.")
-        @ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = GetDocumentsResDTO.class)))
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocumentsResDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })

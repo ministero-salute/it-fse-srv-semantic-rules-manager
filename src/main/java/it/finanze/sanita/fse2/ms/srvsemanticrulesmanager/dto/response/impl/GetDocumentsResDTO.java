@@ -25,6 +25,7 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.Validati
 @EqualsAndHashCode(callSuper = true)
 public class GetDocumentsResDTO extends ResponseDTO {
 
+	private long numberOfItems;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)
 	private List<SchematronDocumentDTO> items;
@@ -33,6 +34,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
 	public GetDocumentsResDTO(LogTraceInfoDTO info, List<SchematronDocumentDTO> data, Options o) {
 		super(info);
 		this.items = applyOptions(data, o);
+		this.numberOfItems = data.size();
 	}
 
 	private List<SchematronDocumentDTO> applyOptions(List<SchematronDocumentDTO> documents, Options options) {

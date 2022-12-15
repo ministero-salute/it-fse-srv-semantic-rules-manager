@@ -39,7 +39,7 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public SchematronETY insert(final SchematronETY ety) throws OperationException, DocumentAlreadyPresentException {
 
-		SchematronETY schematronIfPresent = repository.findByTemplateIdRoot(ety.getTemplateIdRoot());
+		SchematronETY schematronIfPresent = repository.findLatestByTemplateIdRoot(ety.getTemplateIdRoot());
 
 		if (schematronIfPresent != null) {
 			throw new DocumentAlreadyPresentException("Error: schematron already present in the database");
@@ -51,7 +51,7 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public void update(SchematronETY dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException {
 
-		SchematronETY lastSchematron = repository.findByTemplateIdRoot(dto.getTemplateIdRoot());
+		SchematronETY lastSchematron = repository.findLatestByTemplateIdRoot(dto.getTemplateIdRoot());
 
 		if (lastSchematron != null) {
 			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
@@ -81,12 +81,10 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 
 	@Override
-	public SchematronDocumentDTO findByTemplateIdRoot(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		SchematronETY output = repository.findByTemplateIdRoot(templateIdRoot);
-		if (output == null) {
-			throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
-		}
-		return SchematronDocumentDTO.fromEntity(output);
+	public List<SchematronDocumentDTO> findByTemplateIdRoot(String templateIdRoot, boolean deleted) throws OperationException, DocumentNotFoundException {
+		List<SchematronETY> entities = repository.findByTemplateIdRoot(templateIdRoot, deleted);
+		if(entities.isEmpty()) throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
+		return entities.stream().map(SchematronDocumentDTO::fromEntity).collect(Collectors.toList());
 	}
 
 	@Override
@@ -103,7 +101,7 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public int deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
 		// Check existence
-		SchematronETY root = repository.findByTemplateIdRoot(templateIdRoot);
+		SchematronETY root = repository.findLatestByTemplateIdRoot(templateIdRoot);
 		if(root == null) throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
 		// Execute query
 		return repository.deleteByTemplateIdRoot(templateIdRoot);

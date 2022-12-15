@@ -199,7 +199,7 @@ public class SchematronRepo implements ISchematronRepo {
     }
 	
     @Override
-    public SchematronETY findByTemplateIdRoot(String templateIdRoot) throws OperationException {
+    public SchematronETY findLatestByTemplateIdRoot(String templateIdRoot) throws OperationException {
         try {
             Query query = new Query();
             query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
@@ -214,7 +214,7 @@ public class SchematronRepo implements ISchematronRepo {
     
     @Override
     public boolean checkExist(final String templateIdRoot,final String version) {
-    	boolean output = false;
+    	boolean output;
     	try {
             Query query = new Query();
             query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true).
@@ -228,4 +228,21 @@ public class SchematronRepo implements ISchematronRepo {
     	
     	return output;
     }
+
+	@Override
+	public List<SchematronETY> findByTemplateIdRoot(String templateIdRoot, boolean deleted) throws OperationException {
+		List<SchematronETY> entities;
+		// Search by template id
+		Query q = query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot));
+		// Check if deleted are not allowed
+		if(!deleted) q.addCriteria(where(FIELD_DELETED).ne(true));
+		// Sort by insertion
+		q = q.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
+		try {
+			entities = mongo.find(q, SchematronETY.class);
+		} catch (MongoException e) {
+			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
+		}
+		return entities;
+	}
 }

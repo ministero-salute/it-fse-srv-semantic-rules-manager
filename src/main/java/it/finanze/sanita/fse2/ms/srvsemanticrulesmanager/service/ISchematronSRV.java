@@ -56,7 +56,7 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 */
 	SchematronDocumentDTO findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws DocumentNotFoundException, OperationException;
 
-	SchematronDocumentDTO findByTemplateIdRoot(String templateIdRoot)  throws DocumentNotFoundException, OperationException;
+	List<SchematronDocumentDTO> findByTemplateIdRoot(String templateIdRoot, boolean deleted)  throws DocumentNotFoundException, OperationException;
 
 	/**
 	 * Finds all schematrons.

@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.DelDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
@@ -62,8 +61,8 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public SchematronDocumentDTO getSchematronByTemplateIdRoot(String templateIdRoot, boolean binary) throws DocumentNotFoundException, OperationException {
-		return service.findByTemplateIdRoot(templateIdRoot).applyOptions(new Options(binary));
+	public GetDocumentsResDTO getSchematronByTemplateIdRoot(String templateIdRoot, boolean binary, boolean deleted) throws OperationException, DocumentNotFoundException {
+		return new GetDocumentsResDTO(getLogTraceInfo(), service.findByTemplateIdRoot(templateIdRoot, deleted), new Options(binary));
 	}
 
 	@Override
