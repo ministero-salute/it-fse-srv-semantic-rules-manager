@@ -22,7 +22,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -37,23 +36,17 @@ import static org.springframework.data.mongodb.core.query.Query.query;
  */
 @Slf4j
 @Repository
-public class SchematronRepo implements ISchematronRepo, Serializable {
-	
-	
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = -8314432048647769361L; 
-	
+public class SchematronRepo implements ISchematronRepo {
+
 	@Autowired
-	private transient MongoTemplate mongoTemplate; 
+	private MongoTemplate mongo;
 	 
 		
 	@Override
 	public SchematronETY insert(SchematronETY ety) throws OperationException {
 		SchematronETY sch;
 		try {
-			sch = mongoTemplate.insert(ety);
+			sch = mongo.insert(ety);
 		} catch(MongoException ex) {
 			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety, ex);
 		}
@@ -74,7 +67,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		update.set(FIELD_DELETED, true);
 		// Execute
 		try {
-			 res = mongoTemplate.updateMulti(query, update, SchematronETY.class);
+			 res = mongo.updateMulti(query, update, SchematronETY.class);
 		} catch(MongoException ex) {
 			throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
 		}
@@ -83,7 +76,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 	@Override
 	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
 		try {
-			return mongoTemplate.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)
+			return mongo.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)
 					.and(FIELD_VERSION).is(version).and(FIELD_DELETED).ne(true)), SchematronETY.class);
 		} 
 		catch(MongoException e) {
@@ -95,7 +88,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
     @Override
     public SchematronETY findById(String id) throws OperationException {
         try {
-            return mongoTemplate.findOne(query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true)), SchematronETY.class);
+            return mongo.findOne(query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true)), SchematronETY.class);
         } catch (MongoException e) {
         	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
             throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
@@ -104,9 +97,14 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 
 	
 	@Override
-	public List<SchematronETY> findAll() {
-        Query query = query(where(FIELD_DELETED).ne(true));
-		return mongoTemplate.find(query, SchematronETY.class); 
+	public List<SchematronETY> findDocs() throws OperationException {
+		List<SchematronETY> entities;
+		try {
+			entities = mongo.findAll(SchematronETY.class);
+		}catch (MongoException e) {
+			throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+		}
+		return entities;
 	}
 
 	/**
@@ -126,7 +124,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         );
         try {
             // Execute
-            objects = mongoTemplate.find(q, SchematronETY.class);
+            objects = mongo.find(q, SchematronETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
             throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
@@ -152,7 +150,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
                 .and(FIELD_DELETED).is(true)
         );
         try {
-            objects = mongoTemplate.find(q, SchematronETY.class);
+            objects = mongo.find(q, SchematronETY.class);
         } catch (MongoException e) {
             throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_DELETIONS, e);
         }
@@ -173,7 +171,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
 		Query q = query(where(FIELD_DELETED).ne(true));
 		try {
 			// Execute count
-			size = mongoTemplate.count(q, SchematronETY.class);
+			size = mongo.count(q, SchematronETY.class);
 		}catch (MongoException e) {
 			// Catch data-layer runtime exceptions and turn into a checked exception
 			throw new OperationException(ERR_REP_COUNT_ACTIVE_DOC, e);
@@ -192,7 +190,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
         List<SchematronETY> objects;
         try {
         	Query q = query(where(FIELD_DELETED).ne(true));
-            objects = mongoTemplate.find(q, SchematronETY.class); 
+            objects = mongo.find(q, SchematronETY.class);
         } catch (MongoException e) {
         	log.error("Unable to retrieve every available extension with their documents", e);
             throw new OperationException("Unable to retrieve every available extension with their documents", e);
@@ -207,7 +205,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
             query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
             query.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 
-            return mongoTemplate.findOne(query, SchematronETY.class);
+            return mongo.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
 			log.error("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
 			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
@@ -222,7 +220,7 @@ public class SchematronRepo implements ISchematronRepo, Serializable {
             query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true).
             		and(FIELD_VERSION).is(version));
 
-            output = mongoTemplate.exists(query, SchematronETY.class);
+            output = mongo.exists(query, SchematronETY.class);
 		}  catch (Exception ex) {
 			log.error("Generic error encountered while check exists schematron:", ex);
 			throw new BusinessException("Generic error encountered while check exists schematron:", ex);

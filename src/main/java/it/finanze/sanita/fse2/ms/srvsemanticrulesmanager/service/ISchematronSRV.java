@@ -62,7 +62,7 @@ public interface ISchematronSRV extends IChangeSetSRV {
 	 * Finds all schematrons.
 	 * @return List<SchematronDTO>
 	 */
-	List<SchematronDocumentDTO> getSchematrons();
+	List<SchematronDocumentDTO> getSchematrons(boolean deleted) throws OperationException;
 
 	/**
      * Retrieves the Schematron by identifier

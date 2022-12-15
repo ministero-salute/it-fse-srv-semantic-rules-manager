@@ -3,11 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository;
 
-import java.util.List;
-
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
+
+import java.util.List;
 
 /**
  *
@@ -55,7 +55,7 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	 * 
 	 * @return List of all schematrons.
 	 */
-	List<SchematronETY> findAll();
+	List<SchematronETY> findDocs() throws OperationException;
 
 	/**
      * Retrieves all the not-deleted extensions with their documents data

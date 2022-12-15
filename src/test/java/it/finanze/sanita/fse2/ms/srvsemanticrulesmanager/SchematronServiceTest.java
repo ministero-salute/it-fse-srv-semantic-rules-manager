@@ -266,7 +266,7 @@ class SchematronServiceTest extends AbstractTest {
     	
     	schematronService.insert(dtoFirst); 
     	
-    	List<SchematronDocumentDTO> dtoGetList = schematronService.getSchematrons();
+    	List<SchematronDocumentDTO> dtoGetList = schematronService.getSchematrons(false);
     	SchematronDocumentDTO dtoElem = dtoGetList.get(0);
     	
     	assertEquals(ArrayList.class, dtoGetList.getClass()); 

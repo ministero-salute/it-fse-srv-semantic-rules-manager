@@ -110,10 +110,14 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 	
 	@Override
-	public List<SchematronDocumentDTO> getSchematrons() {
-		List<SchematronETY> etyList = repository.findAll();
-		if (etyList == null || etyList.isEmpty()) return new ArrayList<>();
-		return etyList.stream().map(SchematronDocumentDTO::fromEntity).collect(Collectors.toList());
+	public List<SchematronDocumentDTO> getSchematrons(boolean deleted) throws OperationException {
+		List<SchematronETY> entities;
+		if (deleted) {
+			entities = repository.findDocs();
+		} else {
+			entities = repository.getEveryActiveSchematron();
+		}
+		return entities.stream().map(SchematronDocumentDTO::fromEntity).collect(Collectors.toList());
 	}
 
 	@Override

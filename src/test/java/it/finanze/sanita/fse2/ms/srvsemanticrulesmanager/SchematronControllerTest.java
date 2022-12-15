@@ -299,7 +299,7 @@ class SchematronControllerTest extends AbstractTest {
 	
 	@Test
 	void getSchematronsTest() throws Exception {
-		when(schematronService.getSchematrons())
+		when(schematronService.getSchematrons(false))
 			.thenReturn(new ArrayList<>()); 
 		
 		mvc.perform(getSchematronsMockRequest()).andExpectAll(
