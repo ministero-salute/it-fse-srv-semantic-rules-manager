@@ -6,11 +6,11 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.AbstractCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.ISchematronCTL;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO.Options;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.data.GetDocByIdResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.DelDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PutDocsResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentResDTO;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl.GetDocumentsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -61,18 +61,18 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	}
 
 	@Override
-	public GetDocumentsResDTO getSchematronByTemplateIdRoot(String templateIdRoot, boolean binary, boolean deleted) throws OperationException, DocumentNotFoundException {
-		return new GetDocumentsResDTO(getLogTraceInfo(), service.findByTemplateIdRoot(templateIdRoot, deleted), new Options(binary));
+	public GetDocsResDTO getSchematronByTemplateIdRoot(String templateIdRoot, boolean binary, boolean deleted) throws OperationException, DocumentNotFoundException {
+		return new GetDocsResDTO(getLogTraceInfo(), service.findByTemplateIdRoot(templateIdRoot, deleted), new Options(binary));
 	}
 
 	@Override
-	public GetDocumentsResDTO getSchematrons(boolean binary, boolean deleted) throws OperationException {
-		return new GetDocumentsResDTO(getLogTraceInfo(), service.getSchematrons(deleted), new Options(binary));
+	public GetDocsResDTO getSchematrons(boolean binary, boolean deleted) throws OperationException {
+		return new GetDocsResDTO(getLogTraceInfo(), service.getSchematrons(deleted), new Options(binary));
 	}
 
 	@Override
-	public GetDocumentResDTO getSchematronById(String id) throws OperationException, DocumentNotFoundException {
-		return new GetDocumentResDTO(getLogTraceInfo(), service.findById(id));
+	public GetDocByIdResDTO getSchematronById(String id) throws OperationException, DocumentNotFoundException {
+		return new GetDocByIdResDTO(getLogTraceInfo(), service.findById(id));
 	}
 
 }

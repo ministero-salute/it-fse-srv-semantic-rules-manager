@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl;
+package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.data;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,12 +16,12 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GetDocumentResDTO extends ResponseDTO {
+public class GetDocByIdResDTO extends ResponseDTO {
 
     @Schema(implementation = SchematronDocumentDTO.class)
     private SchematronDocumentDTO document;
 
-    public GetDocumentResDTO(LogTraceInfoDTO traceInfo, SchematronDocumentDTO data) {
+    public GetDocByIdResDTO(LogTraceInfoDTO traceInfo, SchematronDocumentDTO data) {
         super(traceInfo);
         this.document = data;
     }

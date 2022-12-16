@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.impl;
+package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
@@ -23,7 +23,7 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.Validati
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GetDocumentsResDTO extends ResponseDTO {
+public class GetDocsResDTO extends ResponseDTO {
 
 	private long numberOfItems;
 
@@ -31,7 +31,7 @@ public class GetDocumentsResDTO extends ResponseDTO {
 	private List<SchematronDocumentDTO> items;
 
 
-	public GetDocumentsResDTO(LogTraceInfoDTO info, List<SchematronDocumentDTO> data, Options o) {
+	public GetDocsResDTO(LogTraceInfoDTO info, List<SchematronDocumentDTO> data, Options o) {
 		super(info);
 		this.items = applyOptions(data, o);
 		this.numberOfItems = data.size();
