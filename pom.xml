@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>srv-semantic-rules-manager-ms</artifactId>
-	<version>0.2.0-SNAPSHOT</version> <!-- IPPOCRATE -->
+	<version>0.2.0-RELEASE</version>
 	<name>srv-semantic-rules-manager-ms</name>
 	<description>EDS SRV Semantic Rules Manager</description>
 	<properties>
