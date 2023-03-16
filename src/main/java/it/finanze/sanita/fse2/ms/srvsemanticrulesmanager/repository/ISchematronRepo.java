@@ -48,7 +48,7 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
 	 * @param templateIdRoot, template_id_extension Primary key of the Schematron to return.
 	 * @throws OperationException 
 	 */
-	int deleteByTemplateIdRoot(String templateIdRoot) throws OperationException;
+	int delete(String root, String system) throws OperationException;
 
 	/**
 	 * Returns all schematrons.
@@ -66,14 +66,14 @@ public interface ISchematronRepo extends IChangeSetRepo<SchematronETY> {
     List<SchematronETY> getEveryActiveSchematron() throws OperationException;
 
 	/**
-	 * Find schematron by templateIdRoot
-	 * @param templateIdRoot
-	 * @return
-	 * @throws OperationException
-	 */
-	SchematronETY findLatestByTemplateIdRoot(String templateIdRoot) throws OperationException;
-	
-	boolean checkExist(String templateIdRoot,String version);
+     * Find schematron by templateIdRoot
+     *
+     * @param templateIdRoot
+     * @param system
+     * @return
+     * @throws OperationException
+     */
+	SchematronETY findLatestByTemplateIdRoot(String templateIdRoot, String system) throws OperationException;
 
 	List<SchematronETY> findByTemplateIdRoot(String templateIdRoot, boolean deleted) throws OperationException;
 }

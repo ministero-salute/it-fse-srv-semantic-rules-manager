@@ -17,6 +17,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.GetDo
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PutDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.ValidObjectId;
 import org.springframework.http.HttpStatus;
@@ -55,8 +56,9 @@ public interface ISchematronCTL extends Serializable {
         PostDocsResDTO addSchematron(
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file)
-            throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
+                        @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
+                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file
+        ) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
 
         @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
                         MediaType.MULTIPART_FORM_DATA_VALUE })
@@ -70,7 +72,9 @@ public interface ISchematronCTL extends Serializable {
         PutDocsResDTO updateSchematron(
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file)
+                        @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
+                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file
+        )
             throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException,
             DocumentAlreadyPresentException;
 
@@ -84,7 +88,8 @@ public interface ISchematronCTL extends Serializable {
         DelDocsResDTO deleteSchematron(
             @NotBlank(message = "templateIdRoot cannot be blank")
             @PathVariable @Size(max = DEFAULT_STRING_MAX_SIZE, message = "templateIdRoot does not match the expected size")
-            String templateIdRoot
+            String templateIdRoot,
+            @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system
         ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = API_GET_BY_TEMPLATEIDROOT, produces = {MediaType.APPLICATION_JSON_VALUE })

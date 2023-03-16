@@ -3,6 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.Binary;
@@ -29,6 +30,7 @@ public class SchematronETY {
 	public static final String FIELD_NAME = "name_schematron";
 	public static final String FIELD_TEMPLATE_ID_ROOT = "template_id_root";
 	public static final String FIELD_VERSION = "version";
+	public static final String FIELD_SYSTEM = "system";
 
 	@Id
 	private String id;
@@ -44,22 +46,26 @@ public class SchematronETY {
 	
 	@Field(name = FIELD_VERSION)
 	private String version;
+
+	@Field(name = FIELD_SYSTEM)
+	private String system;
 	
 	@Field(name = FIELD_INSERTION_DATE)
 	private Date insertionDate; 
 	
 	@Field(name = FIELD_LAST_UPDATE)
-	private Date lastUpdateDate; 
+	private Date lastUpdateDate;
 	
 	@Field(name = FIELD_DELETED)
 	private boolean deleted;
 
-	public static SchematronETY fromMultipart(String templateIdRoot, String version, MultipartFile file) throws IOException {
+	public static SchematronETY fromMultipart(String root, String version, SystemTypeEnum system, MultipartFile file) throws IOException {
 		SchematronETY sch = new SchematronETY();
 		Date now = new Date();
 		sch.setContentSchematron(new Binary(file.getBytes()));
 		sch.setNameSchematron(file.getOriginalFilename());
-		sch.setTemplateIdRoot(templateIdRoot);
+		sch.setTemplateIdRoot(root);
+		sch.setSystem(system.value());
 		sch.setVersion(version);
 		sch.setInsertionDate(now);
 		sch.setLastUpdateDate(now);

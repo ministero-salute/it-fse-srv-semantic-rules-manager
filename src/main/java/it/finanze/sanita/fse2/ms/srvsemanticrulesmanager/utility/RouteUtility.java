@@ -24,6 +24,7 @@ public class RouteUtility {
     public static final String API_PATH_ID_VAR = "id";
     public static final String API_PATH_TEMPLATEIDROOT_VAR = "templateIdRoot";
     public static final String API_PATH_VERSION_VAR = "version";
+    public static final String API_PATH_SYSTEM_VAR = "system";
     public static final String API_PATH_FILE_VAR = "file";
     public static final String API_PATH_TEMPLATEIDROOT = "/{" + API_PATH_TEMPLATEIDROOT_VAR + "}";
     public static final String API_ID_EXTS = "/{" + API_PATH_ID_VAR + "}";

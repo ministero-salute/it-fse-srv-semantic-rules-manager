@@ -7,8 +7,6 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.UpdateResult;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
@@ -54,12 +52,14 @@ public class SchematronRepo implements ISchematronRepo {
 	}
 	
 	@Override
-	public int deleteByTemplateIdRoot(final String templateIdRoot) throws OperationException {
+	public int delete(final String root, final String system) throws OperationException {
 		// Working var
 		UpdateResult res;
 		// Create query
 		Query query = query(
-			where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true)
+			where(FIELD_TEMPLATE_ID_ROOT).is(root).
+			and(FIELD_SYSTEM).is(system).
+			and(FIELD_DELETED).ne(true)
 		);
 		// Define update operation
 		Update update = new Update();
@@ -74,7 +74,7 @@ public class SchematronRepo implements ISchematronRepo {
 		return (int) res.getModifiedCount();
 	}
 	@Override
-	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException, DocumentNotFoundException {
+	public SchematronETY findByTemplateIdRootAndVersion(String templateIdRoot, String version) throws OperationException {
 		try {
 			return mongo.findOne(query(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot)
 					.and(FIELD_VERSION).is(version).and(FIELD_DELETED).ne(true)), SchematronETY.class);
@@ -199,34 +199,22 @@ public class SchematronRepo implements ISchematronRepo {
     }
 	
     @Override
-    public SchematronETY findLatestByTemplateIdRoot(String templateIdRoot) throws OperationException {
-        try {
+    public SchematronETY findLatestByTemplateIdRoot(String templateIdRoot, String system) throws OperationException {
+        SchematronETY out;
+		try {
             Query query = new Query();
-            query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true));
+            query.addCriteria(
+				where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).
+				and(FIELD_SYSTEM).is(system).
+				and(FIELD_DELETED).ne(true)
+			);
             query.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
-
-            return mongo.findOne(query, SchematronETY.class);
+			out = mongo.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
 			log.error("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
 			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
 		}
-    }
-    
-    @Override
-    public boolean checkExist(final String templateIdRoot,final String version) {
-    	boolean output;
-    	try {
-            Query query = new Query();
-            query.addCriteria(where(FIELD_TEMPLATE_ID_ROOT).is(templateIdRoot).and(FIELD_DELETED).ne(true).
-            		and(FIELD_VERSION).is(version));
-
-            output = mongo.exists(query, SchematronETY.class);
-		}  catch (Exception ex) {
-			log.error("Generic error encountered while check exists schematron:", ex);
-			throw new BusinessException("Generic error encountered while check exists schematron:", ex);
-		}
-    	
-    	return output;
+		return out;
     }
 
 	@Override

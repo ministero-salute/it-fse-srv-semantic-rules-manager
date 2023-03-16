@@ -14,7 +14,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.Schem
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ChangeSetUtility;
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.isMajorVersion;
 
 
 /**
@@ -39,7 +40,7 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public SchematronETY insert(final SchematronETY ety) throws OperationException, DocumentAlreadyPresentException {
 
-		SchematronETY schematronIfPresent = repository.findLatestByTemplateIdRoot(ety.getTemplateIdRoot());
+		SchematronETY schematronIfPresent = repository.findLatestByTemplateIdRoot(ety.getTemplateIdRoot(), ety.getSystem());
 
 		if (schematronIfPresent != null) {
 			throw new DocumentAlreadyPresentException("Error: schematron already present in the database");
@@ -51,20 +52,13 @@ public class SchematronSRV implements ISchematronSRV {
 	@Override
 	public void update(SchematronETY dto) throws OperationException, InvalidVersionException, DocumentNotFoundException, DocumentAlreadyPresentException {
 
-		SchematronETY lastSchematron = repository.findLatestByTemplateIdRoot(dto.getTemplateIdRoot());
+		SchematronETY latest = repository.findLatestByTemplateIdRoot(dto.getTemplateIdRoot(), dto.getSystem());
 
-		if (lastSchematron != null) {
-			if (ValidationUtility.isMajorVersion(dto.getVersion(), lastSchematron.getVersion())) {
-				if(!repository.checkExist(dto.getTemplateIdRoot(), dto.getVersion())) {
-					repository.deleteByTemplateIdRoot(lastSchematron.getTemplateIdRoot());
-					repository.insert(dto);
-				} else {
-					throw new DocumentAlreadyPresentException("File già presente");
-				}
-
-			} else {
-				throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", dto.getVersion(), lastSchematron.getVersion()));
-			}
+		if (latest != null) {
+			if(dto.getVersion().equalsIgnoreCase(latest.getVersion())) throw new DocumentAlreadyPresentException("File già presente");
+			if (!isMajorVersion(dto.getVersion(), latest.getVersion())) throw new InvalidVersionException(String.format("Invalid version: %s. The version must be greater than %s", dto.getVersion(), latest.getVersion()));
+			repository.delete(latest.getTemplateIdRoot(), latest.getSystem());
+			repository.insert(dto);
 		} else {
 			throw new DocumentNotFoundException(String.format("Document with templateIdRoot: %s not found", dto.getTemplateIdRoot()));
 		}
@@ -99,12 +93,12 @@ public class SchematronSRV implements ISchematronSRV {
 	}
 	
 	@Override
-	public int deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
+	public int deleteSchematron(String templateIdRoot, String system) throws DocumentNotFoundException, OperationException {
 		// Check existence
-		SchematronETY root = repository.findLatestByTemplateIdRoot(templateIdRoot);
+		SchematronETY root = repository.findLatestByTemplateIdRoot(templateIdRoot, system);
 		if(root == null) throw new DocumentNotFoundException(Constants.Logs.ERROR_DOCUMENT_NOT_FOUND);
 		// Execute query
-		return repository.deleteByTemplateIdRoot(templateIdRoot);
+		return repository.delete(templateIdRoot, system);
 	}
 	
 	@Override

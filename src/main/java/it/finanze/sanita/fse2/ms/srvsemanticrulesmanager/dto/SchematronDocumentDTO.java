@@ -33,6 +33,9 @@ public class SchematronDocumentDTO {
 	private String version;
 
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
+	private String system;
+
+	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private OffsetDateTime insertionDate;
 	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
@@ -60,6 +63,7 @@ public class SchematronDocumentDTO {
 		out.setLastUpdateDate(
 			convertToOffsetDateTime(e.getLastUpdateDate())
 		);
+		out.setSystem(e.getSystem());
 		out.setInsertionDate(convertToOffsetDateTime(e.getInsertionDate()));
 		out.setDeleted(e.isDeleted());
 		return out;

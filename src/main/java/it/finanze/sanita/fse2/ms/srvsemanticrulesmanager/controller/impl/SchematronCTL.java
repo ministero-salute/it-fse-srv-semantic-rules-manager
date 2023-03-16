@@ -11,6 +11,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.DelDo
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.GetDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PostDocsResDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud.PutDocsResDTO;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -32,32 +33,32 @@ public class SchematronCTL extends AbstractCTL implements ISchematronCTL {
 	private ISchematronSRV service;
 
 	@Override
-	public PostDocsResDTO addSchematron(String templateIdRoot, String version, MultipartFile file) throws IOException,
+	public PostDocsResDTO addSchematron(String templateIdRoot, String version, SystemTypeEnum system, MultipartFile file) throws IOException,
 		OperationException, DocumentAlreadyPresentException, InvalidContentException, SchematronValidatorException {
 		// Check file consistency
 		if (!isValidFile(file)) throw new InvalidContentException("One or more files appear to be invalid");
 		// Verify integrity
 		SchematronValidator.verify(file);
 		// Insert into database
-		service.insert(SchematronETY.fromMultipart(templateIdRoot, version, file));
+		service.insert(SchematronETY.fromMultipart(templateIdRoot, version, system, file));
 		return new PostDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
-	public PutDocsResDTO updateSchematron(String templateIdRoot, String version, MultipartFile file)
+	public PutDocsResDTO updateSchematron(String templateIdRoot, String version, SystemTypeEnum system, MultipartFile file)
 		throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException, DocumentAlreadyPresentException {
 		// Check file consistency
 		if (!isValidFile(file)) throw new InvalidContentException("One or more files appear to be invalid");
 		// Verify integrity
 		SchematronValidator.verify(file);
 		// Update
-		service.update(SchematronETY.fromMultipart(templateIdRoot, version, file));
+		service.update(SchematronETY.fromMultipart(templateIdRoot, version, system, file));
 		return new PutDocsResDTO(getLogTraceInfo(), 1);
 	}
 
 	@Override
-	public DelDocsResDTO deleteSchematron(String templateIdRoot) throws DocumentNotFoundException, OperationException {
-		return new DelDocsResDTO(getLogTraceInfo(), service.deleteSchematron(templateIdRoot));
+	public DelDocsResDTO deleteSchematron(String templateIdRoot, SystemTypeEnum system) throws DocumentNotFoundException, OperationException {
+		return new DelDocsResDTO(getLogTraceInfo(), service.deleteSchematron(templateIdRoot, system.value()));
 	}
 
 	@Override
