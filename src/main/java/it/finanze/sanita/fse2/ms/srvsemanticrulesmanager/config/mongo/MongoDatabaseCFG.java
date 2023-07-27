@@ -12,16 +12,12 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.mongo;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
@@ -30,10 +26,6 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
-
- 
 
 /**
  * 
@@ -48,13 +40,7 @@ public class MongoDatabaseCFG {
 	 * The Mongo URI 
 	 */
 	@Value("${data.mongodb.uri}")
-	private String mongoUri; 
- 
-    final List<Converter<?, ?>> conversions = new ArrayList<>();
-    
-    @Autowired
-    private ApplicationContext appContext;
-
+	private String mongoUri;
 
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(){
@@ -63,7 +49,7 @@ public class MongoDatabaseCFG {
 
     @Bean
     @Primary
-    public MongoTemplate mongoTemplate() {
+    public MongoTemplate mongoTemplate(ApplicationContext appContext) {
         final MongoDatabaseFactory factory = mongoDatabaseFactory();
 
         final MongoMappingContext mongoMappingContext = new MongoMappingContext();
