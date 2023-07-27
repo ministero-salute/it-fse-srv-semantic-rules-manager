@@ -214,8 +214,8 @@ public class SchematronRepo implements ISchematronRepo {
 
             return mongo.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
-			log.error(String.format("%s %s", ERROR_RETRIEVING_SCHEMATRON, templateIdRoot), e);
-			throw new OperationException(String.format("%s %s", ERROR_RETRIEVING_SCHEMATRON, templateIdRoot), e);
+			log.error(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
+			throw new OperationException(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
 		}
     }
     
@@ -248,7 +248,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			entities = mongo.find(q, SchematronETY.class);
 		} catch (MongoException e) {
-			throw new OperationException(String.format("%s %s", ERROR_RETRIEVING_SCHEMATRON, templateIdRoot), e);
+			throw new OperationException(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
 		}
 		return entities;
 	}
