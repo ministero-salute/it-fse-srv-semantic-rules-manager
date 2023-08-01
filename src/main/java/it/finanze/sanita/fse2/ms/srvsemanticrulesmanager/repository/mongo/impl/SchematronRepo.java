@@ -15,6 +15,8 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl;
 import com.mongodb.MongoException;
 import com.mongodb.client.result.UpdateResult;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.DocumentNotFoundException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
@@ -31,7 +33,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants.Logs.ERR_REP_COUNT_ACTIVE_DOC;
+import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants.Logs.*;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -54,7 +56,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			sch = mongo.insert(ety);
 		} catch(MongoException ex) {
-			throw new OperationException(Constants.Logs.ERROR_INSERT_SCHEMATRON + ety, ex);
+			throw new OperationException(ERROR_INSERT_SCHEMATRON + ety, ex);
 		}
 		return sch;
 	}
@@ -77,7 +79,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			 res = mongo.updateMulti(query, update, SchematronETY.class);
 		} catch(MongoException ex) {
-			throw new OperationException(Constants.Logs.ERROR_DELETE_SCHEMATRON + getClass(), ex);
+			throw new OperationException(ERROR_DELETE_SCHEMATRON + getClass(), ex);
 		}
 		return (int) res.getModifiedCount();
 	}
@@ -88,8 +90,8 @@ public class SchematronRepo implements ISchematronRepo {
 					.and(FIELD_VERSION).is(version).and(FIELD_DELETED).ne(true)), SchematronETY.class);
 		} 
 		catch(MongoException e) {
-			log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
-            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+			log.error(ERROR_RETRIEVING_SCHEMATRON, e);
+            throw new OperationException(ERROR_RETRIEVING_SCHEMATRON, e);
 		}
 	}
 
@@ -98,8 +100,8 @@ public class SchematronRepo implements ISchematronRepo {
         try {
             return mongo.findOne(query(where(FIELD_ID).is(new ObjectId(id)).and(FIELD_DELETED).ne(true)), SchematronETY.class);
         } catch (MongoException e) {
-        	log.error(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
-            throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+        	log.error(ERROR_RETRIEVING_SCHEMATRON, e);
+            throw new OperationException(ERROR_RETRIEVING_SCHEMATRON, e);
         }
     }
 
@@ -110,7 +112,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			entities = mongo.findAll(SchematronETY.class);
 		}catch (MongoException e) {
-			throw new OperationException(Constants.Logs.ERROR_RETRIEVING_SCHEMATRON, e);
+			throw new OperationException(ERROR_RETRIEVING_SCHEMATRON, e);
 		}
 		return entities;
 	}
@@ -135,7 +137,7 @@ public class SchematronRepo implements ISchematronRepo {
             objects = mongo.find(q, SchematronETY.class);
         } catch (MongoException e) {
             // Catch data-layer runtime exceptions and turn into a checked exception
-            throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_INSERTIONS, e);
+            throw new OperationException(ERROR_UNABLE_FIND_INSERTIONS, e);
         }
         return objects;
     }
@@ -160,7 +162,7 @@ public class SchematronRepo implements ISchematronRepo {
         try {
             objects = mongo.find(q, SchematronETY.class);
         } catch (MongoException e) {
-            throw new OperationException(Constants.Logs.ERROR_UNABLE_FIND_DELETIONS, e);
+            throw new OperationException(ERROR_UNABLE_FIND_DELETIONS, e);
         }
         return objects;
     }
@@ -219,8 +221,8 @@ public class SchematronRepo implements ISchematronRepo {
             query.with(Sort.by(Direction.DESC, FIELD_INSERTION_DATE));
 			out = mongo.findOne(query, SchematronETY.class);
 		} catch (MongoException e) {
-			log.error("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
-			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
+			log.error(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
+			throw new OperationException(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
 		}
 		return out;
     }
@@ -237,7 +239,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			entities = mongo.find(q, SchematronETY.class);
 		} catch (MongoException e) {
-			throw new OperationException("Error encountered while retrieving schematron with templateIdRoot: " + templateIdRoot, e);
+			throw new OperationException(String.format(ERROR_RETRIEVING_SCHEMATRON_ID, templateIdRoot), e);
 		}
 		return entities;
 	}

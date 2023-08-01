@@ -38,7 +38,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.IOException;
-import java.io.Serializable;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.RouteUtility.*;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.ValidationUtility.DEFAULT_STRING_MAX_SIZE;
@@ -50,7 +49,7 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.Validati
 @RequestMapping(path = API_SCHEMATRON_MAPPER)
 @Tag(name = API_SCHEMATRONS_TAG)
 @Validated
-public interface ISchematronCTL extends Serializable {
+public interface ISchematronCTL {
 
         @PostMapping(produces = {
                         MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
