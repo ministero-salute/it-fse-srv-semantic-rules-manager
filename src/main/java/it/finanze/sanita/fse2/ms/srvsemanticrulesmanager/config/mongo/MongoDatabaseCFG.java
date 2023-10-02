@@ -27,6 +27,10 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClients;
+
 /**
  * 
  *
@@ -41,10 +45,18 @@ public class MongoDatabaseCFG {
 	 */
 	@Value("${data.mongodb.uri}")
 	private String mongoUri;
+	
+	@Value("${data.mongodb.schema-name}")
+	private String schemaName;
+	
 
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(){
-        return new SimpleMongoClientDatabaseFactory(mongoUri); 
+    	  ConnectionString connectionString = new ConnectionString(mongoUri);
+          MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+              .applyConnectionString(connectionString)
+              .build();
+          return new SimpleMongoClientDatabaseFactory(MongoClients.create(mongoClientSettings), schemaName);
     }
 
     @Bean
