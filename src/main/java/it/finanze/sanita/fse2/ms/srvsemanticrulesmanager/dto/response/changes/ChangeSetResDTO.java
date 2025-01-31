@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.List;
 
@@ -58,5 +60,8 @@ public class ChangeSetResDTO extends ResponseDTO {
 	@Schema(minimum = DEFAULT_ARRAY_MIN_SIZE + "", maximum = DEFAULT_ARRAY_MAX_SIZE + "")
 	private long totalNumberOfElements;
 
+	@Min(0)
+	@Max(100000)
+	@Schema(format = "int64")
 	private long collectionSize;
 }

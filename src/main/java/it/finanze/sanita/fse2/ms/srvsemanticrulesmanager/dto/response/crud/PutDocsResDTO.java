@@ -11,10 +11,14 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 
 /**
@@ -32,6 +36,9 @@ public class PutDocsResDTO extends ResponseDTO {
 	 */
 	private static final long serialVersionUID = 5857199886068379718L;
 
+	@Min(0)
+	@Max(100000)
+	@Schema(format = "int32")
 	private Integer updatedItems;
 
 	public PutDocsResDTO(final LogTraceInfoDTO traceInfo, final Integer updatedItems) {

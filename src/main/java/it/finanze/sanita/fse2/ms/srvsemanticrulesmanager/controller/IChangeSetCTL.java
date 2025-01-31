@@ -43,7 +43,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.NoFutureDate
 @Validated
 public interface IChangeSetCTL {
 
-	@Operation(summary = "Schematron ChangeSet status", description = "Creazione lista ChangeSet degli Schematron")
+	@Operation(summary = "Schematron ChangeSet status", description = "Creazione lista ChangeSet degli Schematron", operationId = "createSchematronChangeSet")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Operazione eseguita correttamente", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ChangeSetResDTO.class))),
 			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),

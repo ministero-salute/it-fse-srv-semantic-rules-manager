@@ -12,12 +12,15 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.crud;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.SchematronDocumentDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,9 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.Validati
 @EqualsAndHashCode(callSuper = true)
 public class GetDocsResDTO extends ResponseDTO {
 
+	@Min(0)
+	@Max(1000000)
+	@Schema(format = "int64")
 	private long numberOfItems;
 
 	@ArraySchema(minItems = DEFAULT_ARRAY_MIN_SIZE, maxItems = DEFAULT_ARRAY_MAX_SIZE, uniqueItems = true)

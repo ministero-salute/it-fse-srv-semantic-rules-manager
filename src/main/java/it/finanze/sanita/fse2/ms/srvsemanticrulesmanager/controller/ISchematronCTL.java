@@ -53,7 +53,7 @@ public interface ISchematronCTL {
 
         @PostMapping(produces = {
                         MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-        @Operation(summary = "Add schematron to MongoDB", description = "Servizio che consente di aggiungere uno schematron alla base dati.")
+        @Operation(summary = "Add schematron to MongoDB", description = "Servizio che consente di aggiungere uno schematron alla base dati.", operationId = "addSchematron")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Creazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -64,12 +64,13 @@ public interface ISchematronCTL {
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
-                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file
+                        @RequestPart(API_PATH_FILE_VAR)
+                        MultipartFile file
         ) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
 
         @PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = {
                         MediaType.MULTIPART_FORM_DATA_VALUE })
-        @Operation(summary = "Update schematron on MongoDB", description = "Servizio che consente di aggiornare uno schematron sulla base dati.")
+        @Operation(summary = "Update schematron on MongoDB", description = "Servizio che consente di aggiornare uno schematron sulla base dati.", operationId = "updateSchematron")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Aggiornamento Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PutDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -80,13 +81,14 @@ public interface ISchematronCTL {
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
                         @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
-                        @RequestPart(API_PATH_FILE_VAR) MultipartFile file
+                        @RequestPart(API_PATH_FILE_VAR)
+                        MultipartFile file
         )
             throws IOException, OperationException, DocumentNotFoundException, InvalidContentException, InvalidVersionException, SchematronValidatorException,
             DocumentAlreadyPresentException;
 
         @DeleteMapping(value = API_DELETE_BY_TEMPLATEIDROOT, produces = {MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Delete schematron from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare uno schematron dalla base dati dato il Template ID Root")
+        @Operation(summary = "Delete schematron from MongoDB given its Template ID Root", description = "Servizio che consente di cancellare uno schematron dalla base dati dato il Template ID Root", operationId = "removeSchematron")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Cancellazione Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DelDocsResDTO.class))),
                         @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -100,7 +102,7 @@ public interface ISchematronCTL {
         ) throws DocumentNotFoundException, OperationException;
 
         @GetMapping(value = API_GET_BY_TEMPLATEIDROOT, produces = {MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Returns a schematron from MongoDB, given its Template ID Root", description = "Servizio che consente di ritornare uno schematron dalla base dati dati il suo Template ID Root e Version.")
+        @Operation(summary = "Returns a schematron from MongoDB, given its Template ID Root", description = "Servizio che consente di ritornare uno schematron dalla base dati dati il suo Template ID Root e Version.", operationId = "listSchematronByTemplateIdAndVersion")
         @ApiResponses(value = {
                 @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocsResDTO.class))),
                 @ApiResponse(responseCode = "400", description = "I parametri forniti non sono validi", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -126,7 +128,7 @@ public interface ISchematronCTL {
         GetDocByIdResDTO getSchematronById(@NotBlank(message = "Id cannot be blank") @PathVariable @Size(max = DEFAULT_STRING_MAX_SIZE, message = "id does not match the expected size") @ValidObjectId(message = "Document id not valid") String id) throws OperationException, DocumentNotFoundException;
 
         @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE })
-        @Operation(summary = "Returns the list of all schematrons from MongoDB", description = "Servizio che consente di ritornare la lista degli schematron dalla base dati.")
+        @Operation(summary = "Returns the list of all schematrons from MongoDB", description = "Servizio che consente di ritornare la lista degli schematron dalla base dati.", operationId = "listSchematrons")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Richiesta Schematron avvenuta con successo", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GetDocsResDTO.class))),
                         @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = ErrorResponseDTO.class))) })
