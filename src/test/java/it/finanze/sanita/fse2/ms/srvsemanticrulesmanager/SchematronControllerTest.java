@@ -17,6 +17,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
@@ -102,6 +103,7 @@ class SchematronControllerTest extends AbstractTest {
 		MockHttpServletRequestBuilder req = insertSchematronByTemplateAndVersion(
 			TEST_ID_ROOT,
 			TEST_ID_VERSION,
+			SystemTypeEnum.TS,
 			file
 		);
 		// Perform request and verify
@@ -116,6 +118,7 @@ class SchematronControllerTest extends AbstractTest {
 		MockHttpServletRequestBuilder req = insertSchematronByTemplateAndVersion(
 			TEST_ID_ROOT,
 			TEST_ID_VERSION,
+			SystemTypeEnum.TS,
 			file
 		);
 		// Perform request and verify
@@ -159,6 +162,7 @@ class SchematronControllerTest extends AbstractTest {
 						.file(multipartFile)
 						.part(new MockPart("templateIdRoot", TEST_ID_ROOT.getBytes()))
 						.part(new MockPart("version", "1.0".getBytes()))
+						.part(new MockPart("system", SystemTypeEnum.TS.name().getBytes()))
 						.contentType(MediaType.MULTIPART_FORM_DATA))
 	            .andExpect(status().is5xxServerError()); 
 	} 
@@ -203,6 +207,7 @@ class SchematronControllerTest extends AbstractTest {
 		MockHttpServletRequestBuilder req = updateSchematronByTemplateAndVersion(
 			TEST_ID_ROOT,
 			TEST_ID_NEXT_VERSION,
+			SystemTypeEnum.TS,
 			file
 		);
 		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isOk());
@@ -237,6 +242,7 @@ class SchematronControllerTest extends AbstractTest {
 		MockHttpServletRequestBuilder req = updateSchematronByTemplateAndVersion(
 			TEST_ID_ROOT_INV,
 			TEST_ID_NEXT_VERSION,
+			SystemTypeEnum.TS,
 			file
 		);
 		mvc.perform(req).andExpect(MockMvcResultMatchers.status().isNotFound());

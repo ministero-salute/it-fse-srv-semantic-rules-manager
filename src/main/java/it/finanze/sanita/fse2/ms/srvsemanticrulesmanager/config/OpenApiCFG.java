@@ -14,7 +14,11 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +37,8 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Content;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 
 @Configuration
@@ -133,13 +139,92 @@ public class OpenApiCFG {
 				if(schema.getProperties().get("content_schematron") != null){
 					schema.getProperties().get("content_schematron").setMaxLength(customOpenapi.getFileMaxLength());
 				}
-
 			});
 
-
-
-
+			openApi.getPaths().values()
+					.stream()
+					.map(item -> getFileSchema(item))
+					.filter(Objects::nonNull)
+					.map(schema -> {
+						if (schema.get$ref() != null) {
+							String refName = schema.get$ref().replace("#/components/schemas/", "");
+							Schema<?> resolvedSchema = openApi.getComponents().getSchemas().get(refName);
+							return resolvedSchema != null ? resolvedSchema : schema;
+						}
+						return schema;
+					})
+					.filter(Objects::nonNull)
+					.forEach(schema -> {
+						if (schema.getProperties() != null && schema.getProperties().containsKey("file")) {
+							schema.getProperties().get("file").setMaxLength(customOpenapi.getFileMaxLength());
+						}
+						schema.setAdditionalProperties(false);
+					});
 		};
+	}
+
+	@Bean
+	@Order(Ordered.LOWEST_PRECEDENCE)
+	public OpenApiCustomiser updateFileMaxLength() {
+		return openApi -> {
+			openApi.getPaths().forEach((path, pathItem) -> {
+				if (pathItem.getPut() != null) {
+					Operation putOperation = pathItem.getPut();
+					RequestBody requestBody = putOperation.getRequestBody();
+					if (requestBody != null && requestBody.getContent() != null) {
+						MediaType mediaType = requestBody.getContent()
+								.get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+						if (mediaType != null && mediaType.getSchema() != null) {
+							Schema<?> schema = mediaType.getSchema();
+							// If the schema is a reference, resolve it
+							if (schema.get$ref() != null) {
+								String refName = schema.get$ref().replace("#/components/schemas/", "");
+								Schema<?> resolvedSchema = openApi.getComponents().getSchemas().get(refName);
+								if (resolvedSchema != null) {
+									schema = resolvedSchema;
+								}
+							}
+							if (schema.getProperties() != null && schema.getProperties().containsKey("file")) {
+								Schema<?> fileSchema = (Schema<?>) schema.getProperties().get("file");
+								fileSchema.setMaxLength(customOpenapi.getFileMaxLength());
+							}
+							schema.setAdditionalProperties(false);
+						}
+					}
+				}
+			});
+		};
+	}
+
+	private Schema<?> getFileSchema(PathItem item) {
+		MediaType mediaType = getMultipartFile(item);
+		if (mediaType == null)
+			return null;
+		return mediaType.getSchema();
+	}
+
+	private MediaType getMultipartFile(PathItem item) {
+		Operation operation = getOperation(item);
+		if (operation == null)
+			return null;
+		RequestBody body = operation.getRequestBody();
+		if (body == null)
+			return null;
+		Content content = body.getContent();
+		if (content == null)
+			return null;
+		MediaType mediaType = content.get(org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE);
+		return mediaType;
+	}
+
+	private Operation getOperation(PathItem item) {
+		if (item.getPost() != null)
+			return item.getPost();
+		if (item.getPatch() != null)
+			return item.getPatch();
+		if (item.getPut() != null)
+			return item.getPut();
+		return null;
 	}
 
 	private void disableAdditionalPropertiesToMultipart(Content content) {

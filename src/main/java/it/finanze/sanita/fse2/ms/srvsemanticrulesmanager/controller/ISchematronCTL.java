@@ -63,7 +63,7 @@ public interface ISchematronCTL {
         PostDocsResDTO addSchematron(
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
+                        @RequestParam(value = API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
                         @RequestPart(API_PATH_FILE_VAR)
                         MultipartFile file
         ) throws IOException, OperationException, EmptyDocumentException, DocumentAlreadyPresentException, DocumentNotFoundException, InvalidContentException, SchematronValidatorException;
@@ -80,7 +80,7 @@ public interface ISchematronCTL {
         PutDocsResDTO updateSchematron(
                         @RequestPart(API_PATH_TEMPLATEIDROOT_VAR) @Parameter(description = "Template Id Root of the Schematron", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Template Id cannot be blank") String templateIdRoot,
                         @RequestPart(API_PATH_VERSION_VAR) @Parameter(description = "Schematron version", schema = @Schema(minLength = 1, maxLength = 100)) @Size(min = 1, max = 100) @NotBlank(message = "Version cannot be blank") @Pattern(message = "Version does not match the regex ^(\\d+\\.)(\\d+)$", regexp = "^(\\d+\\.)(\\d+)$") String version,
-                        @RequestParam(API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
+                        @RequestParam(value = API_PATH_SYSTEM_VAR) @Parameter(description = "If the schematron target is a specific system") SystemTypeEnum system,
                         @RequestPart(API_PATH_FILE_VAR)
                         MultipartFile file
         )

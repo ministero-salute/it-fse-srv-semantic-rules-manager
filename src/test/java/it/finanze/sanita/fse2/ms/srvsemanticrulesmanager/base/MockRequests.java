@@ -11,6 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base;
 
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -54,22 +55,26 @@ public final class MockRequests {
     public static MockHttpServletRequestBuilder insertSchematronByTemplateAndVersion(
         String template,
         String version,
+        SystemTypeEnum system,
         MockMultipartFile file
     ) {
        return multipart("/v1/schematron").part(
            new MockPart("templateIdRoot", template.getBytes()),
-           new MockPart("version", version.getBytes())
+           new MockPart("version", version.getBytes()),
+           new MockPart("system", system.toString().getBytes())
        ).file(file);
     }
 
     public static MockHttpServletRequestBuilder updateSchematronByTemplateAndVersion(
         String template,
         String version,
+        SystemTypeEnum system,
         MockMultipartFile file
     ) {
         MockMultipartHttpServletRequestBuilder req = multipart("/v1/schematron").part(
             new MockPart("templateIdRoot", template.getBytes()),
-            new MockPart("version", version.getBytes())
+            new MockPart("version", version.getBytes()),
+            new MockPart("system", system.toString().getBytes())
         ).file(file);
         // Modify output method
         req.with(request -> {

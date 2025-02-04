@@ -37,8 +37,7 @@ public class PutDocsResDTO extends ResponseDTO {
 	private static final long serialVersionUID = 5857199886068379718L;
 
 	@Min(0)
-	@Max(100000)
-	@Schema(format = "int32")
+	@Max(Integer.MAX_VALUE)
 	private Integer updatedItems;
 
 	public PutDocsResDTO(final LogTraceInfoDTO traceInfo, final Integer updatedItems) {
