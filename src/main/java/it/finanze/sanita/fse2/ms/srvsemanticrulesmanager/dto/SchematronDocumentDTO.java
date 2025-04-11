@@ -32,7 +32,7 @@ public class SchematronDocumentDTO {
 	private String id; 
 	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
-	private String schemaName;
+	private String name;
 	
 	@Size(max = DEFAULT_STRING_MAX_SIZE)
 	private String templateIdRoot; 
@@ -62,7 +62,7 @@ public class SchematronDocumentDTO {
 	public static SchematronDocumentDTO fromEntity(SchematronETY e) {
 		SchematronDocumentDTO out = new SchematronDocumentDTO();
 		out.setId(e.getId());
-		out.setSchemaName(e.getNameSchematron());
+		out.setName(e.getNameSchematron());
 		out.setContent(
 			encodeBase64(e.getContentSchematron().getData())
 		);

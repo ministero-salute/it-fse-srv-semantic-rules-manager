@@ -50,7 +50,7 @@ class EntityDtoTest extends AbstractTest {
     	SchematronDocumentDTO schematron = new SchematronDocumentDTO();
     	Date dateNow = new Date();
     	
-    	schematron.setSchemaName(TEST_SCHEMATRON_NAME);
+    	schematron.setName(TEST_SCHEMATRON_NAME);
     	schematron.setContent(SCHEMATRON_TEST_STRING);
     	schematron.setTemplateIdRoot(TEST_SCHEMATRON_ROOT); 
     	schematron.setVersion(TEST_SCHEMATRON_EXT); 
@@ -61,7 +61,7 @@ class EntityDtoTest extends AbstractTest {
     	
     	assertEquals(schematron.getClass(), SchematronDocumentDTO.class);
     	
-    	assertEquals(String.class, schematron.getSchemaName().getClass());
+    	assertEquals(String.class, schematron.getName().getClass());
     	assertEquals(String.class, schematron.getContent().getClass());
     	assertEquals(String.class, schematron.getTemplateIdRoot().getClass()); 
     	assertEquals(String.class, schematron.getVersion().getClass()); 
@@ -69,7 +69,7 @@ class EntityDtoTest extends AbstractTest {
     	assertEquals(String.class, schematron.getVersion().getClass()); 
 
     	
-    	assertEquals(TEST_SCHEMATRON_NAME, schematron.getSchemaName());
+    	assertEquals(TEST_SCHEMATRON_NAME, schematron.getName());
     	assertEquals(new String(TEST_SCHEMATRON_CONTENT.getData()), schematron.getContent());
     	assertEquals(TEST_SCHEMATRON_ROOT, schematron.getTemplateIdRoot()); 
     	assertEquals(TEST_SCHEMATRON_EXT, schematron.getVersion()); 
