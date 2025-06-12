@@ -18,10 +18,10 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.changes.Ch
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.OperationException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 

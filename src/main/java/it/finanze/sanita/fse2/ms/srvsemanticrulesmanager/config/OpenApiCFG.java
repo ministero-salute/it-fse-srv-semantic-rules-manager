@@ -19,7 +19,7 @@ import java.util.Objects;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.parameters.RequestBody;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Content;
@@ -53,7 +52,7 @@ public class OpenApiCFG {
 	}
 
 	@Bean
-	public OpenApiCustomiser disableAdditionalResponseProperties() {
+	public OpenApiCustomizer disableAdditionalResponseProperties() {
 		return openApi -> openApi.getComponents().
 				getSchemas().
 				values().
@@ -61,7 +60,7 @@ public class OpenApiCFG {
 	}
 
 	@Bean
-	public OpenApiCustomiser binaryProperties() {
+	public OpenApiCustomizer binaryProperties() {
 		return openApi -> openApi
 				.getComponents()
 				.getSchemas()
@@ -85,7 +84,7 @@ public class OpenApiCFG {
 
 
 	@Bean
-	public OpenApiCustomiser openApiCustomiser() {
+	public OpenApiCustomizer openApiCustomiser() {
 
 		return openApi -> {
 
@@ -165,7 +164,7 @@ public class OpenApiCFG {
 
 	@Bean
 	@Order(Ordered.LOWEST_PRECEDENCE)
-	public OpenApiCustomiser updateFileMaxLength() {
+	public OpenApiCustomizer updateFileMaxLength() {
 		return openApi -> {
 			openApi.getPaths().forEach((path, pathItem) -> {
 				if (pathItem.getPut() != null) {

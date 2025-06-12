@@ -11,7 +11,9 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller;
 
-import brave.Tracer;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +46,11 @@ public abstract class AbstractCTL {
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-		if (tracer.currentSpan() != null) {
+		SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservice.MS_NAME);
+		if (spanbuilder != null) {
 			out = new LogTraceInfoDTO(
-					tracer.currentSpan().context().spanIdString(), 
-					tracer.currentSpan().context().traceIdString());
+					spanbuilder.startSpan().getSpanContext().getSpanId(),
+					spanbuilder.startSpan().getSpanContext().getTraceId());
 		}
 		return out;
 	}

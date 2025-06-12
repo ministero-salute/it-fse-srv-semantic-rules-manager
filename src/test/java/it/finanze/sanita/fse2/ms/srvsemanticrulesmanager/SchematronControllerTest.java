@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager;
 
-import brave.Tracer;
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.MockRequests;
@@ -21,6 +20,7 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.service.ISchematronSRV;
+import jakarta.xml.bind.JAXBException;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.AfterAll;
@@ -31,14 +31,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
@@ -76,12 +75,9 @@ class SchematronControllerTest extends AbstractTest {
 
 	
 	@Autowired
-	private MockMvc mvc; 
+	private MockMvc mvc;
 	
-	@MockBean
-	private Tracer tracer; 
-	
-	@SpyBean
+	@MockitoSpyBean
 	private ISchematronSRV schematronService; 
 	
 	

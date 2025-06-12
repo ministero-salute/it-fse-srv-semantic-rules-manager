@@ -13,9 +13,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.impl;
 
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.NoFutureDate;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Date;
 
 public class NoFutureDateValidator implements ConstraintValidator<NoFutureDate, Date> {

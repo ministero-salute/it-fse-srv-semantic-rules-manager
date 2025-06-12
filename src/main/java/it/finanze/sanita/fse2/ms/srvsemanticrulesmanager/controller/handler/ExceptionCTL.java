@@ -12,16 +12,16 @@
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.handler;
 
 
-import brave.Tracer;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
+import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -29,7 +29,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Date;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorBuilderDTO.*;
@@ -193,25 +192,24 @@ public class ExceptionCTL extends ResponseEntityExceptionHandler {
      * @return The new instance
      */
     private LogTraceInfoDTO getLogTraceInfo() {
-        // Create instance
         LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-        // Verify if context is available
-        if (tracer.currentSpan() != null) {
+        SpanBuilder spanbuilder = tracer.spanBuilder(Constants.Microservice.MS_NAME);
+        if (spanbuilder != null) {
             out = new LogTraceInfoDTO(
-                tracer.currentSpan().context().spanIdString(),
-                tracer.currentSpan().context().traceIdString());
+                    spanbuilder.startSpan().getSpanContext().getSpanId(),
+                    spanbuilder.startSpan().getSpanContext().getTraceId());
         }
-        // Return the log trace
         return out;
     }
 
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestPart(MissingServletRequestPartException ex, HttpHeaders ignored, HttpStatusCode status, WebRequest request) {
         // Log me
         log.error("HANDLER handleMissingServletRequestPart()", ex);
         // Create error DTO
         ErrorResponseDTO out = createMissingPartError(getLogTraceInfo(), ex);
         // Set HTTP headers
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
         // Bye bye
         return new ResponseEntity<>(out, headers, out.getStatus());

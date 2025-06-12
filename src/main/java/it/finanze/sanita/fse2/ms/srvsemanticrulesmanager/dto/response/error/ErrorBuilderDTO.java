@@ -19,11 +19,10 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.Erro
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.base.ErrorResponseDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.exceptions.*;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.UtilsMisc;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants.Logs.ERR_VAL_UNABLE_CONVERT;
 import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.error.ErrorInstance.IO;

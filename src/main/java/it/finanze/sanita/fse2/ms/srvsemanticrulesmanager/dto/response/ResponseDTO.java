@@ -11,7 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.AbstractDTO;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTraceInfoDTO;

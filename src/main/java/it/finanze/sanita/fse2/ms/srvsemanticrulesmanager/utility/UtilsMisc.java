@@ -11,11 +11,12 @@
  */
 package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility;
 
+import jakarta.validation.Path;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.Date;
-import javax.validation.Path;
 
 public final class UtilsMisc {
 

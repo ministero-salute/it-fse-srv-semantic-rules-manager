@@ -13,9 +13,9 @@ package it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators;
 
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.validators.impl.ObjectIdValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented

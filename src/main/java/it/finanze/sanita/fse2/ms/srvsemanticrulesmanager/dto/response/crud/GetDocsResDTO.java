@@ -19,8 +19,8 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.dto.response.log.LogTra
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 

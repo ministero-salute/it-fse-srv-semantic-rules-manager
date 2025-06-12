@@ -72,6 +72,11 @@ public final class Constants {
 		}
 	}
 
+	public static final class Microservice {
+		public static final String MS_NAME = "it-fse-srv-semantic-rules-manager";
+
+		private Microservice(){}
+	}
 
 	public static final class Profile {
 

@@ -16,8 +16,7 @@ import static it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.utility.RouteUti
 
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;

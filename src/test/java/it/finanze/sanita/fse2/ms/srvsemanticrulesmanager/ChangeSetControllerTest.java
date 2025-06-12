@@ -22,12 +22,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import brave.Tracer;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.config.Constants;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.SchematronCTL;
@@ -38,10 +36,6 @@ import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.controller.impl.Schemat
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles(Constants.Profile.TEST)
 class ChangeSetControllerTest extends AbstractTest {
-
-	@MockBean
-	private Tracer tracer;
-
 		
 	@Autowired
 	private MockMvc mvc; 

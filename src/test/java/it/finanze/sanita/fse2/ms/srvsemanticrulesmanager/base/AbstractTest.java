@@ -18,12 +18,11 @@ import java.util.Date;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.srvsemanticrulesmanager.repository.mongo.impl.SchematronRepo;
-
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 
 public abstract class AbstractTest {
@@ -97,7 +96,7 @@ public abstract class AbstractTest {
 			"files",
 			"modified");
 
-	@SpyBean
+	@MockitoSpyBean
 	public MongoTemplate mongo;
 
 
